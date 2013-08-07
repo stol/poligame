@@ -5,8 +5,8 @@
 <div ng-repeat="question in questions">
 	{{question.text}}
 	<form ng-submit="vote()">
-		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="1">Pour</button>
-		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="-1">Contre</button>
-		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="0">Absention</button>
+		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="1" ng-click="setVote(1)">Pour</button>
+		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="-1" ng-click="setVote(-1)">Contre</button>
+		<button type="submit" ng-model="radio" class="btn-primary" name="vote" value="0" ng-click="setVote(0)">Absention</button>
 	</form>
 </div>
