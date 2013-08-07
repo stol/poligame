@@ -1,3 +1,7 @@
+
+
+
+
 -- ---
 -- Globals
 -- ---
@@ -18,6 +22,8 @@ CREATE TABLE `questions` (
   `pour` INTEGER NULL DEFAULT NULL,
   `contre` INTEGER NULL DEFAULT NULL,
   `abstention` INTEGER NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT NULL,
+  `updated_at` INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -45,6 +51,16 @@ DROP TABLE IF EXISTS `users`;
 		
 CREATE TABLE `users` (
   `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `firstname` VARCHAR(255) NULL DEFAULT NULL,
+  `lastname` VARCHAR(255) NULL DEFAULT NULL,
+  `fullname` VARCHAR(255) NULL DEFAULT NULL,
+  `nickname` VARCHAR(255) NULL DEFAULT NULL,
+  `provider_user_id` INTEGER NULL DEFAULT NULL,
+  `gender` INTEGER NULL DEFAULT NULL,
+  `bio` MEDIUMTEXT NULL DEFAULT NULL,
+  `link` MEDIUMTEXT NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NULL DEFAULT NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -54,7 +70,6 @@ CREATE TABLE `users` (
 
 ALTER TABLE `votes` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
 ALTER TABLE `votes` ADD FOREIGN KEY (question_id) REFERENCES `questions` (`id`);
-
 -- ---
 -- Table Properties
 -- ---
@@ -68,23 +83,23 @@ ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ---
 
 INSERT INTO `questions` (`id`,`text`,`pour`,`contre`,`abstention`) VALUES
-	(null, 'Texte de loi n°1',5,5,2),
-	(null, 'Texte de loi n°2',10,7,3),
-	(null, 'Texte de loi n°3',4,21,5),
-	(null, 'Texte de loi n°4',30,150,25);
+  (null, 'Texte de loi n°1',5,5,2),
+  (null, 'Texte de loi n°2',10,7,3),
+  (null, 'Texte de loi n°3',4,21,5),
+  (null, 'Texte de loi n°4',30,150,25);
 INSERT INTO `users` (`id`) VALUES
-	(1),
-	(2),
-	(3);
+  (1),
+  (2),
+  (3);
 
 INSERT INTO `votes` (`user_id`,`question_id`) VALUES
-	(1,1),
-	(1,2),
-	(1,3),
-	(2,1),
-	(2,2),
-	(2,3),
-	(3,1),
-	(3,2),
-	(3,3);
+  (1,1),
+  (1,2),
+  (1,3),
+  (2,1),
+  (2,2),
+  (2,3),
+  (3,1),
+  (3,2),
+  (3,3);
 
