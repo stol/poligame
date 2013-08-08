@@ -22,8 +22,9 @@ CREATE TABLE `questions` (
   `pour` INTEGER NULL DEFAULT NULL,
   `contre` INTEGER NULL DEFAULT NULL,
   `abstention` INTEGER NULL DEFAULT NULL,
+  `link` MEDIUMTEXT NULL DEFAULT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
-  `updated_at` INTEGER NULL DEFAULT NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -70,6 +71,7 @@ CREATE TABLE `users` (
 
 ALTER TABLE `votes` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
 ALTER TABLE `votes` ADD FOREIGN KEY (question_id) REFERENCES `questions` (`id`);
+
 -- ---
 -- Table Properties
 -- ---
@@ -83,10 +85,10 @@ ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- ---
 
 INSERT INTO `questions` (`id`,`text`,`pour`,`contre`,`abstention`) VALUES
-  (null, 'Texte de loi n°1',5,5,2),
-  (null, 'Texte de loi n°2',10,7,3),
-  (null, 'Texte de loi n°3',4,21,5),
-  (null, 'Texte de loi n°4',30,150,25);
+  (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge',5,5,2),
+  (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans',10,7,3),
+  (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel',4,21,5),
+  (null, 'Projet de loi relatif à la transparence de la vie publique',30,150,25);
 INSERT INTO `users` (`id`) VALUES
   (1),
   (2),

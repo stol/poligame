@@ -22,56 +22,57 @@ myApp.config(['$locationProvider', function($locationProvider) {
 }]);
 
 myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', function($rootScope, $scope, $location, $http) {
+    
+    function isVoted(vote){
+        return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === vote || false;
+    }
 
-    var tempVote;
 
     $http({method: 'GET', url: '/questions'})
     .success(function(data, status, headers, config) {
-        console.log("succès !");
-        $scope.questions = data
+        for( var i=0, l = data.length; i<l;i++){
+            data[i].isVoted = isVoted;
+        }
+        $scope.questions = data;
     })
     .error(function(data, status, headers, config) {
-        console.log("Erreur !");
+        console.log("GET QUESTIONS : Erreur !");
     });
 
     // Sends the vote
-    $scope.vote = function() {
-
-        console.log("submit : ", myVote);
-        console.log("COUCOU ", $rootScope.user);
-        if (!$rootScope.user){
-            console.log("user pas loggé")
+    $scope.vote = function(vote, question) {
+        console.log("voting...")
+        /*
+        // Create a new instance of ladda for the specified button
+        var l = Ladda.create( document.querySelector( '.my-button' ) );
+        // Start loading
+        l.start();
+        // Will display a progress bar for 50% of the button width
+        l.setProgress( 0.5 );
+        // Stop loading
+        l.stop();
+        // Toggle between loading/not loading states
+        l.toggle();
+        // Check the current state
+        l.isLoading();
+        */
+        if (!$rootScope.user.accessToken){
+            console.log("user pas loggé. Trying to logg in facebook...")
             FB.login(function(response) {
+                console.log('FB login DONE. reponse = ', response);
                 if (response.authResponse) {
-                    console.log('Welcome!  Fetching your information.... ');
-                    FB.api('/me', function(response) {
-                        console.log(response);
-
-                        $http({method: 'POST', url: '/users/login', data: {
-                            firstname: response.first_name,
-                            lastname : response.last_name,
-                            fullname : response.name,
-                            nickname : response.username,
-                            provider_user_id: response.id,
-                            gender   : response.gender == "male" ? 1 : response.gender == "female" ? 2 : 0,
-                            bio      : response.bio,
-                            link     : response.link
-                        }})
-                        .success(function(data, status, headers, config) {
-                            console.log("GREAT SUCCESS : ", data);
-                        })
-                        .error(function(data, status, headers, config) {
-                            console.log("Erreur !");
-                        });
-                    });
+                    $rootScope.user.accessToken = response.authResponse.accessToken;
+                    $scope.vote(vote, question);
                 } else {
                     console.log('User cancelled login or did not fully authorize.');
                 }
-            });
+            }, {scope: 'publish_actions'});
+            return;
         }
-        else{
-            console.log("user loggé")
-        }
+
+        console.log("user loggé")
+        $rootScope.user.votes[question.id] = vote;
+        sendVote(vote, question);
 
 
         /*
@@ -82,17 +83,26 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', funct
         */
     };
 
-    // Sets the vote after clicking
-    $scope.setVote = function(vote){
-        myVote = vote;
+    function sendVote(vote, question){
+        console.log("sending action...");
+        FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
+            access_token: $rootScope.user.accessToken,
+            bill_project: 'http://samples.ogp.me/609805575706972'
+        }, function(response) {
+            console.log(response);
+        });
     }
 }]); 
 
 
 // application initialization : declare $httpBackend.when*() behaviors
-myApp.run(['$rootScope', '$window', function($rootScope, $window) {
+myApp.run(['$rootScope', '$window', '$http', function($rootScope, $window, $http) {
 
-    $rootScope.user = null;
+    $rootScope.user = {
+        infos: null,
+        accessToken: null,
+        votes: [[],[],[]]
+    };
 
     (function(d, s, id){
         var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) {return;}
@@ -112,11 +122,33 @@ myApp.run(['$rootScope', '$window', function($rootScope, $window) {
 
 
         FB.Event.subscribe('auth.authResponseChange', function(response) {
-            console.log(response);
-            /*
-            if (response.status === 'connected') {            
-                _self.getUserInfo();
+            console.log("auth.authResponseChange ! response = ", response);
+            if (response.status === 'connected') {
+                $rootScope.user.accessToken = response.authResponse.accessToken;
+
+                !$rootScope.user.infos && FB.api('/me', function(response) {
+                    console.log('infos FB reçues... Enregistrement en BDD...', response)
+
+                    $http({method: 'POST', url: '/users/login', data: {
+                        firstname: response.first_name,
+                        lastname : response.last_name,
+                        fullname : response.name,
+                        nickname : response.username,
+                        provider_user_id: response.id,
+                        gender   : response.gender == "male" ? 1 : response.gender == "female" ? 2 : 0,
+                        bio      : response.bio,
+                        link     : response.link
+                    }})
+                    .success(function(data, status, headers, config) {
+                        $rootScope.user.infos = data;
+                        console.log("login/save is GREAT SUCCESS : ", $rootScope.user);
+                    })
+                    .error(function(data, status, headers, config) {
+                        console.log("Erreur !");
+                    });
+                });
             }
+            /*
             else {
             }
             */
