@@ -1,0 +1,17 @@
+<div class="modal-header">
+	<h3>4 points importants</h3>
+</div>
+<div class="modal-body">
+	<h4>1/ Les votes sont définitifs</h4>
+	<h4>2/ Les votes sont anonymes</h4>
+	<h4>3/ L'identification par facebook est obligatoire</h4>
+	<h4>4/ Vous pouvez choisir de partager votre vote avec vos amis, en cochant la case ci-dessous</h4>
+  	<label class="checkbox">
+    	<input type="checkbox" name="share" ng-model="oneAtATime" checked="checked">
+    	Partager vote vote sur facebook
+  	</label>
+</div>
+<div class="modal-footer">
+	<button ng-click="close(result)" class="btn btn-large btn-warning" >Annuler</button>
+	<button ang-click="vote()" class="btn btn-large btn-primary" >Valider votre vote</button>
+</div>

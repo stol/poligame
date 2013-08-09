@@ -40,7 +40,7 @@ CREATE TABLE `votes` (
   `question_id` INTEGER NULL DEFAULT NULL,
 KEY (`user_id`),
 KEY (`question_id`),
-  UNIQUE KEY (`user_id`, `question_id`)
+  PRIMARY KEY (`user_id`, `question_id`)
 );
 
 -- ---
@@ -56,7 +56,7 @@ CREATE TABLE `users` (
   `lastname` VARCHAR(255) NULL DEFAULT NULL,
   `fullname` VARCHAR(255) NULL DEFAULT NULL,
   `nickname` VARCHAR(255) NULL DEFAULT NULL,
-  `provider_user_id` INTEGER NULL DEFAULT NULL,
+  `provider_user_id` VARCHAR(255) NULL DEFAULT NULL,
   `gender` INTEGER NULL DEFAULT NULL,
   `bio` MEDIUMTEXT NULL DEFAULT NULL,
   `link` MEDIUMTEXT NULL DEFAULT NULL,
