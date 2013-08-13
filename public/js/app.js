@@ -30,8 +30,11 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
 
 myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', function($rootScope, $scope, $location, $http, $dialog) {
     
-    function isVoted(userVote){
-        return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === userVote || false;
+    function isVoted(user_vote){
+        if (user_vote != undefined)
+            return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
+        else
+            return !!$rootScope.user.votes[this.id];
     }
 
 
@@ -46,28 +49,9 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
         console.log("GET QUESTIONS : Erreur !");
     });
 
-    function doVote(userVote, question){
-        console.log("voting...")
-        if ($rootScope.user.status != "connected"){
-            console.log("user pas loggé. Trying to logg in facebook...")
-            FB.login(function(response) {
-                console.log('FB login DONE. reponse = ', response);
-                if (response.authResponse) {
-                    $rootScope.user.accessToken = response.authResponse.accessToken;
-                    $scope.doVote(userVote, question);
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
-                }
-            }, {scope: 'publish_actions'});
-            return;
-        }
-        console.log("user loggé")
-        $rootScope.user.votes[question.id] = userVote;
-        sendVote(userVote, question);
-    }
 
     // Sends the vote
-    $scope.setChoice = function(userVote, question) {
+    function setChoice(user_vote, question) {
         $dialog.dialog({
             backdrop: true,
             keyboard: true,
@@ -77,11 +61,42 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
         }).open().then(function(result){
             result = !!result; // Casts result to boolean
             console.log('dialog closed with result: ' + result);
-            result && doVote(userVote, question);
+            result && doVote(user_vote, question);
         });
     };
 
-    function sendVote(userVote, question){
+    function doVote(user_vote, question){
+        if ($rootScope.user.status != "connected"){
+            console.log("user pas loggé. Trying to logg in facebook...")
+            FB.login(function(response) {
+                console.log('FB login DONE. reponse = ', response);
+                if (response.authResponse) {
+                    $rootScope.user.accessToken = response.authResponse.accessToken;
+                    doVote(user_vote, question);
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope: 'publish_actions'});
+            return;
+        }
+        console.log("user loggé. voting...")
+        $http({method: 'POST', url: '/questions/'+question.id+'/vote', data: {
+            user_id: $rootScope.user.infos.id,
+            question_id: question.id,
+            user_vote: user_vote
+        }})
+        .success(function(data, status, headers, config) {
+        
+        })
+        .error(function(data, status, headers, config) {
+            console.log("VOTE QUESTION : Erreur !");
+        });
+
+        $rootScope.user.votes[question.id] = user_vote;
+        //publishVote(user_vote, question);
+    }
+
+    function publishVote(user_vote, question){
         console.log("sending action...");
         FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
             access_token: $rootScope.user.accessToken,
@@ -90,6 +105,9 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
             console.log(response);
         });
     }
+
+    // API exposition
+    $scope.setChoice = setChoice;
 }]); 
 
 
@@ -99,7 +117,7 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
     $rootScope.user = {
         infos: null,
         accessToken: null,
-        votes: [[],[],[]],
+        votes: {},
         status: 'unknown'
     };
 
@@ -116,7 +134,7 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
             channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
             status: true, 
             cookie: true, 
-            xfbml: false
+            xfbml: true
         });
 
 
@@ -146,7 +164,8 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
                         }})
                         .success(function(data, status, headers, config) {
                             console.log("SAVE is GREAT SUCCESS : ", $rootScope.user);
-                            $rootScope.user.infos = data;
+                            $rootScope.user.infos = data.infos;
+                            $rootScope.user.votes = data.votes;
                             $cookieStore.put("tok", token_new);
                             console.log("PUT TOK | ", token_new);
                         })
@@ -161,7 +180,8 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
                     }})
                     .success(function(data, status, headers, config) {
                         console.log("AUTOLOGIN is GREAT SUCCESS : ", $rootScope.user);
-                        $rootScope.user.infos = data;
+                        $rootScope.user.infos = data.infos;
+                        $rootScope.user.votes = data.votes;
                         $cookieStore.put("tok", token_new);
                         console.log("PUT TOK | ", token_new);
                     });

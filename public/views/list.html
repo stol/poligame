@@ -1,17 +1,22 @@
 <div ng-repeat="question in questions">
 	<h4>{{question.text}}</h4>
-	<div class="text-center">
-		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-			ng-click="setChoice(1,question)"
-			ng-class="{active : question.isVoted(1)}"
-		>Pour</button>
-		<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-			ng-click="setChoice(2,question)"
-			ng-class="{active : question.isVoted(2)}"
-		>Contre</button>
-		<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-			ng-click="setChoice(0,question)"
-			ng-class="{active : question.isVoted(0)}"
-		>Absention</button>
+	<div ng-switch on="question.isVoted()">
+		<div class="text-center" ng-switch-when="true">
+			Vous avez déjà voté !
+		</div>
+		<div class="text-center" ng-switch-default>
+			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+				ng-click="setChoice(1,question)"
+				ng-class="{active : question.isVoted(1)}"
+			>Pour</button>
+			<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+				ng-click="setChoice(2,question)"
+				ng-class="{active : question.isVoted(2)}"
+			>Contre</button>
+			<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+				ng-click="setChoice(0,question)"
+				ng-class="{active : question.isVoted(0)}"
+			>Absention</button>
+		</div>
 	</div>
 </div>

@@ -43,7 +43,7 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 app.get('/questions', questions.list);
-app.get('/questions/:id/vote', questions.vote);
+app.post('/questions/:question_id/vote', questions.vote);
 app.post('/users/login', users.login);
 
 http.createServer(app).listen(app.get('port'), function(){

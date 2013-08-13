@@ -4,26 +4,34 @@
  */
 
 exports.login = function(req, res){
-	console.log("LOGIN : ", req.body);
-	var query =  "SELECT * from users WHERE provider_user_id = '"+req.body.provider_user_id+"'";
-	
-	console.log(query);
-	db.query(query, function(err, rows, fields) {
+
+	db.query("SELECT * from users WHERE provider_user_id = ?", [req.body.provider_user_id], function(err, rows, fields) {
   		if (err) throw err;
 
-		console.log("RES : ", rows);
-
   		if (!rows.length){
-  			console.log("INSERTING DATA...")
-  			db.query('INSERT INTO users SET ? ', req.body);
-  			req.body.votes = [[],[],[]];
-			res.json(req.body);
+  			db.query('INSERT INTO users SET ? ', req.body, function(err, result){
+  				req.body.id = result.insertId;
+  				get_votes(req.body);
+  			});
   		}
   		else{
-  			rows.votes = [[],[],[]];
-  			res.json(rows[0]);
+  			get_votes(rows[0]);
   		}
-
-  		
 	});
+
+	function get_votes(user){
+		var votes = {};
+		db.query("SELECT * from votes WHERE user_id = ?", [user.id], function(err, rows, fields) {
+			for(var i=0; i<rows.length; i++){
+				votes[rows[i].question_id] = true;
+			}
+			console.log("VOTES = ", votes);
+			res.json({
+				infos: user,
+				votes: votes
+			});
+		});
+
+	}
+
 };
