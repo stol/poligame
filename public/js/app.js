@@ -32,16 +32,24 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     };
 }]);
 
-myApp.controller('QuestionsCtrl', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
-    console.log($routeParams);
+myApp.controller('QuestionsCtrl', ['$rootScope', '$scope', '$routeParams', '$http', '$window', function($rootScope, $scope, $routeParams, $http, $window) {
 
-    $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
-    .success(function(data, status, headers, config) {
-        $scope.question = data;
-    })
-    .error(function(data, status, headers, config) {
-        console.log("GET QUESTION : Erreur !");
-    });
+    if (!$rootScope.questions || !$rootScope.questions[$routeParams.question_id]){
+        $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
+        .success(function(question, status, headers, config) {
+            $rootScope.questions = $rootScope.questions || {};
+            $rootScope.questions[question.id] = question;
+            $scope.question = $rootScope.questions[question.id];
+            $window.FB.XFBML.parse();
+        })
+        .error(function(data, status, headers, config) {
+            console.log("GET QUESTION : Erreur !");
+        });
+    }
+    else{
+        $scope.question = $rootScope.questions[$routeParams.question_id];
+        $window.FB.XFBML.parse();
+    }
 
 }]); 
 myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', function($rootScope, $scope, $location, $http, $dialog) {
@@ -54,28 +62,30 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
     }
 
     // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
-    if (!$rootScope.questions){
+    if (!$rootScope.home_done){
+        $rootScope.home_done = true;
         $http({method: 'GET', url: '/questions'})
-        .success(function(data, status, headers, config) {
-            for( var i=0, l = data.length; i<l;i++){
-                data[i].isVoted = isVoted;
-                data[i].total = data[i].pour + data[i].contre + data[i].abstention;
-                data[i].pour = {
-                    nb: data[i].pour,
-                    perc: Math.round(100 * data[i].pour / (data[i].pour + data[i].contre))
+        .success(function(questions, status, headers, config) {
+            $rootScope.questions = $rootScope.questions || {};
+            for( var i=0, l = questions.length; i<l;i++){
+                questions[i].isVoted = isVoted;
+                questions[i].total = questions[i].pour + questions[i].contre + questions[i].abstention;
+                questions[i].pour = {
+                    nb: questions[i].pour,
+                    perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
                 }
-                data[i].contre = {
-                    nb: data[i].contre,
-                    perc: Math.round(100 * data[i].contre / (data[i].pour.nb + data[i].contre))
+                questions[i].contre = {
+                    nb: questions[i].contre,
+                    perc: Math.round(100 * questions[i].contre / (questions[i].pour.nb + questions[i].contre))
                 }
-                data[i].abstention = {
-                    nb: data[i].abstention,
-                    perc: Math.round(100 * data[i].abstention / data[i].total)
+                questions[i].abstention = {
+                    nb: questions[i].abstention,
+                    perc: Math.round(100 * questions[i].abstention / questions[i].total)
                 }
                 
-                data[i].votes = data[i].pour + data[i].contre + data[i].abstention;
+                questions[i].votes = questions[i].pour + questions[i].contre + questions[i].abstention;
+                $rootScope.questions[questions[i].id] = questions[i];
             }
-            $rootScope.questions = data;
         })
         .error(function(data, status, headers, config) {
             console.log("GET QUESTIONS : Erreur !");

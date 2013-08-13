@@ -1,3 +1,5 @@
+<h2>Textes actuellement soumis au vote</h2>
+
 <div ng-repeat="question in questions">
 	<h4><a href="/questions/{{question.id}}">{{question.text}}</a></h4>
 	<div ng-switch on="question.isVoted()">
