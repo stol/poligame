@@ -5,15 +5,15 @@ var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
 
   // routes declaration
 myApp.config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/edit', {
-        templateUrl: 'partial_edit.html',
-        controller: 'FriendEditCtrl'
-    });
-
     $routeProvider.when('/', {
-        templateUrl: 'views/list.html',
+        templateUrl: '/views/list.html',
         controller: 'ListCtrl'
     });
+    $routeProvider.when('/questions/:question_id', {
+        templateUrl: '/views/question.html',
+        controller: 'QuestionsCtrl'
+    });
+
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
@@ -28,6 +28,18 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     };
 }]);
 
+myApp.controller('QuestionsCtrl', ['$scope', '$routeParams', '$http', function($scope, $routeParams, $http) {
+    console.log($routeParams);
+
+    $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
+    .success(function(data, status, headers, config) {
+        $scope.question = data;
+    })
+    .error(function(data, status, headers, config) {
+        console.log("GET QUESTION : Erreur !");
+    });
+
+}]); 
 myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', function($rootScope, $scope, $location, $http, $dialog) {
     
     function isVoted(user_vote){

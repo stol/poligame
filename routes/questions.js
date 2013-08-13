@@ -10,6 +10,17 @@ exports.list = function(req, res){
 	});
 };
 
+
+exports.show = function(req, res){
+	db.query('SELECT * from questions WHERE id = ?', [req.params.question_id], function(err, rows, fields) {
+  		if (err) throw err;
+  		if (req.xhr)
+  			res.json(rows[0]);
+  		else
+  			res.render('index', { title: 'Express' });
+	});
+};
+
 exports.vote = function(req, res){
 
 	set_vote();

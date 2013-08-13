@@ -1,5 +1,5 @@
 <div ng-repeat="question in questions">
-	<h4>{{question.text}}</h4>
+	<h4><a href="/questions/{{question.id}}">{{question.text}}</a></h4>
 	<div ng-switch on="question.isVoted()">
 		<div class="text-center" ng-switch-when="true">
 			Vous avez déjà voté !
