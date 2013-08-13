@@ -21,6 +21,7 @@ myApp.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 
+
 myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     $scope.close = function(result){
         dialog.close(result);
@@ -29,8 +30,8 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
 
 myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', function($rootScope, $scope, $location, $http, $dialog) {
     
-    function isVoted(vote){
-        return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === vote || false;
+    function isVoted(userVote){
+        return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === userVote || false;
     }
 
 
@@ -45,9 +46,28 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
         console.log("GET QUESTIONS : Erreur !");
     });
 
+    function doVote(userVote, question){
+        console.log("voting...")
+        if ($rootScope.user.status != "connected"){
+            console.log("user pas loggé. Trying to logg in facebook...")
+            FB.login(function(response) {
+                console.log('FB login DONE. reponse = ', response);
+                if (response.authResponse) {
+                    $rootScope.user.accessToken = response.authResponse.accessToken;
+                    $scope.doVote(userVote, question);
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope: 'publish_actions'});
+            return;
+        }
+        console.log("user loggé")
+        $rootScope.user.votes[question.id] = userVote;
+        sendVote(userVote, question);
+    }
 
     // Sends the vote
-    $scope.vote = function(vote, question) {
+    $scope.setChoice = function(userVote, question) {
         $dialog.dialog({
             backdrop: true,
             keyboard: true,
@@ -55,57 +75,13 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
             templateUrl:  '/views/modal.html',
             controller: 'ModalCtrl'
         }).open().then(function(result){
-            if(result) {
-                alert('dialog closed with result: ' + result);
-            }
+            result = !!result; // Casts result to boolean
+            console.log('dialog closed with result: ' + result);
+            result && doVote(userVote, question);
         });
-        return;
-
-        console.log("voting...")
-        /*
-        // Create a new instance of ladda for the specified button
-        var l = Ladda.create( document.querySelector( '.my-button' ) );
-        // Start loading
-        l.start();
-        // Will display a progress bar for 50% of the button width
-        l.setProgress( 0.5 );
-        // Stop loading
-        l.stop();
-        // Toggle between loading/not loading states
-        l.toggle();
-        // Check the current state
-        l.isLoading();
-        */
-        if ($rootScope.user.status != "connected"){
-            console.log("user pas loggé. Trying to logg in facebook...")
-            FB.login(function(response) {
-                console.log('FB login DONE. reponse = ', response);
-                if (response.authResponse) {
-                    $rootScope.user.accessToken = response.authResponse.accessToken;
-                    $scope.vote(vote, question);
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
-                }
-            }, {scope: 'publish_actions'});
-            return;
-        }
-
-
-        $('#myModal').modal();
-        console.log("user loggé")
-        $rootScope.user.votes[question.id] = vote;
-        sendVote(vote, question);
-
-
-        /*
-        $http({method: 'GET', url: '/questions'})
-
-        $scope.todos.push({text:$scope.todoText, done:false});
-        $scope.todoText = '';
-        */
     };
 
-    function sendVote(vote, question){
+    function sendVote(userVote, question){
         console.log("sending action...");
         FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
             access_token: $rootScope.user.accessToken,

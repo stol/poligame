@@ -2,15 +2,15 @@
 	<h4>{{question.text}}</h4>
 	<div class="text-center">
 		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-			ng-click="vote(1,question)"
+			ng-click="setChoice(1,question)"
 			ng-class="{active : question.isVoted(1)}"
 		>Pour</button>
 		<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-			ng-click="vote(2,question)"
+			ng-click="setChoice(2,question)"
 			ng-class="{active : question.isVoted(2)}"
 		>Contre</button>
 		<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-			ng-click="vote(0,question)"
+			ng-click="setChoice(0,question)"
 			ng-class="{active : question.isVoted(0)}"
 		>Absention</button>
 	</div>
