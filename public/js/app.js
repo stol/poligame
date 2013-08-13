@@ -7,7 +7,7 @@ var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
 myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: '/views/list.html',
-        controller: 'ListCtrl'
+        controller: 'QuestionsCtrl'
     });
     $routeProvider.when('/questions/:question_id', {
         templateUrl: '/views/question.html',
@@ -32,27 +32,8 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     };
 }]);
 
-myApp.controller('QuestionsCtrl', ['$rootScope', '$scope', '$routeParams', '$http', '$window', function($rootScope, $scope, $routeParams, $http, $window) {
-
-    if (!$rootScope.questions || !$rootScope.questions[$routeParams.question_id]){
-        $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
-        .success(function(question, status, headers, config) {
-            $rootScope.questions = $rootScope.questions || {};
-            $rootScope.questions[question.id] = question;
-            $scope.question = $rootScope.questions[question.id];
-            $window.FB.XFBML.parse();
-        })
-        .error(function(data, status, headers, config) {
-            console.log("GET QUESTION : Erreur !");
-        });
-    }
-    else{
-        $scope.question = $rootScope.questions[$routeParams.question_id];
-        $window.FB.XFBML.parse();
-    }
-
-}]); 
-myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', function($rootScope, $scope, $location, $http, $dialog) {
+myApp.controller('QuestionsCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
+function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     
     function isVoted(user_vote){
         if (user_vote != undefined)
@@ -61,36 +42,58 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
             return !!$rootScope.user.votes[this.id];
     }
 
-    // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
-    if (!$rootScope.home_done){
-        $rootScope.home_done = true;
-        $http({method: 'GET', url: '/questions'})
-        .success(function(questions, status, headers, config) {
-            $rootScope.questions = $rootScope.questions || {};
-            for( var i=0, l = questions.length; i<l;i++){
-                questions[i].isVoted = isVoted;
-                questions[i].total = questions[i].pour + questions[i].contre + questions[i].abstention;
-                questions[i].pour = {
-                    nb: questions[i].pour,
-                    perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
-                }
-                questions[i].contre = {
-                    nb: questions[i].contre,
-                    perc: Math.round(100 * questions[i].contre / (questions[i].pour.nb + questions[i].contre))
-                }
-                questions[i].abstention = {
-                    nb: questions[i].abstention,
-                    perc: Math.round(100 * questions[i].abstention / questions[i].total)
-                }
-                
-                questions[i].votes = questions[i].pour + questions[i].contre + questions[i].abstention;
-                $rootScope.questions[questions[i].id] = questions[i];
-            }
-        })
-        .error(function(data, status, headers, config) {
-            console.log("GET QUESTIONS : Erreur !");
-        });
+
+    if ($routeParams.question_id){
+        if (!$rootScope.questions || !$rootScope.questions[$routeParams.question_id]){
+            $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
+            .success(function(question, status, headers, config) {
+                $rootScope.questions = $rootScope.questions || {};
+                $rootScope.questions[question.id] = question;
+                $scope.question = $rootScope.questions[question.id];
+                $window.FB.XFBML.parse();
+            })
+            .error(function(data, status, headers, config) {
+                console.log("GET QUESTION : Erreur !");
+            });
+        }
+        else{
+            $scope.question = $rootScope.questions[$routeParams.question_id];
+        }
+
     }
+    else{
+        // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
+        if (!$rootScope.home_done){
+            $rootScope.home_done = true;
+            $http({method: 'GET', url: '/questions'})
+            .success(function(questions, status, headers, config) {
+                $rootScope.questions = $rootScope.questions || {};
+                for( var i=0, l = questions.length; i<l;i++){
+                    questions[i].isVoted = isVoted;
+                    questions[i].total = questions[i].pour + questions[i].contre + questions[i].abstention;
+                    questions[i].pour = {
+                        nb: questions[i].pour,
+                        perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
+                    }
+                    questions[i].contre = {
+                        nb: questions[i].contre,
+                        perc: Math.round(100 * questions[i].contre / (questions[i].pour.nb + questions[i].contre))
+                    }
+                    questions[i].abstention = {
+                        nb: questions[i].abstention,
+                        perc: Math.round(100 * questions[i].abstention / questions[i].total)
+                    }
+                    
+                    questions[i].votes = questions[i].pour + questions[i].contre + questions[i].abstention;
+                    $rootScope.questions[questions[i].id] = questions[i];
+                }
+            })
+            .error(function(data, status, headers, config) {
+                console.log("GET QUESTIONS : Erreur !");
+            });
+        }        
+    }
+
 
 
     // Sends the vote
