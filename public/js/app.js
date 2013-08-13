@@ -42,6 +42,21 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
     .success(function(data, status, headers, config) {
         for( var i=0, l = data.length; i<l;i++){
             data[i].isVoted = isVoted;
+            data[i].total = data[i].pour + data[i].contre + data[i].abstention;
+            data[i].pour = {
+                nb: data[i].pour,
+                perc: Math.round(100 * data[i].pour / (data[i].pour + data[i].contre))
+            }
+            data[i].contre = {
+                nb: data[i].contre,
+                perc: Math.round(100 * data[i].contre / (data[i].pour.nb + data[i].contre))
+            }
+            data[i].abstention = {
+                nb: data[i].abstention,
+                perc: Math.round(100 * data[i].abstention / data[i].total)
+            }
+            
+            data[i].votes = data[i].pour + data[i].contre + data[i].abstention;
         }
         $scope.questions = data;
     })
