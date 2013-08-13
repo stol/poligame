@@ -14,6 +14,10 @@ myApp.config(['$routeProvider', function($routeProvider) {
         controller: 'QuestionsCtrl'
     });
 
+    $routeProvider.when('/a-propos', {
+        templateUrl: '/views/a-propos.html'
+    });
+
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
@@ -49,32 +53,34 @@ myApp.controller('ListCtrl', ['$rootScope', '$scope', '$location','$http', '$dia
             return !!$rootScope.user.votes[this.id];
     }
 
-
-    $http({method: 'GET', url: '/questions'})
-    .success(function(data, status, headers, config) {
-        for( var i=0, l = data.length; i<l;i++){
-            data[i].isVoted = isVoted;
-            data[i].total = data[i].pour + data[i].contre + data[i].abstention;
-            data[i].pour = {
-                nb: data[i].pour,
-                perc: Math.round(100 * data[i].pour / (data[i].pour + data[i].contre))
+    // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
+    if (!$rootScope.questions){
+        $http({method: 'GET', url: '/questions'})
+        .success(function(data, status, headers, config) {
+            for( var i=0, l = data.length; i<l;i++){
+                data[i].isVoted = isVoted;
+                data[i].total = data[i].pour + data[i].contre + data[i].abstention;
+                data[i].pour = {
+                    nb: data[i].pour,
+                    perc: Math.round(100 * data[i].pour / (data[i].pour + data[i].contre))
+                }
+                data[i].contre = {
+                    nb: data[i].contre,
+                    perc: Math.round(100 * data[i].contre / (data[i].pour.nb + data[i].contre))
+                }
+                data[i].abstention = {
+                    nb: data[i].abstention,
+                    perc: Math.round(100 * data[i].abstention / data[i].total)
+                }
+                
+                data[i].votes = data[i].pour + data[i].contre + data[i].abstention;
             }
-            data[i].contre = {
-                nb: data[i].contre,
-                perc: Math.round(100 * data[i].contre / (data[i].pour.nb + data[i].contre))
-            }
-            data[i].abstention = {
-                nb: data[i].abstention,
-                perc: Math.round(100 * data[i].abstention / data[i].total)
-            }
-            
-            data[i].votes = data[i].pour + data[i].contre + data[i].abstention;
-        }
-        $scope.questions = data;
-    })
-    .error(function(data, status, headers, config) {
-        console.log("GET QUESTIONS : Erreur !");
-    });
+            $rootScope.questions = data;
+        })
+        .error(function(data, status, headers, config) {
+            console.log("GET QUESTIONS : Erreur !");
+        });
+    }
 
 
     // Sends the vote
