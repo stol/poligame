@@ -238,12 +238,14 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
 
             } else if (response.status === 'not_authorized') {
                 $rootScope.user.status = "not_authorized";
+                console.log("UNSET TOK 1.0 ("+$cookieStore.get("tok")+")");
                 $cookieStore.remove("tok");
-                console.log("UNSET TOK");
+                console.log("UNSET TOK 1.1 ("+$cookieStore.get("tok")+")");
             } else {
                 $rootScope.user.status = "unknown";
+                console.log("UNSET TOK 2.0 ("+$cookieStore.get("tok")+")");
                 $cookieStore.remove("tok");
-                console.log("UNSET TOK");
+                console.log("UNSET TOK 2.1 ("+$cookieStore.get("tok")+")");
                 // the user isn't logged in to Facebook.
             }
         });
