@@ -1,5 +1,11 @@
 <h2>Textes actuellement en discussion</h2>
 
-<div ng-include="'/views/questions.html'"></div>
+<div ng-include="'/views/questions.html'" ng-controller="QuestionsCtrl" ng-init="mode='current'"></div>
 
 <h2>Textes déjà votés</h2>
+
+<div ng-include="'/views/questions.html'" ng-controller="QuestionsCtrl" ng-init="mode='past'"></div>
+
+<h2>Textes bientôt sousmis au vote</h2>
+
+<div ng-include="'/views/questions.html'" ng-controller="QuestionsCtrl" ng-init="mode='future'"></div>

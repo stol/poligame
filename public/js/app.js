@@ -6,8 +6,7 @@ var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
   // routes declaration
 myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: '/views/home.html',
-        controller: 'QuestionsCtrl'
+        templateUrl: '/views/home.html'
     });
     $routeProvider.when('/questions/:question_id', {
         templateUrl: '/views/question.html',
@@ -31,6 +30,7 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
         dialog.close(result);
     };
 }]);
+
 
 myApp.controller('QuestionsCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
 function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
