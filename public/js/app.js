@@ -8,9 +8,9 @@ myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: '/views/home.html'
     });
-    $routeProvider.when('/questions/:question_id', {
-        templateUrl: '/views/question.html',
-        controller: 'QuestionsCtrl'
+    $routeProvider.when('/textes/:texte_id', {
+        templateUrl: '/views/texte.html',
+        controller: 'TextesCtrl'
     });
 
     $routeProvider.when('/a-propos', {
@@ -32,7 +32,7 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
 }]);
 
 
-myApp.controller('QuestionsCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
+myApp.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
 function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     
     function isVoted(user_vote){
@@ -45,58 +45,58 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     $scope.init = function(mode){
         mode = mode || 'default';
-        // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
+        // Loading des textes, ajoutées au scope global pour pas les recharger qd on change de page
         if (!$rootScope['mode_'+mode+'_done']){
             
-            $http({method: 'GET', url: '/questions', params:{
+            $http({method: 'GET', url: '/textes', params:{
                 'mode' : mode
             }})
-            .success(function(questions, status, headers, config) {
+            .success(function(textes, status, headers, config) {
                 $rootScope['mode_'+mode+'_done'] = true;
-                $rootScope.questions2 = $rootScope.questions2 || {};
-                $scope.questions = $scope.questions || {};
-                for( var i=0, l = questions.length; i<l;i++){
-                    questions[i].isVoted = isVoted;
-                    $rootScope.questions2[questions[i].id] = questions[i];
-                    $scope.questions[questions[i].id] = questions[i];
+                $rootScope.textes2 = $rootScope.textes2 || {};
+                $scope.textes = $scope.textes || {};
+                for( var i=0, l = textes.length; i<l;i++){
+                    textes[i].isVoted = isVoted;
+                    $rootScope.textes2[textes[i].id] = textes[i];
+                    $scope.textes[textes[i].id] = textes[i];
                 }
                 
             })
             .error(function(data, status, headers, config) {
-                console.log("GET QUESTIONS : Erreur !");
+                console.log("GET texteS : Erreur !");
             });
         }
         else{
-            $scope.questions = $scope.questions || {};
-            angular.forEach($rootScope.questions2, function(question, id){
-                if (question.mode == mode)
-                    $scope.questions[id] = question;
+            $scope.textes = $scope.textes || {};
+            angular.forEach($rootScope.textes2, function(texte, id){
+                if (texte.mode == mode)
+                    $scope.textes[id] = texte;
             });
         }
 
     }
 
-    if ($routeParams.question_id){
-        if (!$rootScope.questions2 || !$rootScope.questions2[$routeParams.question_id]){
-            $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
-            .success(function(question, status, headers, config) {
-                $rootScope.questions2 = $rootScope.questions2 || {};
-                $rootScope.questions2[question.id] = question;
-                $scope.question = $rootScope.questions2[question.id];
+    if ($routeParams.texte_id){
+        if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
+            $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
+            .success(function(texte, status, headers, config) {
+                $rootScope.textes2 = $rootScope.textes2 || {};
+                $rootScope.textes2[texte.id] = texte;
+                $scope.texte = $rootScope.textes2[texte.id];
                 $window.FB.XFBML.parse();
             })
             .error(function(data, status, headers, config) {
-                console.log("GET QUESTION : Erreur !");
+                console.log("GET texte : Erreur !");
             });
         }
         else{
-            $scope.question = $rootScope.questions2[$routeParams.question_id];
+            $scope.texte = $rootScope.textes2[$routeParams.texte_id];
         }
 
     }
 
     // Sends the vote
-    function setChoice(user_vote, question) {
+    function setChoice(user_vote, texte) {
         $dialog.dialog({
             backdrop: true,
             keyboard: true,
@@ -106,18 +106,18 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         }).open().then(function(result){
             result = !!result; // Casts result to boolean
             console.log('dialog closed with result: ' + result);
-            result && doVote(user_vote, question);
+            result && doVote(user_vote, texte);
         });
     };
 
-    function doVote(user_vote, question){
+    function doVote(user_vote, texte){
         if ($rootScope.user.status != "connected"){
             console.log("user pas loggé. Trying to logg in facebook...")
             FB.login(function(response) {
                 console.log('FB login DONE. reponse = ', response);
                 if (response.authResponse) {
                     $rootScope.user.accessToken = response.authResponse.accessToken;
-                    doVote(user_vote, question);
+                    doVote(user_vote, texte);
                 } else {
                     console.log('User cancelled login or did not fully authorize.');
                 }
@@ -125,23 +125,23 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             return;
         }
         console.log("user loggé. voting...")
-        $http({method: 'POST', url: '/questions/'+question.id+'/vote', data: {
+        $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
             user_id: $rootScope.user.infos.id,
-            question_id: question.id,
+            texte_id: texte.id,
             user_vote: user_vote
         }})
         .success(function(data, status, headers, config) {
         
         })
         .error(function(data, status, headers, config) {
-            console.log("VOTE QUESTION : Erreur !");
+            console.log("VOTE texte : Erreur !");
         });
 
-        $rootScope.user.votes[question.id] = user_vote;
-        //publishVote(user_vote, question);
+        $rootScope.user.votes[texte.id] = user_vote;
+        //publishVote(user_vote, texte);
     }
 
-    function publishVote(user_vote, question){
+    function publishVote(user_vote, texte){
         console.log("sending action...");
         FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
             access_token: $rootScope.user.accessToken,

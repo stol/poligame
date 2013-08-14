@@ -3,9 +3,9 @@ var util = require('util');
  * GET users listing.
  */
 
-exports.questions = function(req, res){
+exports.textes = function(req, res){
 	
-	var sql = 'SELECT * from questions';
+	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || false;
 
 	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
@@ -13,41 +13,41 @@ exports.questions = function(req, res){
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
 	console.log(sql);
-	db.query(sql, function(err, questions, fields) {
+	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
 
-        for( var i=0, l = questions.length; i<l;i++){
-        	questions[i].votes = {
-        		total: questions[i].pour + questions[i].contre + questions[i].abstention,
-        		actives: questions[i].pour + questions[i].contre,
+        for( var i=0, l = textes.length; i<l;i++){
+        	textes[i].votes = {
+        		total: textes[i].pour + textes[i].contre + textes[i].abstention,
+        		actives: textes[i].pour + textes[i].contre,
 				pour: {
-                	nb: questions[i].pour,
-                	perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
+                	nb: textes[i].pour,
+                	perc: Math.round(100 * textes[i].pour / (textes[i].pour + textes[i].contre))
             	},
             	contre: {
-                	nb: questions[i].contre,
-                	perc: Math.round(100 * questions[i].contre / (questions[i].pour + questions[i].contre))
+                	nb: textes[i].contre,
+                	perc: Math.round(100 * textes[i].contre / (textes[i].pour + textes[i].contre))
             	},
 				abstention: {
-                	nb: questions[i].abstention,
-                	perc: Math.round(100 * questions[i].abstention / questions[i].total)
+                	nb: textes[i].abstention,
+                	perc: Math.round(100 * textes[i].abstention / textes[i].total)
             	}
         	};
-        	questions[i].mode = mode;
+        	textes[i].mode = mode;
         	
         	// Pas besoin de ça
-        	delete questions[i].pour;
-        	delete questions[i].contre;
-        	delete questions[i].abstention;
+        	delete textes[i].pour;
+        	delete textes[i].contre;
+        	delete textes[i].abstention;
         }
 
-  		res.json(questions);
+  		res.json(textes);
 	});
 };
 
 
 exports.show = function(req, res){
-	db.query('SELECT * from questions WHERE id = ?', [req.params.question_id], function(err, rows, fields) {
+	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
   		if (req.xhr)
   			res.json(rows[0]);
@@ -61,10 +61,10 @@ exports.vote = function(req, res){
 	set_vote();
 	
 	function set_vote(){
-		// Set question voted for user
+		// Set texte voted for user
 		db.query("INSERT INTO votes SET ?", {
 			user_id: req.body.user_id,
-			question_id: req.params.question_id
+			texte_id: req.params.texte_id
 		}, function(err, rows, fields) {
 	  		if (err) {
 				res.json({
@@ -78,13 +78,13 @@ exports.vote = function(req, res){
 	}
 
 	function update_stats(){
-		// Update question statistics
+		// Update texte statistics
 		var user_vote = parseInt(req.body.user_vote,10);
 		if      (user_vote == 1) var choice = "pour";
 		else if (user_vote == 2) var choice = "contre";
 		else if (user_vote == 0) var choice = "abstention";
 
-		db.query("UPDATE questions SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.question_id]
+		db.query("UPDATE textes SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.texte_id]
 		, function(err, rows, fields) {
 	  		if (err) throw err;
 			res.json({success: true});

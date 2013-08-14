@@ -5,7 +5,7 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , questions = require('./routes/questions')
+  , textes = require('./routes/textes')
   , users = require('./routes/users')
   , http = require('http')
   , mysql = require('mysql')
@@ -42,10 +42,10 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/questions', questions.questions);
+app.get('/textes', textes.textes);
 app.get('/a-propos', routes.about);
-app.get('/questions/:question_id', questions.show);
-app.post('/questions/:question_id/vote', questions.vote);
+app.get('/textes/:texte_id', textes.show);
+app.post('/textes/:texte_id/vote', textes.vote);
 app.post('/users/login', users.login);
 
 http.createServer(app).listen(app.get('port'), function(){

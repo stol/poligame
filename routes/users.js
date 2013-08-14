@@ -23,7 +23,7 @@ exports.login = function(req, res){
 		var votes = {};
 		db.query("SELECT * from votes WHERE user_id = ?", [user.id], function(err, rows, fields) {
 			for(var i=0; i<rows.length; i++){
-				votes[rows[i].question_id] = true;
+				votes[rows[i].texte_id] = true;
 			}
 			console.log("VOTES = ", votes);
 			res.json({

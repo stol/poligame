@@ -10,13 +10,13 @@
 -- SET FOREIGN_KEY_CHECKS=0;
 
 -- ---
--- Table 'questions'
+-- Table 'textes'
 -- 
 -- ---
 
-DROP TABLE IF EXISTS `questions`;
+DROP TABLE IF EXISTS `textes`;
     
-CREATE TABLE `questions` (
+CREATE TABLE `textes` (
   `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
   `text` MEDIUMTEXT NULL DEFAULT NULL,
   `pour` INTEGER NOT NULL DEFAULT 0,
@@ -26,7 +26,7 @@ CREATE TABLE `questions` (
   `starts_at` TIMESTAMP NULL DEFAULT NULL,
   `ends_at` TIMESTAMP NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP NULL,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -39,10 +39,10 @@ DROP TABLE IF EXISTS `votes`;
     
 CREATE TABLE `votes` (
   `user_id` INTEGER NULL DEFAULT NULL,
-  `question_id` INTEGER NULL DEFAULT NULL,
+  `texte_id` INTEGER NULL DEFAULT NULL,
 KEY (`user_id`),
-KEY (`question_id`),
-  PRIMARY KEY (`user_id`, `question_id`)
+KEY (`texte_id`),
+  PRIMARY KEY (`user_id`, `texte_id`)
 );
 
 -- ---
@@ -72,13 +72,13 @@ CREATE TABLE `users` (
 -- ---
 
 ALTER TABLE `votes` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
-ALTER TABLE `votes` ADD FOREIGN KEY (question_id) REFERENCES `questions` (`id`);
+ALTER TABLE `votes` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
 
 -- ---
 -- Table Properties
 -- ---
 
-ALTER TABLE `questions` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `textes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `votes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
@@ -86,8 +86,8 @@ ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- Test Data
 -- ---
 
-INSERT INTO `questions` (`id`,`text`, `starts_at`, `ends_at`) VALUES
+INSERT INTO `textes` (`id`,`text`, `starts_at`, `ends_at`) VALUES
   (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge', NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
   (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),
   (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel', NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 10 DAY),
-  (null, 'Projet de loi relatif à la transparence de la vie publique', NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
+  (null, 'Projet de loi relatif à la transparence de la vie publique', NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY);
