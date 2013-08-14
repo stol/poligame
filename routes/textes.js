@@ -3,6 +3,31 @@ var util = require('util');
  * GET users listing.
  */
 
+function alter_texte(mode, texte){
+	texte.votes = {
+		total: texte.pour + texte.contre + texte.abstention,
+		actives: texte.pour + texte.contre,
+		pour: {
+        	nb: texte.pour,
+        	perc: Math.round(100 * texte.pour / (texte.pour + texte.contre))
+    	},
+    	contre: {
+        	nb: texte.contre,
+        	perc: Math.round(100 * texte.contre / (texte.pour + texte.contre))
+    	},
+		abstention: {
+        	nb: texte.abstention,
+        	perc: Math.round(100 * texte.abstention / texte.total)
+    	}
+	};
+	texte.mode = mode;
+	
+	// Pas besoin de ça
+	delete texte.pour;
+	delete texte.contre;
+	delete texte.abstention;
+}
+
 exports.textes = function(req, res){
 	
 	var sql = 'SELECT * from textes';
@@ -17,28 +42,7 @@ exports.textes = function(req, res){
   		if (err) throw err;
 
         for( var i=0, l = textes.length; i<l;i++){
-        	textes[i].votes = {
-        		total: textes[i].pour + textes[i].contre + textes[i].abstention,
-        		actives: textes[i].pour + textes[i].contre,
-				pour: {
-                	nb: textes[i].pour,
-                	perc: Math.round(100 * textes[i].pour / (textes[i].pour + textes[i].contre))
-            	},
-            	contre: {
-                	nb: textes[i].contre,
-                	perc: Math.round(100 * textes[i].contre / (textes[i].pour + textes[i].contre))
-            	},
-				abstention: {
-                	nb: textes[i].abstention,
-                	perc: Math.round(100 * textes[i].abstention / textes[i].total)
-            	}
-        	};
-        	textes[i].mode = mode;
-        	
-        	// Pas besoin de ça
-        	delete textes[i].pour;
-        	delete textes[i].contre;
-        	delete textes[i].abstention;
+			alter_texte(mode, textes[i]);
         }
 
   		res.json(textes);
@@ -49,8 +53,10 @@ exports.textes = function(req, res){
 exports.show = function(req, res){
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
-  		if (req.xhr)
+  		if (req.xhr){
+  			alter_texte("past", rows[0]);
   			res.json(rows[0]);
+  		}
   		else
   			res.render('index', { title: 'Express' });
 	});
