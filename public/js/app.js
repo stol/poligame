@@ -9,8 +9,7 @@ myApp.config(['$routeProvider', function($routeProvider) {
         templateUrl: '/views/pages/home.html'
     });
     $routeProvider.when('/textes/:texte_id', {
-        templateUrl: '/views/pages/texte.html',
-        controller: 'TextesCtrl'
+        templateUrl: '/views/pages/texte.html'
     });
 
     $routeProvider.when('/a-propos', {
