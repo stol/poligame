@@ -42,7 +42,7 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/questions', questions.list);
+app.get('/questions', questions.questions);
 app.get('/a-propos', routes.about);
 app.get('/questions/:question_id', questions.show);
 app.post('/questions/:question_id/vote', questions.vote);

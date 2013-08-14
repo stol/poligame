@@ -3,8 +3,17 @@ var util = require('util');
  * GET users listing.
  */
 
-exports.list = function(req, res){
-	db.query('SELECT * from questions', function(err, questions, fields) {
+exports.questions = function(req, res){
+	
+	var sql = 'SELECT * from questions';
+	var mode = req.query.mode || false;
+
+	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
+	else if (mode == "current") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
+	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
+
+	console.log(sql);
+	db.query(sql, function(err, questions, fields) {
   		if (err) throw err;
 
         for( var i=0, l = questions.length; i<l;i++){
@@ -24,6 +33,8 @@ exports.list = function(req, res){
                 	perc: Math.round(100 * questions[i].abstention / questions[i].total)
             	}
         	};
+        	questions[i].mode = mode;
+        	
         	// Pas besoin de ça
         	delete questions[i].pour;
         	delete questions[i].contre;

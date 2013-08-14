@@ -44,33 +44,45 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
 
     $scope.init = function(mode){
+        mode = mode || 'default';
         // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
-        if (!$rootScope.home_done){
-            $rootScope.home_done = true;
+        if (!$rootScope['mode_'+mode+'_done']){
+            
             $http({method: 'GET', url: '/questions', params:{
                 'mode' : mode
             }})
             .success(function(questions, status, headers, config) {
-                $rootScope.questions = $rootScope.questions || {};
+                $rootScope['mode_'+mode+'_done'] = true;
+                $rootScope.questions2 = $rootScope.questions2 || {};
+                $scope.questions = $scope.questions || {};
                 for( var i=0, l = questions.length; i<l;i++){
                     questions[i].isVoted = isVoted;
-                    $rootScope.questions[questions[i].id] = questions[i];
+                    $rootScope.questions2[questions[i].id] = questions[i];
+                    $scope.questions[questions[i].id] = questions[i];
                 }
+                
             })
             .error(function(data, status, headers, config) {
                 console.log("GET QUESTIONS : Erreur !");
             });
-        }        
+        }
+        else{
+            $scope.questions = $scope.questions || {};
+            angular.forEach($rootScope.questions2, function(question, id){
+                if (question.mode == mode)
+                    $scope.questions[id] = question;
+            });
+        }
 
     }
 
     if ($routeParams.question_id){
-        if (!$rootScope.questions || !$rootScope.questions[$routeParams.question_id]){
+        if (!$rootScope.questions2 || !$rootScope.questions2[$routeParams.question_id]){
             $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
             .success(function(question, status, headers, config) {
-                $rootScope.questions = $rootScope.questions || {};
-                $rootScope.questions[question.id] = question;
-                $scope.question = $rootScope.questions[question.id];
+                $rootScope.questions2 = $rootScope.questions2 || {};
+                $rootScope.questions2[question.id] = question;
+                $scope.question = $rootScope.questions2[question.id];
                 $window.FB.XFBML.parse();
             })
             .error(function(data, status, headers, config) {
@@ -78,7 +90,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             });
         }
         else{
-            $scope.question = $rootScope.questions[$routeParams.question_id];
+            $scope.question = $rootScope.questions2[$routeParams.question_id];
         }
 
     }
