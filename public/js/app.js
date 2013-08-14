@@ -6,7 +6,7 @@ var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
   // routes declaration
 myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: '/views/list.html',
+        templateUrl: '/views/home.html',
         controller: 'QuestionsCtrl'
     });
     $routeProvider.when('/questions/:question_id', {
