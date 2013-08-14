@@ -4,9 +4,32 @@ var util = require('util');
  */
 
 exports.list = function(req, res){
-	db.query('SELECT * from questions', function(err, rows, fields) {
+	db.query('SELECT * from questions', function(err, questions, fields) {
   		if (err) throw err;
-  		res.json(rows);
+
+        for( var i=0, l = questions.length; i<l;i++){
+        	questions[i].votes = {
+        		total: questions[i].pour + questions[i].contre + questions[i].abstention,
+        		actives: questions[i].pour + questions[i].contre,
+				pour: {
+                	nb: questions[i].pour,
+                	perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
+            	},
+            	contre: {
+                	nb: questions[i].contre,
+                	perc: Math.round(100 * questions[i].contre / (questions[i].pour + questions[i].contre))
+            	},
+				abstention: {
+                	nb: questions[i].abstention,
+                	perc: Math.round(100 * questions[i].abstention / questions[i].total)
+            	}
+        	};
+        	delete questions[i].pour;
+        	delete questions[i].contre;
+        	delete questions[i].abstention;
+        }
+
+  		res.json(questions);
 	});
 };
 

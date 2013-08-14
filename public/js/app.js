@@ -70,21 +70,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 $rootScope.questions = $rootScope.questions || {};
                 for( var i=0, l = questions.length; i<l;i++){
                     questions[i].isVoted = isVoted;
-                    questions[i].total = questions[i].pour + questions[i].contre + questions[i].abstention;
-                    questions[i].pour = {
-                        nb: questions[i].pour,
-                        perc: Math.round(100 * questions[i].pour / (questions[i].pour + questions[i].contre))
-                    }
-                    questions[i].contre = {
-                        nb: questions[i].contre,
-                        perc: Math.round(100 * questions[i].contre / (questions[i].pour.nb + questions[i].contre))
-                    }
-                    questions[i].abstention = {
-                        nb: questions[i].abstention,
-                        perc: Math.round(100 * questions[i].abstention / questions[i].total)
-                    }
-                    
-                    questions[i].votes = questions[i].pour + questions[i].contre + questions[i].abstention;
                     $rootScope.questions[questions[i].id] = questions[i];
                 }
             })
@@ -249,9 +234,15 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
                 // the user isn't logged in to Facebook.
             }
         });
-
     };
+}]);
 
-
-
+/**
+ * Gestion de la navigation
+ */
+myApp.controller('NavigationCtrl', ['$scope', '$location', function($scope, $location) {
+    $scope.navClass = function (page) {
+        var currentRoute = $location.path().substring(1) || 'home';
+        return page === currentRoute ? 'active' : '';
+    };        
 }]);
