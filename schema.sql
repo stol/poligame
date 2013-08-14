@@ -86,8 +86,8 @@ ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- Test Data
 -- ---
 
-INSERT INTO `questions` (`id`,`text`) VALUES
-  (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge'),
-  (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans'),
-  (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel'),
-  (null, 'Projet de loi relatif à la transparence de la vie publique');
+INSERT INTO `questions` (`id`,`text`, `starts_at`, `ends_at`) VALUES
+  (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge', NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
+  (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),
+  (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel', NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 10 DAY),
+  (null, 'Projet de loi relatif à la transparence de la vie publique', NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),

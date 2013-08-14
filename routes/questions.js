@@ -24,6 +24,7 @@ exports.list = function(req, res){
                 	perc: Math.round(100 * questions[i].abstention / questions[i].total)
             	}
         	};
+        	// Pas besoin de ça
         	delete questions[i].pour;
         	delete questions[i].contre;
         	delete questions[i].abstention;

@@ -43,6 +43,27 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     }
 
 
+    $scope.init = function(mode){
+        // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
+        if (!$rootScope.home_done){
+            $rootScope.home_done = true;
+            $http({method: 'GET', url: '/questions', params:{
+                'mode' : mode
+            }})
+            .success(function(questions, status, headers, config) {
+                $rootScope.questions = $rootScope.questions || {};
+                for( var i=0, l = questions.length; i<l;i++){
+                    questions[i].isVoted = isVoted;
+                    $rootScope.questions[questions[i].id] = questions[i];
+                }
+            })
+            .error(function(data, status, headers, config) {
+                console.log("GET QUESTIONS : Erreur !");
+            });
+        }        
+
+    }
+
     if ($routeParams.question_id){
         if (!$rootScope.questions || !$rootScope.questions[$routeParams.question_id]){
             $http({method: 'GET', url: '/questions/'+$routeParams.question_id})
@@ -61,25 +82,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         }
 
     }
-    else{
-        // Loading des questions, ajoutées au scope global pour pas les recharger qd on change de page
-        if (!$rootScope.home_done){
-            $rootScope.home_done = true;
-            $http({method: 'GET', url: '/questions'})
-            .success(function(questions, status, headers, config) {
-                $rootScope.questions = $rootScope.questions || {};
-                for( var i=0, l = questions.length; i<l;i++){
-                    questions[i].isVoted = isVoted;
-                    $rootScope.questions[questions[i].id] = questions[i];
-                }
-            })
-            .error(function(data, status, headers, config) {
-                console.log("GET QUESTIONS : Erreur !");
-            });
-        }        
-    }
-
-
 
     // Sends the vote
     function setChoice(user_vote, question) {
