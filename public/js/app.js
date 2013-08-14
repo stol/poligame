@@ -6,15 +6,15 @@ var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
   // routes declaration
 myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: '/views/home.html'
+        templateUrl: '/views/pages/home.html'
     });
     $routeProvider.when('/textes/:texte_id', {
-        templateUrl: '/views/texte.html',
+        templateUrl: '/views/pages/texte.html',
         controller: 'TextesCtrl'
     });
 
     $routeProvider.when('/a-propos', {
-        templateUrl: '/views/a-propos.html'
+        templateUrl: '/views/pages/a-propos.html'
     });
 
     $routeProvider.otherwise({ redirectTo: '/' });
@@ -101,7 +101,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             backdrop: true,
             keyboard: true,
             backdropClick: true,
-            templateUrl:  '/views/modal.html',
+            templateUrl:  '/views/partials/modal.html',
             controller: 'ModalCtrl'
         }).open().then(function(result){
             result = !!result; // Casts result to boolean
