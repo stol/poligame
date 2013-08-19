@@ -9,16 +9,22 @@ function alter_texte(mode, texte){
 		total: texte.pour + texte.contre + texte.abstention,
 		actives: texte.pour + texte.contre,
 		pour: {
+			label: "pour",
         	nb: texte.pour,
-        	perc: Math.round(100 * texte.pour / (texte.pour + texte.contre))
+        	perc: Math.round(100 * texte.pour / (texte.pour + texte.contre)),
+        	color: '#006DCC'
     	},
     	contre: {
+			label: "contre",
         	nb: texte.contre,
-        	perc: Math.round(100 * texte.contre / (texte.pour + texte.contre))
+        	perc: Math.round(100 * texte.contre / (texte.pour + texte.contre)),
+        	color: '#DA4F49'
     	},
 		abstention: {
+			label: "abstention",
         	nb: texte.abstention,
-        	perc: Math.round(100 * texte.abstention / texte.total)
+        	perc: Math.round(100 * texte.abstention / texte.total),
+        	color: '#FAA732'
     	}
 	};
 	texte.mode = mode;

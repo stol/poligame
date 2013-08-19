@@ -31,17 +31,27 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     $scope.socialShare = true;
 }]);
 
-
 myApp.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
 function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     
-    function isVoted(user_vote){
-        if (user_vote != undefined)
-            return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
-        else
-            return !!$rootScope.user.votes[this.id];
-    }
 
+    var Texte = {
+        isVoted: function(user_vote){
+            if (user_vote != undefined)
+                return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
+            else
+                return !!$rootScope.user.votes[this.id];
+        },
+
+        date_start: function(){
+            return moment(this.starts_at).format("ll")
+        },
+        date_end: function(){
+            return moment(this.ends_at).format("ll")
+        }
+
+
+    }
 
     $scope.init = function(mode){
         mode = mode || 'default';
@@ -56,10 +66,11 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 $rootScope.textes2 = $rootScope.textes2 || {};
                 $scope.textes = $scope.textes || {};
                 for( var i=0, l = textes.length; i<l;i++){
-                    textes[i].isVoted = isVoted;
+                    angular.extend(textes[i], Texte);
                     $rootScope.textes2[textes[i].id] = textes[i];
                     $scope.textes[textes[i].id] = textes[i];
                 }
+
                 
             })
             .error(function(data, status, headers, config) {
@@ -80,6 +91,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
             $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
             .success(function(texte, status, headers, config) {
+                angular.extend(texte, Texte);
                 $rootScope.textes2 = $rootScope.textes2 || {};
                 $rootScope.textes2[texte.id] = texte;
                 $scope.texte = $rootScope.textes2[texte.id];
@@ -271,12 +283,61 @@ myApp.directive('myChart', function() {
     return function($scope, element, attrs) {
         var r = Raphael(element[0]);
 
-        r.piechart(40, 40, 40, [$scope.texte.votes.pour.nb, $scope.texte.votes.contre.nb, $scope.texte.votes.abstention.nb],{
+        var temp1 = [$scope.texte.votes.pour, $scope.texte.votes.contre, $scope.texte.votes.abstention];
+        temp = _.sortBy(temp1, function(vote){ return -vote.nb });
+        console.log(temp1," et ",temp);
+
+        r.piechart(40, 40, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
             init: false,
             legendpos: "east",
-            colors: ['#006DCC', '#DA4F49', '#FAA732'],
-            legend: ["%%.% - Pour", "%%.% - Contre", "%%.% - Abstention"]
+            colors: [temp[0].color, temp[1].color, temp[2].color],
+            legend: ["%%.% "+temp[0].label, "%%.% "+temp[1].label, "%%.% "+temp[2].label]
         });
 
     };
+});
+
+moment.lang('fr', {
+    months : "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),
+    monthsShort : "janv._févr._mars_avr._mai_juin_juil._août_sept._oct._nov._déc.".split("_"),
+    weekdays : "dimanche_lundi_mardi_mercredi_jeudi_vendredi_samedi".split("_"),
+    weekdaysShort : "dim._lun._mar._mer._jeu._ven._sam.".split("_"),
+    weekdaysMin : "Di_Lu_Ma_Me_Je_Ve_Sa".split("_"),
+    longDateFormat : {
+        LT : "HH:mm",
+        L : "DD/MM/YYYY",
+        LL : "D MMMM YYYY",
+        LLL : "D MMMM YYYY LT",
+        LLLL : "dddd D MMMM YYYY LT"
+    },
+    calendar : {
+        sameDay: "[Aujourd'hui à] LT",
+        nextDay: '[Demain à] LT',
+        nextWeek: 'dddd [à] LT',
+        lastDay: '[Hier à] LT',
+        lastWeek: 'dddd [dernier à] LT',
+        sameElse: 'L'
+    },
+    relativeTime : {
+        future : "dans %s",
+        past : "il y a %s",
+        s : "quelques secondes",
+        m : "une minute",
+        mm : "%d minutes",
+        h : "une heure",
+        hh : "%d heures",
+        d : "un jour",
+        dd : "%d jours",
+        M : "un mois",
+        MM : "%d mois",
+        y : "une année",
+        yy : "%d années"
+    },
+    ordinal : function (number) {
+        return number + (number === 1 ? 'er' : 'ème');
+    },
+    week : {
+        dow : 1, // Monday is the first day of the week.
+        doy : 4  // The week that contains Jan 4th is the first week of the year.
+    }
 });

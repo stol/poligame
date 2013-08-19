@@ -1,11 +1,9 @@
-<div class="row">
-	<div class="span6"><h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4></div>
-	<div class="span2"><div my-chart="texte"></div></div>
-</div>
+<h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4>
 
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
-		Ce texte a déjà été voté, et discuté
+		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
+		<div my-chart="texte"></div>
 	</div>
 	<div ng-switch-when="current">
 		<div ng-switch on="texte.isVoted()">
@@ -28,10 +26,7 @@
 			</div>
 
 			<div ng-switch on="texte.votes.actives">
-				<div class="progress progress-info" ng-switch-when=">0">
-					<div class="bar bar-success" style="width: {{texte.votes.pour.perc}}%;">{{texte.votes.pour.perc}}%</div>
-	  				<div class="bar bar-warning" style="width: {{texte.votes.contre.perc}}%;">{{texte.votes.contre.perc}}%</div>
-				</div>
+				<div my-chart="texte"></div>
 				<div ng-switch-default>
 					Aucun vote pour l'instant
 				</div>
@@ -39,6 +34,6 @@
 		</div>
 	</div>
 	<div ng-switch-when="future">
-		Ce texte n'est pas encore en discussion
+		Ce texte n'est pas encore en discussion. Le vote sera ouvert le <b>{{texte.date_start()}}</b>
 	</div>
 </div>
