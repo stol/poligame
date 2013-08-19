@@ -1,10 +1,10 @@
 var util = require('util');
+var moment = require('moment');
 /*
  * GET users listing.
  */
 
 function alter_texte(mode, texte){
-	console.log(texte);
 	texte.votes = {
 		total: texte.pour + texte.contre + texte.abstention,
 		actives: texte.pour + texte.contre,
@@ -39,7 +39,6 @@ exports.textes = function(req, res){
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
 	console.log(sql);
-
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
 
@@ -53,11 +52,20 @@ exports.textes = function(req, res){
 
 
 exports.show = function(req, res){
-	console.log(req.params.texte_id);
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
   		if (req.xhr){
   			alter_texte("past", rows[0]);
+  			var current   = moment(),
+  				starts_at = moment(rows[0].starts_at),
+  				ends_at   = moment(rows[0].ends_at);
+
+  			if (ends_at < current)
+  				rows[0].mode = "past";
+  			else if (starts_at < current && ends_at > current)
+  				rows[0].mode = "current";
+  			else
+  				rows[0].mode = "future";
   			res.json(rows[0]);
   		}
   		else

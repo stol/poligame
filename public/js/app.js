@@ -28,6 +28,7 @@ myApp.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
     $scope.close = function(result){
         dialog.close(result);
     };
+    $scope.socialShare = true;
 }]);
 
 
@@ -73,23 +74,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             });
         }
 
-    }
-
-    /*
-    $scope.chart = function(){
-        var r = Raphael("pie-holder");
-
-        //r.text(320, 70, "Static Pie Chart").attr({ font: "20px sans-serif" });
-        r.piechart(150, 150, 150, [40, 60],{
-            init: true,
-            legend: ["%%.% - Pour", "%%.% - Contre"]
-        });
-
-    }
-    */
-
-    $scope.coucou = function(){
-        console.log("coucou");
     }
 
     if ($routeParams.texte_id){
@@ -156,10 +140,12 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         });
 
         $rootScope.user.votes[texte.id] = user_vote;
-        //publishVote(user_vote, texte);
+        publishVote(user_vote, texte);
     }
 
     function publishVote(user_vote, texte){
+        console.log("publishVote canceled (debug)");
+        return;
         console.log("sending action...");
         FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
             access_token: $rootScope.user.accessToken,
@@ -281,25 +267,8 @@ myApp.controller('NavigationCtrl', ['$scope', '$location', function($scope, $loc
     };        
 }]);
 
-/*
-var r = Raphael("pie-holder");
-
-//r.text(320, 70, "Static Pie Chart").attr({ font: "20px sans-serif" });
-r.piechart(150, 150, 150, [40, 60],{
-    init: true,
-    legend: ["%%.% - Pour", "%%.% - Contre"]
-});
-*/
-
-
-
 myApp.directive('myChart', function() {
     return function($scope, element, attrs) {
-
-        console.log("$scope.texte.votes = ", $scope.texte);
-        console.log("element = ", element, " et ", element[0]);
-        console.log("attrs = ", attrs);
-
         var r = Raphael(element[0]);
 
         r.piechart(40, 40, 40, [$scope.texte.votes.pour.nb, $scope.texte.votes.contre.nb, $scope.texte.votes.abstention.nb],{
