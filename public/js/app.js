@@ -26,6 +26,8 @@ myApp.config(['$locationProvider', function($locationProvider) {
 // application initialization : declare $httpBackend.when*() behaviors
 myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope, $window, $http, $cookieStore) {
 
+    $rootScope.afterLogin = [];
+
     $rootScope.user = {
         infos: null,
         accessToken: null,
@@ -38,6 +40,14 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
         js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/fr_FR/all.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
+
+    function afterLoginAction(){
+        console.log("after login actions !");
+        for( var i=0; i < $rootScope.afterLogin.length; i++){
+            $rootScope.afterLogin[i]();
+        }
+        $rootScope.afterLogin = [];
+    }
 
     $window.fbAsyncInit = function() {
         // Executed when the SDK is loaded
@@ -75,11 +85,12 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
                             link     : response.link
                         }})
                         .success(function(data, status, headers, config) {
-                            console.log("SAVE is GREAT SUCCESS : ", $rootScope.user);
+                            console.log("USER LOGIN is GREAT SUCCESS : ", $rootScope.user);
                             $rootScope.user.infos = data.infos;
                             $rootScope.user.votes = data.votes;
                             $cookieStore.put("tok", token_new);
                             console.log("PUT TOK | ", token_new);
+                            afterLoginAction();
                         })
                         .error(function(data, status, headers, config) {
                             console.log("Erreur !");
@@ -96,6 +107,7 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
                         $rootScope.user.votes = data.votes;
                         $cookieStore.put("tok", token_new);
                         console.log("PUT TOK | ", token_new);
+                        afterLoginAction();
                     });
 
                 }

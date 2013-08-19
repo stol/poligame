@@ -91,21 +91,8 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         });
     };
 
-    function doVote(user_vote, texte){
-        if ($rootScope.user.status != "connected"){
-            console.log("user pas loggé. Trying to logg in facebook...")
-            FB.login(function(response) {
-                console.log('FB login DONE. reponse = ', response);
-                if (response.authResponse) {
-                    $rootScope.user.accessToken = response.authResponse.accessToken;
-                    doVote(user_vote, texte);
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
-                }
-            }, {scope: 'publish_actions'});
-            return;
-        }
-        console.log("user loggé. voting...")
+    function saveVote(user_vote, texte){
+        console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
         $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
             user_id: $rootScope.user.infos.id,
             texte_id: texte.id,
@@ -120,6 +107,27 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
         $rootScope.user.votes[texte.id] = user_vote;
         publishVote(user_vote, texte);
+    }
+
+    function doVote(user_vote, texte){
+        if ($rootScope.user.status != "connected"){
+            console.log("doVote: user pas loggé. Trying to logg in facebook...")
+            FB.login(function(response) {
+                console.log('doVote: FB login DONE. reponse = ', response);
+                if (response.authResponse) {
+                    console.log('doVote: registering after login action ');
+                    $rootScope.afterLogin.push(function(){
+                        console.log("doVote : anonymous call before savevote");
+                        saveVote(user_vote, texte);
+                    });
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope: 'publish_actions'});
+
+            return;
+        }
+        saveVote(user_vote, texte);
     }
 
     function publishVote(user_vote, texte){
