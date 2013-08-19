@@ -75,6 +75,17 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     }
 
+    $scope.chart = function(){
+        var r = Raphael("pie-holder");
+
+        //r.text(320, 70, "Static Pie Chart").attr({ font: "20px sans-serif" });
+        r.piechart(150, 150, 150, [40, 60],{
+            init: true,
+            legend: ["%%.% - Pour", "%%.% - Contre"]
+        });
+
+    }
+
     if ($routeParams.texte_id){
         if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
             $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
@@ -82,7 +93,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 $rootScope.textes2 = $rootScope.textes2 || {};
                 $rootScope.textes2[texte.id] = texte;
                 $scope.texte = $rootScope.textes2[texte.id];
-                $window.FB.XFBML.parse();
+                //$window.FB.XFBML.parse();
             })
             .error(function(data, status, headers, config) {
                 console.log("GET texte : Erreur !");
@@ -91,6 +102,8 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         else{
             $scope.texte = $rootScope.textes2[$routeParams.texte_id];
         }
+
+
 
     }
 
@@ -178,7 +191,7 @@ myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope
             channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
             status: true, 
             cookie: true, 
-            xfbml: true
+            xfbml: false
         });
 
 
