@@ -4,6 +4,7 @@ var util = require('util');
  */
 
 function alter_texte(mode, texte){
+	console.log(texte);
 	texte.votes = {
 		total: texte.pour + texte.contre + texte.abstention,
 		actives: texte.pour + texte.contre,
@@ -38,6 +39,7 @@ exports.textes = function(req, res){
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
 	console.log(sql);
+
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
 
@@ -51,6 +53,7 @@ exports.textes = function(req, res){
 
 
 exports.show = function(req, res){
+	console.log(req.params.texte_id);
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
   		if (req.xhr){

@@ -1,4 +1,8 @@
-<h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4>
+<div class="row">
+	<div class="span6"><h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4></div>
+	<div class="span2"><div my-chart="texte"></div></div>
+</div>
+
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté
@@ -36,8 +40,5 @@
 	</div>
 	<div ng-switch-when="future">
 		Ce texte n'est pas encore en discussion
-	</div>
-	<div id="pie-holder">
-
 	</div>
 </div>

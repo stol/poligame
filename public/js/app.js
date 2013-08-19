@@ -75,6 +75,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     }
 
+    /*
     $scope.chart = function(){
         var r = Raphael("pie-holder");
 
@@ -84,6 +85,11 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             legend: ["%%.% - Pour", "%%.% - Contre"]
         });
 
+    }
+    */
+
+    $scope.coucou = function(){
+        console.log("coucou");
     }
 
     if ($routeParams.texte_id){
@@ -274,3 +280,34 @@ myApp.controller('NavigationCtrl', ['$scope', '$location', function($scope, $loc
         return page === currentRoute ? 'active' : '';
     };        
 }]);
+
+/*
+var r = Raphael("pie-holder");
+
+//r.text(320, 70, "Static Pie Chart").attr({ font: "20px sans-serif" });
+r.piechart(150, 150, 150, [40, 60],{
+    init: true,
+    legend: ["%%.% - Pour", "%%.% - Contre"]
+});
+*/
+
+
+
+myApp.directive('myChart', function() {
+    return function($scope, element, attrs) {
+
+        console.log("$scope.texte.votes = ", $scope.texte);
+        console.log("element = ", element, " et ", element[0]);
+        console.log("attrs = ", attrs);
+
+        var r = Raphael(element[0]);
+
+        r.piechart(40, 40, 40, [$scope.texte.votes.pour.nb, $scope.texte.votes.contre.nb, $scope.texte.votes.abstention.nb],{
+            init: false,
+            legendpos: "east",
+            colors: ['#006DCC', '#DA4F49', '#FAA732'],
+            legend: ["%%.% - Pour", "%%.% - Contre", "%%.% - Abstention"]
+        });
+
+    };
+});
