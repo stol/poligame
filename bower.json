@@ -11,14 +11,18 @@
     "jquery": "2.0.3",
     "angular": "1.0.7",
     "raphael": "2.1.1",
+    "g.raphael": "*",
     "moment": "*",
     "underscore": "*",
-    "angular-bootstrap": "*"
+    "angular-bootstrap": "*",
+    "angular-cookies": "*",
+    "angular-resource": "*"
   },
   "devDependencies": {
     "jquery": "2.0.3",
     "angular": "1.0.7",
     "raphael": "2.1.1",
+    "g.raphael": "*",
     "moment": "*",
     "underscore": "*",
     "angular-bootstrap": "*"

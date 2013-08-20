@@ -2,32 +2,23 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
 
-
-        // Configured a task
-        concat: {
-            css: {
-                src: ['public/libs/**/*.css', 'public/css/**.css'],
-                dest: 'public/prod.css'
-            },
-            js: {
-                src: [
-                    'public/libs/jquery/jquery.min.js',
-                    'public/libs/angular/*.js',
-                    'public/libs/ui-bootstrap/*.js',
-                    'public/libs/raphael/*.js',
-                    'public/libs/moment/*.js',
-                    'public/libs/underscore/*.js',
-                    'public/js/**/*.js',
-                ],
-                dest: 'public/prod.js'
+        'useminPrepare': {
+            html: 'views/index.ejs',
+            dest: "public"
+        },
+        usemin: {
+            basedir: '/public',
+            options: {
+                dest: "public",
+                dirs: ['temp', 'dist']
             }
-
         }
     });
 
+
     // Loaded a task from an npm module
-    grunt.loadNpmTasks("grunt-contrib-concat");
+    grunt.loadNpmTasks("grunt-usemin");
 
     //setup our workflow
-    grunt.registerTask("default", "concat");
+    grunt.registerTask("default", ["useminPrepare", "usemin"]);
 };
