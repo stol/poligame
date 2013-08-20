@@ -1,0 +1,20 @@
+{
+  "directory" : "coucou",
+  "name": "moiElu",
+  "version": "0.0.1",
+  "main": "public/app.css",
+  "ignore": [
+    ".jshintrc",
+    "**/*.txt"
+  ],
+  "dependencies": {
+    "jquery": "2.0.3",
+    "angular": "1.0.7",
+    "raphael": "2.1.1"
+  },
+  "devDependencies": {
+    "jquery": "2.0.3",
+    "angular": "1.0.7",
+    "raphael": "2.1.1"
+  }
+}
