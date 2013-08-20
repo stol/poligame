@@ -1,4 +1,4 @@
-myApp.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
+moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
 function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     
 

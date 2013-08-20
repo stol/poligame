@@ -1,5 +1,5 @@
 
-myApp.directive('myChart', function() {
+moiElu.directive('myChart', function() {
     return function($scope, element, attrs) {
         var r = Raphael(element[0]);
 
@@ -16,7 +16,7 @@ myApp.directive('myChart', function() {
     };
 });
 
-myApp.directive('myCurrentTime', function($timeout, dateFilter) {
+moiElu.directive('myCurrentTime', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
         var timeoutId; // timeoutId, so that we can cancel the time updates

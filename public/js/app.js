@@ -1,10 +1,10 @@
-// myApp module with myApp.controllers dependency containing all controllers
+// moiElu module with moiElu.controllers dependency containing all controllers
 // and ngMockE2E dependency containing $httpBackend service
 
-var myApp = angular.module('myApp', ['ngCookies', 'ui.bootstrap']);
+var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap']);
 
   // routes declaration
-myApp.config(['$routeProvider', function($routeProvider) {
+moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: '/views/pages/home.html'
     });
@@ -19,12 +19,12 @@ myApp.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-myApp.config(['$locationProvider', function($locationProvider) {
+moiElu.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 
 // application initialization : declare $httpBackend.when*() behaviors
-myApp.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope, $window, $http, $cookieStore) {
+moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScope, $window, $http, $cookieStore) {
 
     $rootScope.afterLogin = [];
 
