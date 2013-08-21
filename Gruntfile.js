@@ -35,12 +35,17 @@ module.exports = function(grunt) {
             }
         },
         useminPrepare: {
-            html: ['client/build/views/index.ejs']
+            html: ['client/build/views/index.ejs'],
+            options: {
+                dest: 'client/build/',
+                basedir: 'sfpsdfpo'
+            }
         },
         usemin: {
             html: ['client/build/views/index.ejs'],
             options: {
-                dirs: ['client/build/']
+                dirs: ['build/'],
+                basedir: 'sfpsdfpo'
             }
         }
     });
