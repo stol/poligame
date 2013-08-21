@@ -23,7 +23,6 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('views', __dirname + '/../client/src/views');
 app.set('view engine', 'ejs');
 
 app.use(express.favicon());
@@ -33,12 +32,18 @@ app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 app.use(app.router);
-app.use(require('stylus').middleware(__dirname + '../client/src'));
-app.use(express.static(path.join(__dirname, '../client/src')));
 
 // development only
 if ('development' == app.get('env')) {
-  app.use(express.errorHandler());
+    app.set('views', __dirname + '/../client/src/views');
+    app.use(express.errorHandler());
+    app.use(require('stylus').middleware(__dirname + '../client/src'));
+    app.use(express.static(path.join(__dirname, '../client/src')));
+}
+else if ('production' == app.get('env')) {
+    app.set('views', __dirname + '/../client/build/views');
+    app.use(require('stylus').middleware(__dirname + '../client/build'));
+    app.use(express.static(path.join(__dirname, '../client/build')));
 }
 
 app.get('/', routes.index);
