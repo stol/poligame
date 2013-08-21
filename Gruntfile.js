@@ -1,62 +1,50 @@
 module.exports = function(grunt) {
+
+    // load tasks
+    [
+        'grunt-contrib-clean',
+        'grunt-contrib-copy',
+        'grunt-contrib-concat',
+        'grunt-contrib-uglify',
+        'grunt-contrib-cssmin',
+        'grunt-contrib-concat',
+        'grunt-usemin'
+    ].forEach(function(task) { grunt.loadNpmTasks(task); });
+
+
+    // setup init config
     grunt.initConfig({
-        pkg: grunt.file.readJSON("package.json"),
-
-        usemin2: {
+        pkg: grunt.file.readJSON('package.json'),
+        clean: { // Vider le build
+            build: ['client/build']
+        },
+        copy: {
+            build: {
+                files: [{
+                    expand: true,
+                    dot: true,
+                    cwd: 'client/src',
+                    dest: 'client/build',
+                    src: [
+                        '*',
+                        '**/**'
+                    ]
+                }]
+            }
+        },
+        useminPrepare: {
+            html: ['dist/index.html']
+        },
+        usemin: {
+            html: ['dist/index.html'],
             options: {
-                // If provided, then set all path in html files relative to this directory
-                baseDir: "/",
-
-                // Same thing as baseDir but forces path to be absolute to this directory
-                absoluteBaseDir: "/",
-
-                // Task(s) to execute to process the css
-                cssmin: 'cssmin',
-
-                // Task(s) to execute to process the js
-                jsmin: 'uglify'
-            },
-
-            // This should contain a reference to all HTML files that usemin2
-            // needs to process
-            html: 'views/index.ejs',
-
-            // This section contain everything about css files processing
-            css: {
-                // You can create as much section as you want with
-                // any name you want to use
-                section_name: {
-                    // Each section should define a destination that point to the file
-                    // that will be created if the minification process is executed
-                    dest: "app.min.css",
-
-                    // Files that needs to be processed for this section
-                    files: [{
-                        // Same as usual
-                        cwd: "src",
-                        // List of src (can be an array), each can be expanded,
-                        // you can also use a special "__min__" markup to select
-                        // thje correct file depending on the running process
-                        src: ["css/*.css", "externals/css/*__min__.css"],
-                        // Destination of the files when no minification process
-                        // occurs
-                        dest: "dest/"
-                    } /* , ... */]
-                }/* , ... */
-            },
-
-            // Same as css but for js files
-            js: {
-                // ...
+                dirs: ['dist/']
             }
         }
-
     });
 
-
-    // Loaded a task from an npm module
-    grunt.loadNpmTasks("grunt-usemin2");
-
-    //setup our workflow
-    grunt.registerTask("default", ["usemin2"]);
+    grunt.registerTask('default', ['clean', 'copy',
+                                   'useminPrepare',
+                                   'concat', 'uglify', 'cssmin',
+                                   'usemin']);
 };

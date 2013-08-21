@@ -12,6 +12,12 @@
     "mysql": "2.0.0-alpha8",
     "moment": "*",
     "grunt": "*",
-    "grunt-usemin2": "*"
+    "grunt-contrib-clean": "*",
+    "grunt-contrib-copy": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-concat": "*",
+    "grunt-usemin": "*"
   }
 }
