@@ -15,9 +15,11 @@ module.exports = function(grunt) {
     // setup init config
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
-        clean: { // Vider le build
+        // Vider le précédent
+        clean: {
             build: ['client/build']
         },
+        // Copie des fichiers de devs vers le build
         copy: {
             build: {
                 files: [{
@@ -33,12 +35,12 @@ module.exports = function(grunt) {
             }
         },
         useminPrepare: {
-            html: ['dist/index.html']
+            html: ['client/build/views/index.ejs']
         },
         usemin: {
-            html: ['dist/index.html'],
+            html: ['client/build/views/index.ejs'],
             options: {
-                dirs: ['dist/']
+                dirs: ['client/build/']
             }
         }
     });
