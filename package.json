@@ -12,6 +12,6 @@
     "mysql": "2.0.0-alpha8",
     "moment": "*",
     "grunt": "*",
-    "grunt-usemin": "*"
+    "grunt-usemin2": "*"
   }
 }

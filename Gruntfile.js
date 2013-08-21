@@ -2,56 +2,61 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON("package.json"),
 
-        'useminPrepare': {
+        usemin2: {
+            options: {
+                // If provided, then set all path in html files relative to this directory
+                baseDir: "/",
+
+                // Same thing as baseDir but forces path to be absolute to this directory
+                absoluteBaseDir: "/",
+
+                // Task(s) to execute to process the css
+                cssmin: 'cssmin',
+
+                // Task(s) to execute to process the js
+                jsmin: 'uglify'
+            },
+
+            // This should contain a reference to all HTML files that usemin2
+            // needs to process
             html: 'views/index.ejs',
-            options: {
-                dest: 'public/'
-            }
-        },
 
-        cssmin:
-          { 'public/app.css': 'public/app.css' },
+            // This section contain everything about css files processing
+            css: {
+                // You can create as much section as you want with
+                // any name you want to use
+                section_name: {
+                    // Each section should define a destination that point to the file
+                    // that will be created if the minification process is executed
+                    dest: "app.min.css",
 
-        concat:
-          { 'public/app.css': 
-           [ 'views/http:/netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap.min.css',
-             'views/css/jumbotron-narrow.css' ],
-          'public/app.js': 
-           [ 'views/bower_components/jquery/jquery.min.js',
-             'views/bower_components/angular/angular.min.js',
-             'views/bower_components/angular-resource/angular-resource.min.js',
-             'views/bower_components/angular-cookies/angular-cookies.min.js',
-             'views/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
-             'views/bower_components/raphael/raphael-min.js',
-             'views/bower_components/g.raphael/min/g.raphael-min.js',
-             'views/bower_components/g.raphael/min/g.pie-min.js',
-             'views/bower_components/moment/moment.js',
-             'views/bower_components/underscore/underscore-min.js',
-             'views/js/app.js',
-             'views/js/controllers/controllers.js',
-             'views/js/controllers/TextesCtrl.js',
-             'views/js/directives.js' ]
-        },
-        uglify:{
-            'public/app.js': 'public/app.js'
-        },
+                    // Files that needs to be processed for this section
+                    files: [{
+                        // Same as usual
+                        cwd: "src",
+                        // List of src (can be an array), each can be expanded,
+                        // you can also use a special "__min__" markup to select
+                        // thje correct file depending on the running process
+                        src: ["css/*.css", "externals/css/*__min__.css"],
+                        // Destination of the files when no minification process
+                        // occurs
+                        dest: "dest/"
+                    } /* , ... */]
+                }/* , ... */
+            },
 
-        usemin: {
-            html: ['views/index.ejs'],
-            css: ['public/app.css'],
-            options: {
-                dest: 'public/dist/'
+            // Same as css but for js files
+            js: {
+                // ...
             }
         }
-
-
 
     });
 
 
     // Loaded a task from an npm module
-    grunt.loadNpmTasks("grunt-usemin");
+    grunt.loadNpmTasks("grunt-usemin2");
 
     //setup our workflow
-    grunt.registerTask("default", ["usemin"]);
+    grunt.registerTask("default", ["usemin2"]);
 };
