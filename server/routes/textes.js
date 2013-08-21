@@ -27,12 +27,40 @@ function alter_texte(mode, texte){
         	color: '#FAA732'
     	}
 	};
+
+	texte.votes_assemblee = {
+		total: texte.pour_assemblee + texte.contre_assemblee + texte.abstention_assemblee,
+		actives: texte.pour_assemblee + texte.contre_assemblee,
+		pour: {
+			label: "pour",
+        	nb: texte.pour_assemblee,
+        	perc: Math.round(100 * texte.pour_assemblee / (texte.pour_assemblee + texte.contre_assemblee)),
+        	color: '#006DCC'
+    	},
+    	contre: {
+			label: "contre",
+        	nb: texte.contre_assemblee,
+        	perc: Math.round(100 * texte.contre_assemblee / (texte.pour_assemblee + texte.contre_assemblee)),
+        	color: '#DA4F49'
+    	},
+		abstention: {
+			label: "abstention",
+        	nb: texte.abstention_assemblee,
+        	perc: Math.round(100 * texte.abstention_assemblee / texte.total),
+        	color: '#FAA732'
+    	}
+	};
+
+
 	texte.mode = mode;
 	
 	// Pas besoin de ça
 	delete texte.pour;
 	delete texte.contre;
 	delete texte.abstention;
+	delete texte.pour_assemblee;
+	delete texte.contre_assemblee;
+	delete texte.abstention_assemblee;
 }
 
 exports.textes = function(req, res){

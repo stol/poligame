@@ -22,6 +22,9 @@ CREATE TABLE `textes` (
   `pour` INTEGER NOT NULL DEFAULT 0,
   `contre` INTEGER NOT NULL DEFAULT 0,
   `abstention` INTEGER NOT NULL DEFAULT 0,
+  `pour_assemblee` INTEGER NOT NULL DEFAULT 0,
+  `contre_assemblee` INTEGER NOT NULL DEFAULT 0,
+  `abstention_assemblee` INTEGER NOT NULL DEFAULT 0,
   `link` MEDIUMTEXT NULL DEFAULT NULL,
   `starts_at` TIMESTAMP NULL DEFAULT NULL,
   `ends_at` TIMESTAMP NULL DEFAULT NULL,
@@ -86,9 +89,9 @@ ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- Test Data
 -- ---
 
-INSERT INTO `textes` (`id`, `text`, `pour`, `contre`, `abstention`, `starts_at`, `ends_at`) VALUES
-  (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge', 480, 350, 30, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
-  (null, 'loremipsum', 480, 350, 30, NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 1 HOUR),
-  (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', 650, 1580, 180, NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),
-  (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel', 14802, 19541, 1500, NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 10 DAY),
-  (null, 'Projet de loi relatif à la transparence de la vie publique', 800,900,100, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY);
+INSERT INTO `textes` (`id`, `text`, `link`, `pour`, `contre`, `abstention`, `pour_assemblee`, `contre_assemblee`, `abstention_assemblee`, `starts_at`, `ends_at`) VALUES
+  (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge', 'http://www.google.fr', 480, 350, 30, 0, 0, 0, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
+  (null, 'loremipsum', 'http://www.google.fr', 480, 350, 30, 0, 0, 0, NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 1 HOUR),
+  (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', 'http://www.google.fr', 650, 1580, 180, 0, 0, 0, NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),
+  (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel', 'http://www.google.fr', 14802, 19541, 1500, 250, 350, 80, NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 10 DAY),
+  (null, 'Projet de loi relatif à la transparence de la vie publique', 'http://www.google.fr', 800,900,100, 0, 0, 0, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY);

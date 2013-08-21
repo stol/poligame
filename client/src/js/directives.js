@@ -1,9 +1,18 @@
 
-moiElu.directive('myChart', function() {
+moiElu.directive('results', function() {
     return function($scope, element, attrs) {
+        console.log(element, attrs)
+
+        if (attrs.results == "net"){
+            var votes = $scope.texte.votes;
+        }
+        else if (attrs.results == "assemblee"){
+            var votes = $scope.texte.votes_assemblee;
+        }
+
         var r = Raphael(element[0]);
 
-        var temp1 = [$scope.texte.votes.pour, $scope.texte.votes.contre, $scope.texte.votes.abstention];
+        var temp1 = [votes.pour, votes.contre, votes.abstention];
         temp = _.sortBy(temp1, function(vote){ return -vote.nb });
 
         r.piechart(40, 40, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
@@ -12,7 +21,6 @@ moiElu.directive('myChart', function() {
             colors: [temp[0].color, temp[1].color, temp[2].color],
             legend: ["%%.% "+temp[0].label, "%%.% "+temp[1].label, "%%.% "+temp[2].label]
         });
-
     };
 });
 

@@ -62,7 +62,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 $rootScope.textes2 = $rootScope.textes2 || {};
                 $rootScope.textes2[texte.id] = texte;
                 $scope.texte = $rootScope.textes2[texte.id];
-                //$window.FB.XFBML.parse();
+                $window.FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
             })
             .error(function(data, status, headers, config) {
                 console.log("GET texte : Erreur !");

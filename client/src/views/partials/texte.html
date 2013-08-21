@@ -1,9 +1,12 @@
 <h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4>
 
+<p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
+
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
-		<div my-chart="texte"></div>
+		<div results="net"></div>
+		<div results="assemblee"></div>
 	</div>
 	<div ng-switch-when="current">
 		<div ng-switch on="texte.isVoted()">
