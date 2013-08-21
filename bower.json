@@ -1,5 +1,4 @@
 {
-  "directory" : "coucou",
   "name": "moiElu",
   "version": "0.0.1",
   "main": "public/app.css",
@@ -11,20 +10,13 @@
     "jquery": "2.0.3",
     "angular": "1.0.7",
     "raphael": "2.1.1",
-    "g.raphael": "*",
     "moment": "*",
     "underscore": "*",
     "angular-bootstrap": "*",
     "angular-cookies": "*",
-    "angular-resource": "*"
+    "angular-resource": "*",
+    "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },
   "devDependencies": {
-    "jquery": "2.0.3",
-    "angular": "1.0.7",
-    "raphael": "2.1.1",
-    "g.raphael": "*",
-    "moment": "*",
-    "underscore": "*",
-    "angular-bootstrap": "*"
   }
 }
