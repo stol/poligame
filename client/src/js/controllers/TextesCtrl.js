@@ -80,8 +80,9 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     }
 
     // Sends the vote
-    function setChoice(user_vote, texte) {
-        if (true || $rootScope.user.infos.votes_nb == 1){
+    function setChoice(user_vote, texte, step) {
+        step = parseInt(step || 0, 10);
+        if (step == 0 && true || $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 5 == 0){
             $dialog.dialog({
                 backdrop: true,
                 keyboard: true,
@@ -89,9 +90,8 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 templateUrl:  '/views/partials/modal-userinfo.html',
                 controller: 'ModalCtrl'
             }).open().then(function(result){
-                result = !!result; // Casts result to boolean
-                console.log('dialog closed with result: ' + result);
-                result && doVote(user_vote, texte);
+                console.log("oh yeahj")
+                setChoice(user_vote, texte, 1);
             });
         }
         else{

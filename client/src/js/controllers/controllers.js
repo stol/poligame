@@ -43,12 +43,11 @@ moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($root
 	];
 
     $scope.close = function(result){
-    	if (result){
-	    	$rootScope.user.infos.csp = $scope.csp;
-	    	$rootScope.user.infos.bord = $scope.bord;
-	    	$rootScope.user.infos.gender = $scope.gender;
-			$rootScope.$broadcast('userChanged');
-    	}
+    	console.log("CLOSE !");
+    	$rootScope.user.infos.csp = $scope.csp;
+    	$rootScope.user.infos.bord = $scope.bord;
+    	$rootScope.user.infos.gender = $scope.gender;
+		$rootScope.$broadcast('userChanged');
         dialog.close(result);
     };
     $scope.socialShare = true;

@@ -2,7 +2,11 @@
 	<h3>Aidez-nous à affiner nos statistiques !</h3>
 </div>
 <div class="modal-body">
-	<p>Vous avez déjà voté plusieurs fois. Pour nous aider à affiner nos statistiques, pourriez-vous renseigner un ou plusieurs des champs ci-dessous ?</p>
+	<p><ng-pluralize count="user.infos.votes_nb"
+                 	when="{'0': 'Vous n\'avez pas encore voté',
+                     'one': 'Vous avez voté à 1 reprise',
+                     'other': 'Vous avez déjà voté à {} reprises'}"></ng-pluralize>.
+        Pour nous aider à affiner nos statistiques, pourriez-vous renseigner un ou plusieurs des champs ci-dessous ?</p>
 
 	<p>Nous rappelons que tous les votes effectués sont anonymes. Aucune information de vote ne sera liée à votre compte</p>
 
@@ -11,7 +15,7 @@
 		<label class="control-label" for="inputSexe">catégorie sociale professionnelle</label>
 		<div class="controls nullable">
 			<select ng-model="csp" ng-options="csp.id as csp.label for csp in csps">
-				<option value="">-- Choissez --</option>
+				<option value="">Garder cette information secrète</option>
 			</select>
 		</div>
 	</div>
@@ -19,7 +23,7 @@
 		<label class="control-label" for="inputSexe">Sexe</label>
 		<div class="controls nullable">
 			<select ng-model="gender" ng-options="gender.id as gender.label for gender in genders">
-				<option value="">-- Choissez --</option>
+				<option value="">Garder cette information secrète</option>
 			</select>
 		</div>
 	</div>
@@ -29,7 +33,7 @@
 		<div class="controls nullable">
 
 			<select ng-model="bord" ng-options="bord.id as bord.label for bord in bords">
-				<option value="">-- Choissez --</option>
+				<option value="">Garder cette information secrète</option>
 			</select>
 
 		</div>
@@ -37,6 +41,5 @@
 
 </div>
 <div class="modal-footer">
-	<button ng-click="close(0)" class="btn btn-large btn-warning" >Annuler</button>
-	<button ng-click="close(1)" class="btn btn-large btn-primary" >Valider votre vote</button>
+	<button ng-click="close(1)" class="btn btn-large btn-primary" >Enregistrer et continuer</button>
 </div>
