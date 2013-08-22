@@ -10,8 +10,35 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 }]);
 
 
-moiElu.controller('ModalCtrl', ['$scope', 'dialog', function($scope, dialog) {
+moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+	$scope.csps = [
+        {id: 1, label: 'Agriculteur exploitant' },
+        {id: 2, label: 'Artisan, commerçant et chef d’entreprise' },
+        {id: 3, label: 'Cadre et profession intellectuelle supérieure' },
+        {id: 4, label: 'Profession intermédiaire' },
+        {id: 5, label: 'Employé' },
+        {id: 6, label: 'Ouvrier' },
+        {id: 7, label: 'Retraité' },
+        {id: 8, label: 'Autre personne sans activité professionnelle' }
+    ];
+
+	$scope.genders = [
+		{id: 1, label: "Homme"},
+		{id: 2, label: "Femme"}
+	];
+
+	$scope.bords = [
+		{id: 1, label: "Extrême gauche"},
+		{id: 2, label: "Gauche"},
+		{id: 3, label: "Centre-gauche"},
+		{id: 4, label: "Centre"},
+		{id: 5, label: "Centre-droit"},
+		{id: 6, label: "Droite"},
+		{id: 7, label: "Extrême droite"}
+	];
+
     $scope.close = function(result){
+    	console.log($rootScope.user.infos);
         dialog.close(result);
     };
     $scope.socialShare = true;

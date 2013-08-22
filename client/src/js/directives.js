@@ -1,7 +1,6 @@
 
 moiElu.directive('results', function() {
     return function($scope, element, attrs) {
-        console.log(element, attrs)
 
         if (attrs.results == "net"){
             var votes = $scope.texte.votes;

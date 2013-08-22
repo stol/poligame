@@ -16,9 +16,8 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         date_end: function(){
             return moment(this.ends_at).format("ll")
         }
-
-
     }
+
 
     $scope.init = function(mode){
         mode = mode || 'default';
@@ -82,17 +81,32 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     // Sends the vote
     function setChoice(user_vote, texte) {
-        $dialog.dialog({
-            backdrop: true,
-            keyboard: true,
-            backdropClick: true,
-            templateUrl:  '/views/partials/modal-vote.html',
-            controller: 'ModalCtrl'
-        }).open().then(function(result){
-            result = !!result; // Casts result to boolean
-            console.log('dialog closed with result: ' + result);
-            result && doVote(user_vote, texte);
-        });
+        if ($rootScope.user.infos.votes_nb == 1){
+            $dialog.dialog({
+                backdrop: true,
+                keyboard: true,
+                backdropClick: true,
+                templateUrl:  '/views/partials/modal-userinfo.html',
+                controller: 'ModalCtrl'
+            }).open().then(function(result){
+                result = !!result; // Casts result to boolean
+                console.log('dialog closed with result: ' + result);
+                result && doVote(user_vote, texte);
+            });
+        }
+        else{
+            $dialog.dialog({
+                backdrop: true,
+                keyboard: true,
+                backdropClick: true,
+                templateUrl:  '/views/partials/modal-vote.html',
+                controller: 'ModalCtrl'
+            }).open().then(function(result){
+                result = !!result; // Casts result to boolean
+                console.log('dialog closed with result: ' + result);
+                result && doVote(user_vote, texte);
+            });
+        }
     };
 
     function saveVote(user_vote, texte){
