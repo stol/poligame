@@ -81,7 +81,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     // Sends the vote
     function setChoice(user_vote, texte) {
-        if ($rootScope.user.infos.votes_nb == 1){
+        if (true || $rootScope.user.infos.votes_nb == 1){
             $dialog.dialog({
                 backdrop: true,
                 keyboard: true,

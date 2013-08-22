@@ -10,7 +10,7 @@
 	<div class="control-group">
 		<label class="control-label" for="inputSexe">catégorie sociale professionnelle</label>
 		<div class="controls nullable">
-			<select ng-model="user.infos.csp" ng-options="csp.id as csp.label for csp in csps">
+			<select ng-model="csp" ng-options="csp.id as csp.label for csp in csps">
 				<option value="">-- Choissez --</option>
 			</select>
 		</div>
@@ -18,7 +18,7 @@
 	<div class="control-group">
 		<label class="control-label" for="inputSexe">Sexe</label>
 		<div class="controls nullable">
-			<select ng-model="user.infos.gender" ng-options="gender.id as gender.label for gender in genders">
+			<select ng-model="gender" ng-options="gender.id as gender.label for gender in genders">
 				<option value="">-- Choissez --</option>
 			</select>
 		</div>
@@ -28,7 +28,7 @@
 		<label class="control-label" for="inputSexe">Sensibilité politique</label>
 		<div class="controls nullable">
 
-			<select ng-model="user.infos.bord" ng-options="bord.id as bord.label for bord in bords">
+			<select ng-model="bord" ng-options="bord.id as bord.label for bord in bords">
 				<option value="">-- Choissez --</option>
 			</select>
 

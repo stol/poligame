@@ -5,7 +5,7 @@
 
 exports.login = function(req, res){
 
-	db.query("SELECT * from users WHERE provider_user_id = ?", [req.body.provider_user_id], function(err, rows, fields) {
+	db.query("SELECT * FROM users WHERE provider_user_id = ?", [req.body.provider_user_id], function(err, rows, fields) {
   		if (err) throw err;
 
   		if (!rows.length){
@@ -36,3 +36,18 @@ exports.login = function(req, res){
 	}
 
 };
+
+exports.update = function(req, res){
+	var user_id = parseInt(req.params.user_id,10);
+	
+	delete req.body.votes_nb;
+	
+	db.query("UPDATE users SET ?  WHERE id = "+user_id, req.body, function(err, rows, fields) {
+  		if (err) throw err;
+		
+		res.json({ success: true});
+
+	});
+
+
+}

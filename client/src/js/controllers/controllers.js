@@ -11,6 +11,11 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 
 
 moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+
+	$scope.csp    = $rootScope.user.infos.csp;
+	$scope.gender = $rootScope.user.infos.gender;
+	$scope.bord   = $rootScope.user.infos.bord;
+
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
         {id: 2, label: 'Artisan, commerçant et chef d’entreprise' },
@@ -38,7 +43,12 @@ moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($root
 	];
 
     $scope.close = function(result){
-    	console.log($rootScope.user.infos);
+    	if (result){
+	    	$rootScope.user.infos.csp = $scope.csp;
+	    	$rootScope.user.infos.bord = $scope.bord;
+	    	$rootScope.user.infos.gender = $scope.gender;
+			$rootScope.$broadcast('userChanged');
+    	}
         dialog.close(result);
     };
     $scope.socialShare = true;

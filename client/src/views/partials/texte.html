@@ -2,8 +2,6 @@
 
 <p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
 
-<input ng-model="user.infos.fullname" type="text" ng-change='sayHello()'/>
-
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>

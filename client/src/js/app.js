@@ -132,6 +132,18 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
             }
         });
     };
+
+
+    $rootScope.$on('userChanged', function(e) {
+        
+        $http({method: 'POST', url: '/users/'+$rootScope.user.infos.id, data: $rootScope.user.infos})
+        .success(function(data, status, headers, config) {
+            console.log("USER UPDATE is great success ! ");
+        })
+        .error(function(data, status, headers, config) {
+            console.log("Erreur update user !");
+        });
+    });
 }]);
 
 moment.lang('fr', {
