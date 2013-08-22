@@ -26,6 +26,7 @@ exports.login = function(req, res){
 				votes[rows[i].texte_id] = true;
 			}
 			console.log("VOTES = ", votes);
+			user.votes_nb = rows.length;
 			res.json({
 				infos: user,
 				votes: votes

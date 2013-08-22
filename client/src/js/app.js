@@ -50,18 +50,20 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
     }
 
     $window.fbAsyncInit = function() {
+        console.log("APP fbAsyncInit");
         // Executed when the SDK is loaded
         FB.init({ 
             appId: '609395745747955', 
             channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
             status: true, 
             cookie: true, 
-            xfbml: false
+            xfbml: true
         });
 
 
         FB.Event.subscribe('auth.statusChange', function(response) {
             console.log("auth.statusChange! response : ", response);
+            console.log("$window.fbAsyncInit = ", $window.fbAsyncInit);
             if (response.status === 'connected') {
                 var token_new = response.authResponse.accessToken;
                 var token_local = $cookieStore.get("tok");

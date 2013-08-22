@@ -62,7 +62,10 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                 $rootScope.textes2 = $rootScope.textes2 || {};
                 $rootScope.textes2[texte.id] = texte;
                 $scope.texte = $rootScope.textes2[texte.id];
-                $window.FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
+
+                $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
+
+
             })
             .error(function(data, status, headers, config) {
                 console.log("GET texte : Erreur !");
@@ -70,6 +73,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         }
         else{
             $scope.texte = $rootScope.textes2[$routeParams.texte_id];
+            $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         }
 
 
@@ -82,7 +86,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             backdrop: true,
             keyboard: true,
             backdropClick: true,
-            templateUrl:  '/views/partials/modal.html',
+            templateUrl:  '/views/partials/modal-vote.html',
             controller: 'ModalCtrl'
         }).open().then(function(result){
             result = !!result; // Casts result to boolean
