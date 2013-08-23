@@ -74,59 +74,48 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
             $scope.texte = $rootScope.textes2[$routeParams.texte_id];
             $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         }
-
-
-
     }
 
-    // Sends the vote
-    function setChoice(user_vote, texte, step) {
-        step = parseInt(step || 0, 10);
-        if (step == 0 && true || $rootScope.user.infos && $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 5 == 0){
-            $dialog.dialog({
-                backdrop: true,
-                keyboard: true,
-                backdropClick: true,
-                templateUrl:  '/views/partials/modal-userinfo.html',
-                controller: 'ModalCtrl'
-            }).open().then(function(result){
-                console.log("oh yeahj")
-                setChoice(user_vote, texte, 1);
-            });
+    // Open the right popin depending the user status
+    function openPopinAndVote(user_vote, texte) {
+        if ($rootScope.user.isLogged && $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 2 == 0){
+            openUserInfosPopin(user_vote, texte);
         }
         else{
-            $dialog.dialog({
-                backdrop: true,
-                keyboard: true,
-                backdropClick: true,
-                templateUrl:  '/views/partials/modal-vote.html',
-                controller: 'ModalCtrl'
-            }).open().then(function(result){
-                result = !!result; // Casts result to boolean
-                console.log('dialog closed with result: ' + result);
-                result && doVote(user_vote, texte);
-            });
+            openReminderPopin(user_vote, texte);
         }
     };
 
-    function saveVote(user_vote, texte){
-        console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
-        $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
-            user_id: $rootScope.user.infos.id,
-            texte_id: texte.id,
-            user_vote: user_vote
-        }})
-        .success(function(data, status, headers, config) {
-        
-        })
-        .error(function(data, status, headers, config) {
-            console.log("VOTE texte : Erreur !");
+    // Opens the "Reminder about your infos" popin
+    function openReminderPopin(user_vote, texte){
+        $dialog.dialog({
+            backdrop: true,
+            keyboard: true,
+            backdropClick: true,
+            templateUrl:  '/views/partials/modal-vote.html',
+            controller: 'ReminderPopinCtrl'
+        }).open().then(function(result){
+            result = !!result; // Casts result to boolean
+            console.log('dialog closed with result: ' + result);
+            result && doVote(user_vote, texte);
         });
-
-        $rootScope.user.votes[texte.id] = user_vote;
-        publishVote(user_vote, texte);
     }
 
+    // Opens the "Share your infos" popin
+    function openUserInfosPopin(user_vote, texte){
+        $dialog.dialog({
+            backdrop: true,
+            keyboard: true,
+            backdropClick: true,
+            templateUrl:  '/views/partials/modal-userinfo.html',
+            controller: 'UserInfosPopinCtrl'
+        }).open().then(function(result){
+            result = !!result; // Casts result to boolean
+            result && openReminderPopin(user_vote, texte);
+        });        
+    }
+
+    // Starts the vote process
     function doVote(user_vote, texte){
         if ($rootScope.user.status != "connected"){
             console.log("doVote: user pas loggé. Trying to logg in facebook...")
@@ -148,6 +137,39 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         saveVote(user_vote, texte);
     }
 
+    // Saves the vote to server
+    function saveVote(user_vote, texte){
+        // Optimistic vote
+        $rootScope.user.infos.votes_nb++;
+        $rootScope.user.votes[texte.id] = user_vote;
+
+        console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
+
+        // Sends the vote to the server
+        $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
+            user_id: $rootScope.user.infos.id,
+            texte_id: texte.id,
+            user_vote: user_vote
+        }})
+        // cancel vote if error
+        .success(function(data, status, headers, config) {
+            if (data.success){
+                publishVote(user_vote, texte);
+            }
+            else {
+                delete $rootScope.user.votes[texte.id];
+                $rootScope.user.infos.votes_nb--;
+            }
+        })
+        .error(function(data, status, headers, config) {
+            delete $rootScope.user.votes[texte.id];
+            $rootScope.user.infos.votes_nb--;
+            console.log("VOTE texte : Erreur !");
+        });
+
+    }
+
+    // Sends the vote to facebook
     function publishVote(user_vote, texte){
         console.log("publishVote canceled (debug)");
         return;
@@ -161,5 +183,5 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     }
 
     // API exposition
-    $scope.setChoice = setChoice;
+    $scope.openPopinAndVote = openPopinAndVote;
 }]); 

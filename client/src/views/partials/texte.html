@@ -15,15 +15,15 @@
 			</div>
 			<div class="text-center" ng-switch-default>
 				<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-					ng-click="setChoice(1,texte)"
+					ng-click="openPopinAndVote(1,texte)"
 					ng-class="{active : texte.isVoted(1)}"
 				>Pour</button>
 				<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-					ng-click="setChoice(2,texte)"
+					ng-click="openPopinAndVote(2,texte)"
 					ng-class="{active : texte.isVoted(2)}"
 				>Contre</button>
 				<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-					ng-click="setChoice(0,texte)"
+					ng-click="openPopinAndVote(0,texte)"
 					ng-class="{active : texte.isVoted(0)}"
 				>Absention</button>
 			</div>

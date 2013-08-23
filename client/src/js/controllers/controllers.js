@@ -10,13 +10,22 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 }]);
 
 
-moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+/**
+ * Gestion des popins
+ */
+moiElu.controller('ReminderPopinCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+    $scope.close = function(result){
+        dialog.close(result);
+    };
 
-	if ($rootScope.user.infos){
-		$scope.csp    = angular.copy($rootScope.user.infos.csp);
-		$scope.gender = angular.copy($rootScope.user.infos.gender);
-		$scope.bord   = angular.copy($rootScope.user.infos.bord);
-	}
+    $scope.socialShare = true;
+}]);
+
+moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+
+	$scope.csp    = angular.copy($rootScope.user.infos.csp);
+	$scope.gender = angular.copy($rootScope.user.infos.gender);
+	$scope.bord   = angular.copy($rootScope.user.infos.bord);
 
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
@@ -50,16 +59,13 @@ moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($root
 	}
 
     $scope.close = function(result){
-    	console.log("CLOSE !");
-    	if ($rootScope.user.infos){
-    		$rootScope.user.infos.csp = $scope.csp;
-    		$rootScope.user.infos.bord = $scope.bord;
-    		$rootScope.user.infos.gender = $scope.gender;
-			$rootScope.$broadcast('userChanged');
-		}
+		$rootScope.user.infos.csp = $scope.csp;
+		$rootScope.user.infos.bord = $scope.bord;
+		$rootScope.user.infos.gender = $scope.gender;
+		$rootScope.$broadcast('userChanged');
         dialog.close(result);
     };
-    $scope.socialShare = true;
+    
 }]);
 
 

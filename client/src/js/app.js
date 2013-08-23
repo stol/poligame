@@ -31,6 +31,7 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
     $rootScope.user = {
         infos: null,
         accessToken: null,
+        isLogged: false,
         votes: {},
         status: 'unknown'
     };
@@ -90,6 +91,7 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
                             console.log("USER LOGIN is GREAT SUCCESS : ", $rootScope.user);
                             $rootScope.user.infos = data.infos;
                             $rootScope.user.votes = data.votes;
+                            $rootScope.user.isLogged = true;
                             $cookieStore.put("tok", token_new);
                             console.log("PUT TOK | ", token_new);
                             afterLoginAction();
@@ -107,6 +109,7 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
                         console.log("AUTOLOGIN is GREAT SUCCESS : ", $rootScope.user);
                         $rootScope.user.infos = data.infos;
                         $rootScope.user.votes = data.votes;
+                        $rootScope.user.isLogged = true;
                         $cookieStore.put("tok", token_new);
                         console.log("PUT TOK | ", token_new);
                         afterLoginAction();
