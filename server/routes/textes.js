@@ -51,7 +51,6 @@ function alter_texte(mode, texte){
     	}
 	};
 
-
 	texte.mode = mode;
 	
 	// Pas besoin de ça
@@ -100,11 +99,77 @@ exports.show = function(req, res){
   				rows[0].mode = "current";
   			else
   				rows[0].mode = "future";
-  			res.json(rows[0]);
+
+  			get_stats(rows[0]);
   		}
   		else
   			res.render('index', { title: 'Express' });
 	});
+
+	var stats = (function(){
+		var numbers = {
+			pour : {
+				nb:   0,
+				genders: [0,0,0],
+				csps:    [0,0,0,0,0,0,0,0,0],
+				bords:   [0,0,0,0,0,0,0,0],
+				ages:    []
+			},
+			contre : {
+				nb:   0,
+				genders: [0,0,0],
+				csps:     [0,0,0,0,0,0,0,0,0],
+				bords:   [0,0,0,0,0,0,0,0],
+				ages:    []
+			},
+			abstention : {
+				nb:   0,
+				genders: [0,0,0],
+				csps:    [0,0,0,0,0,0,0,0,0],
+				bords:   [0,0,0,0,0,0,0,0],
+				ages:    []
+			}
+		}
+
+		function addVote(vote){
+
+			if (vote.choice == 1)
+				var choice = "pour";
+			else if (vote.choice == 2)
+				var choice = "contre";
+			else if (vote.choice == 3)
+				var choice = "contre";
+			else
+				return;
+
+			numbers[choice].nb++;
+			vote.gender && numbers[choice].genders[vote.gender]++;
+			vote.bord   && numbers[choice].bords[vote.bord]++;
+			vote.csp    && numbers[choice].csps[vote.csp]++;
+			vote.age    && numbers[choice].ages.push(vote.age);
+		}
+
+		function getNumbers(){
+			return numbers;
+		}
+
+		return {
+			addVote: addVote,
+			getNumbers: getNumbers
+		};
+	})();
+
+	function get_stats(texte){
+
+		db.query('SELECT * from votes_anon WHERE texte_id = ?', [req.params.texte_id], function(err, rows, fields) {
+			for( var i=0; i<rows.length; i++){
+				stats.addVote(rows[i]);
+			}
+			texte.stats = stats.getNumbers();
+			res.json(texte);
+		});
+	}
+
 };
 
 exports.vote = function(req, res){

@@ -71,7 +71,6 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
                 console.log("token_local = ", token_local)
                 console.log("token_new = ", token_new)
 
-                //if( !token_local || token_local != token_new){
                 if( !token_local){
 
                     FB.api('/me', function(response) {

@@ -1,12 +1,12 @@
 <h2>Textes actuellement en discussion</h2>
 
-<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init('current')"></div>
+<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('current')"></div>
 
 <h2>Textes bientôt sousmis au vote</h2>
 
-<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init('future')"></div>
+<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('future')"></div>
 
 <h2>Textes déjà votés</h2>
 
-<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init('past')"></div>
+<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('past')"></div>
 

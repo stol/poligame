@@ -88,6 +88,7 @@ CREATE TABLE `votes_anon` (
   `bord` INTEGER NULL DEFAULT NULL,
   `csp` INTEGER NULL DEFAULT NULL,
   `age` INTEGER NULL DEFAULT NULL,
+  `choice` INTEGER NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
 KEY (`texte_id`)
 );
@@ -119,3 +120,31 @@ INSERT INTO `textes` (`id`, `text`, `link`, `pour`, `contre`, `abstention`, `pou
   (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', 'http://www.google.fr', 650, 1580, 180, 0, 0, 0, NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),
   (null, 'Proposition de loi visant à redonner des perspectives à l\'économie réelle et à l\'emploi industriel', 'http://www.google.fr', 14802, 19541, 1500, 250, 350, 80, NOW() - INTERVAL 10 DAY, NOW() - INTERVAL 10 DAY),
   (null, 'Projet de loi relatif à la transparence de la vie publique', 'http://www.google.fr', 800,900,100, 0, 0, 0, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY);
+
+
+INSERT INTO `votes_anon` (`texte_id`, `gender`, `bord`, `csp`, `choice`) VALUES
+  (2, 1, 9, 1, 1),
+  (2, 1, 2, 3, 2),
+  (2, 2, 2, 5, 2),
+  (2, 1, 1, 7, 3),
+  (2, 1, 2, 2, 1),
+  (2, 2, 2, 4, 2),
+  (2, 1, 3, 6, 2),
+  (2, 1, 3, 8, 2),
+  (2, 2, 4, 1, 1),
+  (2, 1, 6, 2, 1),
+  (2, 2, 7, 1, 1),
+  (2, 2, 2, 2, 1),
+  (2, 1, 7, 6, 2),
+  (2, 1, 4, 2, 2),
+  (2, 2, 6, 8, 1),
+  (2, 1, 2, 2, 1),
+  (2, 1, 2, 3, 2),
+  (2, 2, 7, 4, 2),
+  (2, 2, 7, 5, 1),
+  (2, 1, 1, 8, 1),
+  (2, 1, 2, 7, 1),
+  (2, 1, 4, 6, 2),
+  (2, 2, 6, 5, 1),
+  (2, 2, 3, 4, 2),
+  (2, 1, 3, 1, 3);

@@ -18,8 +18,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
         }
     }
 
-
-    $scope.init = function(mode){
+    $scope.init_textes = function(mode){
         mode = mode || 'default';
         // Loading des textes, ajoutées au scope global pour pas les recharger qd on change de page
         if (!$rootScope['mode_'+mode+'_done']){
@@ -36,8 +35,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
                     $rootScope.textes2[textes[i].id] = textes[i];
                     $scope.textes[textes[i].id] = textes[i];
                 }
-
-                
             })
             .error(function(data, status, headers, config) {
                 console.log("GET texteS : Erreur !");
@@ -53,7 +50,13 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
 
     }
 
-    if ($routeParams.texte_id){
+    $scope.init_texte = function (){
+        var texte_id = $routeParams.texte_id;
+
+        if (!texte_id){
+            return;
+        }
+
         if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
             $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
             .success(function(texte, status, headers, config) {
