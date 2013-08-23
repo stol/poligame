@@ -16,6 +16,35 @@ moiElu.directive('results', function() {
             var r_label = "Votes des députés";
         }
 
+        else if (attrs.results == "csp"){
+            for (var i=0; i<$scope.texte.stats.csps.length; i++){
+                var votes = $scope.texte.stats.csps[i];
+                var r_label = votes.label;
+
+                var temp1 = [votes.pour, votes.contre, votes.abstention];
+                temp = _.sortBy(temp1, function(vote){ return -vote.nb });
+
+                var graph = element[0].parentNode.appendChild(document.createElement("DIV"))
+                var r = Raphael(graph);
+                r.setSize(200,120);
+
+                r.text(0, 20, r_label).attr({ font: "20px sans-serif", 'text-anchor': 'start' });
+
+                r.piechart(40, 80, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
+                    init: false,
+                    legendpos: "east",
+                    colors: [temp[0].color, temp[1].color, temp[2].color],
+                    legend: ["%%.% "+temp[0].label, "%%.% "+temp[1].label, "%%.% "+temp[2].label]
+                });
+
+
+            }
+            var r_label = "Catégories socio-professionnelles";
+            //var votes = $scope.texte.stats.;
+            return;
+        }
+
+
         var temp1 = [votes.pour, votes.contre, votes.abstention];
         temp = _.sortBy(temp1, function(vote){ return -vote.nb });
 

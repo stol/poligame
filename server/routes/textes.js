@@ -1,5 +1,113 @@
 var util = require('util');
 var moment = require('moment');
+
+function StatsClass(){
+	var numbers = {
+		pour : {
+			nb:   0,
+			genders: [0,0,0],
+			csps:    [0,0,0,0,0,0,0,0,0],
+			bords:   [0,0,0,0,0,0,0,0],
+			ages:    []
+		},
+		contre : {
+			nb:   0,
+			genders: [0,0,0],
+			csps:     [0,0,0,0,0,0,0,0,0],
+			bords:   [0,0,0,0,0,0,0,0],
+			ages:    []
+		},
+		abstention : {
+			nb:   0,
+			genders: [0,0,0],
+			csps:    [0,0,0,0,0,0,0,0,0],
+			bords:   [0,0,0,0,0,0,0,0],
+			ages:    []
+		},
+		csps: [
+			{label: "Inconnue", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Agriculteurs exploitants", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Artisans, commerçants et chefs d’entreprises", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Cadres et professions intellectuelles supérieures", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Professions intermédiaires", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Employés", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Ouvriers", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Retraités", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{label: "Autres personnes sans activités professionnelles", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+		],
+		genders: [
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+		],
+		bords: [
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+		],
+		ages: {
+			'18-25': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			'26-35': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			'36-50': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			'51-75': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
+			'76-99': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+		}
+	}
+
+	this.addVote = function (vote){
+
+		if (vote.choice == 1)
+			var choice = "pour";
+		else if (vote.choice == 2)
+			var choice = "contre";
+		else if (vote.choice == 3)
+			var choice = "abstention";
+		else
+			return;
+
+		numbers[choice].nb++;
+		if (vote.gender){
+			numbers[choice].genders[vote.gender]++;
+			numbers.genders[vote.gender][choice].nb++;
+		}
+		if (vote.bord){
+		    numbers[choice].bords[vote.bord]++;
+			numbers.bords[vote.bord][choice].nb++;
+		}
+		if (vote.csp){
+			numbers[choice].csps[vote.csp]++;
+			numbers.csps[vote.csp][choice].nb++;
+		}
+		if (vote.age){
+			numbers[choice].ages.push(vote.age);
+			if (vote.age >= 18 && vote.age >= 25){
+				numbers.ages['18-25'][choice].nb++;
+			}
+			else if (vote.age >= 26 && vote.age <= 35){
+				numbers.ages['26-35'][choice].nb++;
+			}
+			else if (vote.age >= 36 && vote.age <= 50){
+				numbers.ages['36-50'][choice].nb++;
+			}
+			else if (vote.age >= 51 && vote.age <= 75){
+				numbers.ages['51-75'][choice].nb++;
+			}
+			else if (vote.age >= 76 && vote.age <= 99){
+				numbers.ages['76-99'][choice].nb++;
+			}
+		}
+	}
+
+	this.getNumbers = function(){
+		return numbers;
+	}
+}
+
 /*
  * GET users listing.
  */
@@ -106,60 +214,9 @@ exports.show = function(req, res){
   			res.render('index', { title: 'Express' });
 	});
 
-	var stats = (function(){
-		var numbers = {
-			pour : {
-				nb:   0,
-				genders: [0,0,0],
-				csps:    [0,0,0,0,0,0,0,0,0],
-				bords:   [0,0,0,0,0,0,0,0],
-				ages:    []
-			},
-			contre : {
-				nb:   0,
-				genders: [0,0,0],
-				csps:     [0,0,0,0,0,0,0,0,0],
-				bords:   [0,0,0,0,0,0,0,0],
-				ages:    []
-			},
-			abstention : {
-				nb:   0,
-				genders: [0,0,0],
-				csps:    [0,0,0,0,0,0,0,0,0],
-				bords:   [0,0,0,0,0,0,0,0],
-				ages:    []
-			}
-		}
-
-		function addVote(vote){
-
-			if (vote.choice == 1)
-				var choice = "pour";
-			else if (vote.choice == 2)
-				var choice = "contre";
-			else if (vote.choice == 3)
-				var choice = "contre";
-			else
-				return;
-
-			numbers[choice].nb++;
-			vote.gender && numbers[choice].genders[vote.gender]++;
-			vote.bord   && numbers[choice].bords[vote.bord]++;
-			vote.csp    && numbers[choice].csps[vote.csp]++;
-			vote.age    && numbers[choice].ages.push(vote.age);
-		}
-
-		function getNumbers(){
-			return numbers;
-		}
-
-		return {
-			addVote: addVote,
-			getNumbers: getNumbers
-		};
-	})();
-
 	function get_stats(texte){
+
+		var stats = new StatsClass();
 
 		db.query('SELECT * from votes_anon WHERE texte_id = ?', [req.params.texte_id], function(err, rows, fields) {
 			for( var i=0; i<rows.length; i++){
