@@ -4,17 +4,27 @@ moiElu.directive('results', function() {
 
         if (attrs.results == "net"){
             var votes = $scope.texte.votes;
+            var r_label = "Votes des internautes";
         }
         else if (attrs.results == "assemblee"){
-            var votes = $scope.texte.votes_assemblee;
-        }
+            if ($scope.texte.votes_assemblee.total == 0){
+                $(element[0]).text("Les votes de vos députés n'ont pas encore été enregistrés dans la base de donnée. Revenez un peu plus tard !");
+                return;
+            }
 
-        var r = Raphael(element[0]);
+            var votes = $scope.texte.votes_assemblee;
+            var r_label = "Votes des députés";
+        }
 
         var temp1 = [votes.pour, votes.contre, votes.abstention];
         temp = _.sortBy(temp1, function(vote){ return -vote.nb });
 
-        r.piechart(40, 40, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
+        var r = Raphael(element[0]);
+        r.setSize(200,120);
+
+        r.text(0, 20, r_label).attr({ font: "20px sans-serif", 'text-anchor': 'start' });
+
+        r.piechart(40, 80, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
             init: false,
             legendpos: "east",
             colors: [temp[0].color, temp[1].color, temp[2].color],

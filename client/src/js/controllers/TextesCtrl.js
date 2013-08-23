@@ -82,7 +82,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     // Sends the vote
     function setChoice(user_vote, texte, step) {
         step = parseInt(step || 0, 10);
-        if (step == 0 && true || $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 5 == 0){
+        if (step == 0 && true || $rootScope.user.infos && $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 5 == 0){
             $dialog.dialog({
                 backdrop: true,
                 keyboard: true,

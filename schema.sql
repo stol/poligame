@@ -66,6 +66,7 @@ CREATE TABLE `users` (
   `gender` INTEGER NULL DEFAULT NULL,
   `bord` INTEGER NOT NULL DEFAULT 0,
   `csp` INTEGER NULL DEFAULT NULL,
+  `age` INTEGER NULL DEFAULT NULL,
   `bio` MEDIUMTEXT NULL DEFAULT NULL,
   `link` MEDIUMTEXT NULL DEFAULT NULL,
   `created_at` TIMESTAMP NULL DEFAULT NULL,
@@ -74,11 +75,30 @@ CREATE TABLE `users` (
 );
 
 -- ---
+-- Table 'votes_anon'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `votes_anon`;
+    
+CREATE TABLE `votes_anon` (
+  `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
+  `texte_id` INTEGER NULL DEFAULT NULL,
+  `gender` INTEGER NULL DEFAULT NULL,
+  `bord` INTEGER NULL DEFAULT NULL,
+  `csp` INTEGER NULL DEFAULT NULL,
+  `age` INTEGER NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+KEY (`texte_id`)
+);
+
+-- ---
 -- Foreign Keys 
 -- ---
 
 ALTER TABLE `votes` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
 ALTER TABLE `votes` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
+ALTER TABLE `votes_anon` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
 
 -- ---
 -- Table Properties
@@ -87,6 +107,7 @@ ALTER TABLE `votes` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
 ALTER TABLE `textes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `votes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `votes_anon` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data

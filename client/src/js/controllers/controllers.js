@@ -12,9 +12,11 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 
 moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
 
-	$scope.csp    = $rootScope.user.infos.csp;
-	$scope.gender = $rootScope.user.infos.gender;
-	$scope.bord   = $rootScope.user.infos.bord;
+	if ($rootScope.user.infos){
+		$scope.csp    = angular.copy($rootScope.user.infos.csp);
+		$scope.gender = angular.copy($rootScope.user.infos.gender);
+		$scope.bord   = angular.copy($rootScope.user.infos.bord);
+	}
 
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
@@ -42,12 +44,19 @@ moiElu.controller('ModalCtrl', ['$rootScope', '$scope', 'dialog', function($root
 		{id: 7, label: "Extrême droite"}
 	];
 
+	$scope.ages = [];
+	for( var i=12; i<=100; i++){
+		$scope.ages.push(i);
+	}
+
     $scope.close = function(result){
     	console.log("CLOSE !");
-    	$rootScope.user.infos.csp = $scope.csp;
-    	$rootScope.user.infos.bord = $scope.bord;
-    	$rootScope.user.infos.gender = $scope.gender;
-		$rootScope.$broadcast('userChanged');
+    	if ($rootScope.user.infos){
+    		$rootScope.user.infos.csp = $scope.csp;
+    		$rootScope.user.infos.bord = $scope.bord;
+    		$rootScope.user.infos.gender = $scope.gender;
+			$rootScope.$broadcast('userChanged');
+		}
         dialog.close(result);
     };
     $scope.socialShare = true;

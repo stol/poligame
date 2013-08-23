@@ -109,9 +109,9 @@ exports.show = function(req, res){
 
 exports.vote = function(req, res){
 
-	set_vote();
+	set_user_vote();
 	
-	function set_vote(){
+	function set_user_vote(){
 		// Set texte voted for user
 		db.query("INSERT INTO votes SET ?", {
 			user_id: req.body.user_id,
@@ -122,7 +122,39 @@ exports.vote = function(req, res){
 					success: false,
 					msg: err.message
 				});
+	  		}
+	  		get_user_data();
+		});
+	}
 
+	function get_user_data(){
+		db.query("SELECT * FROM users WHERE id = ?", req.body.user_id, function(err, rows, fields) {
+	  		if (err) {
+				res.json({
+					success: false,
+					msg: err.message
+				});
+	  		}
+
+	  		set_anon_vote(rows[0]);
+		});
+	}
+
+	function set_anon_vote(infos){
+		var data = {
+			texte_id: req.params.texte_id,
+			gender: infos.gender,
+			bord: infos.bord,
+			csp: infos.csp,
+			age: infos.age
+		}
+
+		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {
+	  		if (err) {
+				res.json({
+					success: false,
+					msg: err.message
+				});
 	  		}
 	  		update_stats();
 		});
