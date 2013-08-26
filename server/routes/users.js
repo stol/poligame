@@ -51,3 +51,23 @@ exports.update = function(req, res){
 
 
 }
+
+
+
+exports.show = function(req, res){
+	
+	if (req.xhr){
+		db.query("SELECT * FROM users WHERE id = ?", [req.params.user_id], function(err, rows, fields) {
+	  		if (err) throw err;
+
+			res.json(rows[0]);
+
+		});
+
+	}
+	else{
+		res.render('index', { title: 'Express' });
+	}
+}
+
+

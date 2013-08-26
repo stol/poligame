@@ -68,5 +68,35 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
     
 }]);
 
+moiElu.controller('UsersCtrl', ['$rootScope', '$scope', '$routeParams', '$resource', 
+function($rootScope, $scope, $routeParams, $resource) {
+  	//console.log('Promise is now resolved: '+MyService.doStuff().data)
+  	//$scope.data = MyService.doStuff();
+
+  	var Users = $resource('/users/:user_id');
+
+  	$scope.user2 = Users.get({user_id: 1}, function(){
+  		console.log($scope.user2);
+  	})
+}]);
+
+moiElu.service('MyService', function($http) {
+    var myData = null;
+
+    var promise = $http.get('/users/1').success(function (data) {
+      	myData = data;
+    });
+
+    return {
+      promise:promise,
+      setData: function (data) {
+          myData = data;
+      },
+      doStuff: function () {
+          return myData;//.getSomeData();
+      }
+    };
+});
+
 
 

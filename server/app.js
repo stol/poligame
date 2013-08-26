@@ -53,6 +53,8 @@ app.get('/textes/:texte_id', textes.show);
 app.post('/textes/:texte_id/vote', textes.vote);
 app.post('/users/login', users.login);
 app.post('/users/:user_id', users.update);
+app.get('/user', users.show);
+app.get('/users/:user_id', users.show);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

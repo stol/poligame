@@ -1,7 +1,7 @@
 // moiElu module with moiElu.controllers dependency containing all controllers
 // and ngMockE2E dependency containing $httpBackend service
 
-var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap']);
+var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap', 'ngResource']);
 
   // routes declaration
 moiElu.config(['$routeProvider', function($routeProvider) {
@@ -14,6 +14,20 @@ moiElu.config(['$routeProvider', function($routeProvider) {
 
     $routeProvider.when('/a-propos', {
         templateUrl: '/views/pages/a-propos.html'
+    });
+
+    $routeProvider.when('/user', {
+        templateUrl: '/views/pages/user.html',
+        controller: 'UsersCtrl'
+        /*
+        ,resolve: {
+            'MyServiceData':function(MyService){
+                // MyServiceData will also be injectable in your controller, if you don't want this you could create a new promise with the $q service
+                return MyService.promise;
+            }
+        }
+        */
+
     });
 
     $routeProvider.otherwise({ redirectTo: '/' });
