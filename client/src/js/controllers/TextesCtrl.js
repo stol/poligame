@@ -2,6 +2,8 @@ moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$
 function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     
 
+    $scope.moreInfo = false;
+
     var Texte = {
         isVoted: function(user_vote){
             if (user_vote != undefined)

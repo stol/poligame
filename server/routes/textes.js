@@ -81,7 +81,7 @@ function StatsClass(){
 			ages:    []
 		},
 		csps: [
-			{label: "Inconnue", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "N/A", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
 			{label: "Agriculteurs exploitants", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
 			{label: "Artisans, commerçants et chefs d’entreprises", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
 			{label: "Cadres et professions intellectuelles supérieures", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
@@ -91,8 +91,21 @@ function StatsClass(){
 			{label: "Retraités", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
 			{label: "Autres personnes sans activités professionnelles", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")}
 		],
-		genders: [ voteObj2(), voteObj2(), voteObj2() ],
-		bords: [ voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2() ],
+		genders: [
+			{ label :"N/A", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{ label :"Homme", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{ label :"Femme", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")}
+		],
+		bords: [
+			{label: "N/A", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Extrême gauche", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Gauche", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Centre-gauche", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Centre", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Centre-droit", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Droite", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Extrême droite", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")}
+		],
 		ages: {
 			'18-25': voteObj2(),
 			'26-35': voteObj2(),

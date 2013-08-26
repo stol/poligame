@@ -16,13 +16,16 @@ moiElu.directive('results', function() {
             var r_label = "Votes des députés";
         }
 
-        else if (attrs.results == "csp"){
+        else {
+
+            var toDisplay = attrs.results;
+            console.log("toDisplay = ", toDisplay );
 
             var node = element[0];
             $(node).addClass("row");
 
-            for (var i=0; i<$scope.texte.stats.csps.length; i++){
-                var votes = $scope.texte.stats.csps[i];
+            for (var i=0; i<$scope.texte.stats[toDisplay].length; i++){
+                var votes = $scope.texte.stats[toDisplay][i];
 
                 var data = _.sortBy([votes.pour, votes.contre, votes.abstention], function(vote){ return -vote.nb });
                 var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
