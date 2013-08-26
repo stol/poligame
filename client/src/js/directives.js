@@ -19,8 +19,6 @@ moiElu.directive('results', function() {
         else {
 
             var toDisplay = attrs.results;
-            console.log("toDisplay = ", toDisplay );
-
             var node = element[0];
             $(node).addClass("row");
 
