@@ -5,8 +5,11 @@
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
-		<div results="net"></div>
-		<div results="assemblee"></div>
+		<div class="row">
+			<div results="net" class="span4"></div>
+			<div results="assemblee" class="span4"></div>
+		</div>
+		<h4>Votes des différentes catégories socio-professionnelles</h4>
 		<div results="csp"></div>
 	</div>
 	<div ng-switch-when="current">

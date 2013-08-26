@@ -17,24 +17,28 @@ moiElu.directive('results', function() {
         }
 
         else if (attrs.results == "csp"){
+
+            var node = element[0];
+            $(node).addClass("row");
+
             for (var i=0; i<$scope.texte.stats.csps.length; i++){
                 var votes = $scope.texte.stats.csps[i];
-                var r_label = votes.label;
 
-                var temp1 = [votes.pour, votes.contre, votes.abstention];
-                temp = _.sortBy(temp1, function(vote){ return -vote.nb });
+                var data = _.sortBy([votes.pour, votes.contre, votes.abstention], function(vote){ return -vote.nb });
+                var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
+                var r_label = votes.label + "\n("+nb+" votes)";
 
-                var graph = element[0].parentNode.appendChild(document.createElement("DIV"))
+                var graph = $('<div class="span3"></div>').appendTo(node)[0];
                 var r = Raphael(graph);
                 r.setSize(200,120);
 
-                r.text(0, 20, r_label).attr({ font: "20px sans-serif", 'text-anchor': 'start' });
+                r.text(0, 20, r_label).attr({ font: "14px sans-serif", 'text-anchor': 'start' });
 
-                r.piechart(40, 80, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
+                r.piechart(40, 80, 40, [data[0].nb, data[1].nb, data[2].nb],{
                     init: false,
                     legendpos: "east",
-                    colors: [temp[0].color, temp[1].color, temp[2].color],
-                    legend: ["%%.% "+temp[0].label, "%%.% "+temp[1].label, "%%.% "+temp[2].label]
+                    colors: [data[0].color, data[1].color, data[2].color],
+                    legend: ["%%.% "+data[0].label, "%%.% "+data[1].label, "%%.% "+data[2].label]
                 });
 
 
@@ -45,19 +49,19 @@ moiElu.directive('results', function() {
         }
 
 
-        var temp1 = [votes.pour, votes.contre, votes.abstention];
-        temp = _.sortBy(temp1, function(vote){ return -vote.nb });
+        var data = _.sortBy([votes.pour, votes.contre, votes.abstention], function(vote){ return -vote.nb });
 
-        var r = Raphael(element[0]);
+        var node = element[0];
+        var r = Raphael(node);
         r.setSize(200,120);
 
         r.text(0, 20, r_label).attr({ font: "20px sans-serif", 'text-anchor': 'start' });
 
-        r.piechart(40, 80, 40, [temp[0].nb, temp[1].nb, temp[2].nb],{
+        r.piechart(40, 80, 40, [data[0].nb, data[1].nb, data[2].nb],{
             init: false,
             legendpos: "east",
-            colors: [temp[0].color, temp[1].color, temp[2].color],
-            legend: ["%%.% "+temp[0].label, "%%.% "+temp[1].label, "%%.% "+temp[2].label]
+            colors: [data[0].color, data[1].color, data[2].color],
+            legend: ["%%.% "+data[0].label, "%%.% "+data[1].label, "%%.% "+data[2].label]
         });
     };
 });

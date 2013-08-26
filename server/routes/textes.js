@@ -1,6 +1,62 @@
 var util = require('util');
 var moment = require('moment');
 
+function pourObj(){
+	this.nb = 0;
+	this.label = "pour";
+	this.color = "#006DCC"
+}
+
+function contreObj(){
+	this.nb = 0;
+	this.label = "contre";
+	this.color = "#DA4F49"
+}
+
+function abstentionObj(){
+	this.nb = 0;
+	this.label = "abstention";
+	this.color = "#FAA732"
+	
+}
+
+function globalVoteObj(){
+	this.pour = new pourObj();
+	this.contre = new contreObj();
+	this.abstention = new abstentionObj();
+}
+
+function voteObj(vote){
+	var pour       = {nb:0, label: "pour", color: "#006DCC"};
+	var contre     = {nb:0, label: "contre", color: "#DA4F49"};
+	var abstention = {nb:0, label: "abstention", color: "#FAA732"};
+	var vote       = {
+		pour : pour,
+		contre: contre,
+		abstention: abstention
+	};
+
+	if (vote == "pour")
+		return pour;
+	else if (vote == "contre")
+		return vote.contre;
+	else if (vote == "abstention")
+		return vote.abstention;
+	else
+		return vote;
+}
+
+function voteObj2(vote){
+	if (vote == "pour")
+		return new pourObj();
+	else if (vote == "contre")
+		return new contreObj();
+	else if (vote == "abstention")
+		return new abstentionObj();
+	else
+		return new globalVoteObj();
+}
+
 function StatsClass(){
 	var numbers = {
 		pour : {
@@ -25,37 +81,24 @@ function StatsClass(){
 			ages:    []
 		},
 		csps: [
-			{label: "Inconnue", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Agriculteurs exploitants", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Artisans, commerçants et chefs d’entreprises", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Cadres et professions intellectuelles supérieures", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Professions intermédiaires", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Employés", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Ouvriers", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Retraités", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{label: "Autres personnes sans activités professionnelles", pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+			{label: "Inconnue", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Agriculteurs exploitants", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Artisans, commerçants et chefs d’entreprises", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Cadres et professions intellectuelles supérieures", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Professions intermédiaires", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Employés", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Ouvriers", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Retraités", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")},
+			{label: "Autres personnes sans activités professionnelles", pour: voteObj2("pour"), contre: voteObj2("contre"), abstention: voteObj2("abstention")}
 		],
-		genders: [
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
-		],
-		bords: [
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			{pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
-		],
+		genders: [ voteObj2(), voteObj2(), voteObj2() ],
+		bords: [ voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2(), voteObj2() ],
 		ages: {
-			'18-25': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			'26-35': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			'36-50': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			'51-75': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}},
-			'76-99': {pour: {nb:0, label: "pour"}, contre: {nb:0, label: "contre"}, abstention: {nb:0, label: "abstention"}}
+			'18-25': voteObj2(),
+			'26-35': voteObj2(),
+			'36-50': voteObj2(),
+			'51-75': voteObj2(),
+			'76-99': voteObj2()
 		}
 	}
 
@@ -70,19 +113,25 @@ function StatsClass(){
 		else
 			return;
 
+		vote.gender = vote.gender || 0;
+		vote.bord   = vote.bord || 0;
+		vote.csp    = vote.csp || 0;
+
+		// Inc du pour/contre/abst global
 		numbers[choice].nb++;
-		if (vote.gender){
-			numbers[choice].genders[vote.gender]++;
-			numbers.genders[vote.gender][choice].nb++;
-		}
-		if (vote.bord){
-		    numbers[choice].bords[vote.bord]++;
-			numbers.bords[vote.bord][choice].nb++;
-		}
-		if (vote.csp){
-			numbers[choice].csps[vote.csp]++;
-			numbers.csps[vote.csp][choice].nb++;
-		}
+
+		// Inc du pour/contre/abst pour le genre
+		numbers[choice].genders[vote.gender]++;
+		numbers.genders[vote.gender][choice].nb++;
+
+		// Inc du pour/contre/abst pour le bord
+	    numbers[choice].bords[vote.bord]++;
+		numbers.bords[vote.bord][choice].nb++;
+
+		// Inc du pour/contre/abst pour la csp
+		numbers[choice].csps[vote.csp]++;
+		numbers.csps[vote.csp][choice].nb++;
+
 		if (vote.age){
 			numbers[choice].ages.push(vote.age);
 			if (vote.age >= 18 && vote.age >= 25){
