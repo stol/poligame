@@ -55,10 +55,10 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
     $scope.init_texte = function (){
 
         
-        var qsdqd = Textes.get({id: 4}, function(texte){
+        $scope.texte2 = Textes.get({id: 4}), function(texte){
             console.log("Textes.get done. texte = ", texte); 
         });
-        
+
         
 
         var texte_id = $routeParams.texte_id;

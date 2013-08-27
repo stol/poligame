@@ -80,7 +80,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
 
 
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', function($http) {
+moiElu.factory('Textes', function($http, $q) {
     var textes = {};
     var cache = {};
     
@@ -107,15 +107,30 @@ moiElu.factory('Textes', function($http) {
             nb++;
         });
         var self = this;
-        return $http({
+
+        var deferred = $q.defer();
+
+        $http({
             method: 'GET',
             url: url,
             cache: true,
             params: nb && params
         }).success(function(data, status, headers, config){
+            
+            if (angular.isArray(data)){
+                for(var i=0; i<data.length; i++){
+                    textes[data[i].id] = data;
+                }
+            }
+            else{
+                textes[data.id] = data;
+            }
+            deferred.resolve(data);
+
             console.log("INSIDE $http.SUCCESS")
-            callback.apply(self, arguments);
+            callback && callback.apply(self, arguments);
         })
+        return deferred.promise;
 
     }
 
