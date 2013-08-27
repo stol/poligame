@@ -1,5 +1,5 @@
-moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window',
-function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
+moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes',
+function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, Textes) {
     
 
     $scope.moreInfo = false;
@@ -53,6 +53,14 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window) {
     }
 
     $scope.init_texte = function (){
+
+        
+        var qsdqd = Textes.get({id: 4}, function(texte){
+            console.log("Textes.get done. texte = ", texte); 
+        });
+        
+        
+
         var texte_id = $routeParams.texte_id;
 
         if (!texte_id){

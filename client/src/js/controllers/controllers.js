@@ -1,3 +1,13 @@
+String.prototype.hashCode = function(){
+    var hash = 0;
+    if (this.length == 0) return hash;
+    for (i = 0; i < this.length; i++) {
+        char = this.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash; // Convert to 32bit integer
+    }
+    return Math.abs(hash);
+}
 
 /**
  * Gestion de la navigation
@@ -68,35 +78,63 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
     
 }]);
 
-moiElu.controller('UsersCtrl', ['$rootScope', '$scope', '$routeParams', '$resource', 
-function($rootScope, $scope, $routeParams, $resource) {
-  	//console.log('Promise is now resolved: '+MyService.doStuff().data)
-  	//$scope.data = MyService.doStuff();
 
-  	var Users = $resource('/users/:user_id');
+//factory style, more involved but more sophisticated
+moiElu.factory('Textes', function($http) {
+    var textes = {};
+    var cache = {};
+    
+    function get(params, callback){
+        console.log("FACTORY TEXTES GET START");
+        /*
+        var key = JSON.stringify(params).hashCode();
+        if (cache[key]){
+            var ret = [];
+            for( var i=0; i<cache[key].length; i++){
+                ret.push(textes[cache[key][i]]);
+            }
+            return ret;
+        }
+        */
+        var url = '/textes';
+        if (params.id){
+            url += '/'+params.id;
+            delete params.id;
+        }
 
-  	$scope.user2 = Users.get({user_id: 1}, function(){
-  		console.log($scope.user2);
-  	})
-}]);
+        var nb = 0;
+        angular.forEach(params, function(value, key){
+            nb++;
+        });
+        var self = this;
+        return $http({
+            method: 'GET',
+            url: url,
+            cache: true,
+            params: nb && params
+        }).success(function(data, status, headers, config){
+            console.log("INSIDE $http.SUCCESS")
+            callback.apply(self, arguments);
+        })
 
-moiElu.service('MyService', function($http) {
-    var myData = null;
-
-    var promise = $http.get('/users/1').success(function (data) {
-      	myData = data;
-    });
+    }
 
     return {
-      promise:promise,
-      setData: function (data) {
-          myData = data;
-      },
-      doStuff: function () {
-          return myData;//.getSomeData();
-      }
+        get : get
     };
+    
 });
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -19,15 +19,6 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/user', {
         templateUrl: '/views/pages/user.html',
         controller: 'UsersCtrl'
-        /*
-        ,resolve: {
-            'MyServiceData':function(MyService){
-                // MyServiceData will also be injectable in your controller, if you don't want this you could create a new promise with the $q service
-                return MyService.promise;
-            }
-        }
-        */
-
     });
 
     $routeProvider.otherwise({ redirectTo: '/' });
