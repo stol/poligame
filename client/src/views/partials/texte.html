@@ -9,27 +9,34 @@
 			<div results="net" class="span4"></div>
 			<div results="assemblee" class="span4"></div>
 		</div>
-		<h4>Vous pouvez affiner les résultats du vote par : </h4>
-		<div class="btn-group">
-        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
-        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
-        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
-        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
-    	</div>
-    	<div ng-switch on="moreInfo">
-    		<div class="text-center" ng-switch-when="csps">
-				<div results="csps"></div>
-    		</div>
-    		<div class="text-center" ng-switch-when="bords">
-				<div results="bords"></div>
-    		</div>
-    		<div class="text-center" ng-switch-when="genders">
-				<div results="genders"></div>
-    		</div>
-    		<div class="text-center" ng-switch-when="ages">
-				<div results="ages"></div>
-    		</div>
-    	</div>
+		<div ng-switch on="!!texte.stats">
+			<div ng-switch-when="false">
+				<a href="/textes/{{texte.id}}">Cliquez ici pour obtenir plus d'information sur les votes</a>
+			</div>
+			<div ng-switch-default>
+				<h4>Vous pouvez affiner les résultats du vote par :</h4>
+				<div class="btn-group">
+		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
+		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
+		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
+		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
+		    	</div>
+		    	<div ng-switch on="moreInfo">
+		    		<div class="text-center" ng-switch-when="csps">
+						<div results="csps"></div>
+		    		</div>
+		    		<div class="text-center" ng-switch-when="bords">
+						<div results="bords"></div>
+		    		</div>
+		    		<div class="text-center" ng-switch-when="genders">
+						<div results="genders"></div>
+		    		</div>
+		    		<div class="text-center" ng-switch-when="ages">
+						<div results="ages"></div>
+		    		</div>
+		    	</div>
+			</div>
+		</div>
 	</div>
 	<div ng-switch-when="current">
 		<div ng-switch on="texte.isVoted()">
