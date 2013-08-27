@@ -24,9 +24,13 @@ moiElu.directive('results', function() {
 
             for (var i=0; i<$scope.texte.stats[toDisplay].length; i++){
                 var votes = $scope.texte.stats[toDisplay][i];
+                var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
+                if (!nb){
+                    continue;
+                }
 
                 var data = _.sortBy([votes.pour, votes.contre, votes.abstention], function(vote){ return -vote.nb });
-                var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
+                
                 var r_label = votes.label + "\n("+nb+" votes)";
 
                 var graph = $('<div class="span3"></div>').appendTo(node)[0];
