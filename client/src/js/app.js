@@ -57,7 +57,6 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
     }(document, 'script', 'facebook-jssdk'));
 
     function afterLoginAction(){
-        console.log("after login actions !");
         for( var i=0; i < $rootScope.afterLogin.length; i++){
             $rootScope.afterLogin[i]();
         }
@@ -65,7 +64,6 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
     }
 
     $window.fbAsyncInit = function() {
-        console.log("APP fbAsyncInit");
         // Executed when the SDK is loaded
         FB.init({ 
             appId: '609395745747955', 
@@ -77,18 +75,13 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
 
 
         FB.Event.subscribe('auth.statusChange', function(response) {
-            console.log("auth.statusChange! response : ", response);
-            console.log("$window.fbAsyncInit = ", $window.fbAsyncInit);
             if (response.status === 'connected') {
                 var token_new = response.authResponse.accessToken;
                 var token_local = $cookieStore.get("tok");
-                console.log("token_local = ", token_local)
-                console.log("token_new = ", token_new)
 
                 if( !token_local){
 
                     FB.api('/me', function(response) {
-                        console.log('infos FB reçues... Enregistrement en BDD...', response)
 
                         $http({method: 'POST', url: '/users/login', data: {
                             firstname: response.first_name,
@@ -101,12 +94,10 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
                             link     : response.link
                         }})
                         .success(function(data, status, headers, config) {
-                            console.log("USER LOGIN is GREAT SUCCESS : ", $rootScope.user);
                             $rootScope.user.infos = data.infos;
                             $rootScope.user.votes = data.votes;
                             $rootScope.user.isLogged = true;
                             $cookieStore.put("tok", token_new);
-                            console.log("PUT TOK | ", token_new);
                             afterLoginAction();
                         })
                         .error(function(data, status, headers, config) {
@@ -119,12 +110,10 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
                         provider_user_id: response.authResponse.userID
                     }})
                     .success(function(data, status, headers, config) {
-                        console.log("AUTOLOGIN is GREAT SUCCESS : ", $rootScope.user);
                         $rootScope.user.infos = data.infos;
                         $rootScope.user.votes = data.votes;
                         $rootScope.user.isLogged = true;
                         $cookieStore.put("tok", token_new);
-                        console.log("PUT TOK | ", token_new);
                         afterLoginAction();
                     });
 
@@ -136,14 +125,10 @@ moiElu.run(['$rootScope', '$window', '$http', '$cookieStore', function($rootScop
 
             } else if (response.status === 'not_authorized') {
                 $rootScope.user.status = "not_authorized";
-                console.log("UNSET TOK 1.0 ("+$cookieStore.get("tok")+")");
                 $cookieStore.remove("tok");
-                console.log("UNSET TOK 1.1 ("+$cookieStore.get("tok")+")");
             } else {
                 $rootScope.user.status = "unknown";
-                console.log("UNSET TOK 2.0 ("+$cookieStore.get("tok")+")");
                 $cookieStore.remove("tok");
-                console.log("UNSET TOK 2.1 ("+$cookieStore.get("tok")+")");
                 // the user isn't logged in to Facebook.
             }
         });
