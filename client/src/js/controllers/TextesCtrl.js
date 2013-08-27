@@ -55,10 +55,17 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
     $scope.init_texte = function (){
 
         
-        $scope.texte2 = Textes.get({id: 4}), function(texte){
+        $scope.texte2 = Textes.get({id: 4}, function(texte){
             console.log("Textes.get done. texte = ", texte); 
         });
 
+        setTimeout(function(){
+            console.log("TIMEOUT DONE");
+            $scope.texte2.text = 'AAAAAAAA';
+            Textes.get({id: 4}, function(texte){
+                console.log("HOPHOP => ", texte); 
+            });
+        },5000)
         
 
         var texte_id = $routeParams.texte_id;
