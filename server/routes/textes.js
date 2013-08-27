@@ -21,6 +21,14 @@ function voteObj(label){
 
 }
 
+function voteObjs(labels){
+	var ret = [];
+	for (var i=0; i<labels.length; i++){
+		ret.push(new voteObj(labels[i]));
+	}
+	return ret;
+}
+
 function StatsClass(){
 	var numbers = {
 		pour : {
@@ -44,40 +52,13 @@ function StatsClass(){
 			bords:   [0,0,0,0,0,0,0,0],
 			ages:    []
 		},
-		csps: [
-			new voteObj("N/A"),
-			new voteObj("Agriculteurs exploitants"),
-			new voteObj("Artisans, commerçants et chefs d’entreprises"),
-			new voteObj("Cadres et professions intellectuelles supérieures"),
-			new voteObj("Professions intermédiaires"),
-			new voteObj("Employés"),
-			new voteObj("Ouvriers"),
-			new voteObj("Retraités"),
-			new voteObj("Autres personnes sans activités professionnelles")
-		],
-		genders: [
-			new voteObj("N/A"),
-			new voteObj("Homme"),
-			new voteObj("Femme")
-		],
-		bords: [
-			new voteObj("N/A"),
-			new voteObj("Extrême gauche"),
-			new voteObj("Gauche"),
-			new voteObj("Centre-gauche"),
-			new voteObj("Centre"),
-			new voteObj("Centre-droit"),
-			new voteObj("Droite"),
-			new voteObj("Extrême droite")
-		],
-		ages: [
-			new voteObj('N/A'),
-			new voteObj('18-25 ans'),
-			new voteObj('26-35 ans'),
-			new voteObj('36-50 ans'),
-			new voteObj('51-75 ans'),
-			new voteObj('76-99 ans')
-		]
+		csps: voteObjs([
+				"N/A" , "Agriculteurs exploitants" , "Artisans, commerçants et chefs d’entreprises",
+				"Cadres et professions intellectuelles supérieures" , "Professions intermédiaires" ,
+				"Employés", "Ouvriers", "Retraités", "Autres personnes sans activités professionnelles"]),
+		genders: voteObjs(["N/A", "Homme", "Femme"]),
+		bords: voteObjs(["N/A", "Extrême gauche", "Gauche", "Centre-gauche", "Centre", "Centre-droit", "Droite", "Extrême droite"]),
+		ages: voteObjs(['N/A', '18-25 ans', '26-35 ans', '36-50 ans', '51-75 ans', '76-99 ans'])
 	}
 
 	this.addVote = function (vote){
@@ -138,11 +119,8 @@ function StatsClass(){
 	}
 }
 
-/*
- * GET users listing.
- */
-
-function alter_texte(mode, texte){
+function alter_texte(texte){
+	
 	texte.votes = {
 		total: texte.pour + texte.contre + texte.abstention,
 		actives: texte.pour + texte.contre,
@@ -189,8 +167,6 @@ function alter_texte(mode, texte){
     	}
 	};
 
-	texte.mode = mode;
-	
 	// Pas besoin de ça
 	delete texte.pour;
 	delete texte.contre;
@@ -199,6 +175,23 @@ function alter_texte(mode, texte){
 	delete texte.contre_assemblee;
 	delete texte.abstention_assemblee;
 }
+
+/*
+ * GET users listing.
+ */
+
+function get_stats(texte, callback){
+	var stats = new StatsClass();
+
+	db.query('SELECT * from votes_anon WHERE texte_id = ?', [texte.id], function(err, rows, fields) {
+		for( var i=0; i<rows.length; i++){
+			stats.addVote(rows[i]);
+		}
+		texte.stats = stats.getNumbers();
+		callback && callback(texte);
+	});
+}
+
 
 exports.textes = function(req, res){
 	
@@ -212,49 +205,51 @@ exports.textes = function(req, res){
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
 
-        for( var i=0, l = textes.length; i<l;i++){
-			alter_texte(mode, textes[i]);
-        }
+  		var stats_done = 0;
 
-  		res.json(textes);
+        for( var i=0, l = textes.length; i<l;i++){
+			textes[i].mode = mode;
+			alter_texte(textes[i]);
+
+			get_stats(textes[i], function(){
+				if (++stats_done == textes.length){
+					res.json(textes);
+				}
+			})
+        }
 	});
 };
+
+
 
 
 exports.show = function(req, res){
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
   		if (req.xhr){
-  			alter_texte("past", rows[0]);
+  			var texte = rows[0];
+
   			var current   = moment(),
-  				starts_at = moment(rows[0].starts_at),
-  				ends_at   = moment(rows[0].ends_at);
+  				starts_at = moment(texte.starts_at),
+  				ends_at   = moment(texte.ends_at);
 
   			if (ends_at < current)
-  				rows[0].mode = "past";
+  				texte.mode = "past";
   			else if (starts_at < current && ends_at > current)
-  				rows[0].mode = "current";
+  				texte.mode = "current";
   			else
-  				rows[0].mode = "future";
+  				texte.mode = "future";
 
-  			get_stats(rows[0]);
+  			alter_texte(texte);
+
+  			get_stats(texte, function(texte){
+				res.json(texte);
+  			});
   		}
   		else
   			res.render('index', { title: 'Express' });
 	});
 
-	function get_stats(texte){
-
-		var stats = new StatsClass();
-
-		db.query('SELECT * from votes_anon WHERE texte_id = ?', [req.params.texte_id], function(err, rows, fields) {
-			for( var i=0; i<rows.length; i++){
-				stats.addVote(rows[i]);
-			}
-			texte.stats = stats.getNumbers();
-			res.json(texte);
-		});
-	}
 
 };
 
