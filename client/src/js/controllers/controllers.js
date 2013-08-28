@@ -80,10 +80,27 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
 
 
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', function($http, $q) {
+moiElu.factory('Textes', function($rootScope, $http, $q) {
     var textes = {};
     var cache = {};
     
+    var Texte = {
+        isVoted: function(user_vote){
+            if (user_vote != undefined)
+                return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
+            else
+                return !!$rootScope.user.votes[this.id];
+        },
+
+        date_start: function(){
+            return moment(this.starts_at).format("ll")
+        },
+        date_end: function(){
+            return moment(this.ends_at).format("ll")
+        }
+    }
+
+
     function get(params, callback){
 
         if (params.id && textes[params.id]){
@@ -116,20 +133,28 @@ moiElu.factory('Textes', function($http, $q) {
             var ret;
 
             if (!angular.isArray(data)){
-                textes[data.id] = textes[data.id] || data;
+                if (!textes[data.id]){
+                    textes[data.id] = data;
+                    angular.extend(textes[data.id], Texte);
+                }
+
                 ret = textes[data.id];
             }
             else{
                 ret = {};
                 for(var i=0; i<data.length; i++){
-                    textes[data[i].id] = textes[data[i].id] || data[i];
+                    if (!textes[data[i].id]){
+                        textes[data[i].id] = data[i];
+                        angular.extend(textes[data[i].id], Texte);
+                    }
+                    
                     ret[data[i].id] = textes[data[i].id];
                 }
             }
 
-            deferred.resolve(ret);
-
             callback && callback.apply(self, arguments);
+
+            deferred.resolve(ret);
         });
 
         return deferred.promise;

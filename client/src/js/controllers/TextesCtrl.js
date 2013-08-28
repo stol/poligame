@@ -4,55 +4,11 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
     $scope.moreInfo = false;
 
-    var Texte = {
-        isVoted: function(user_vote){
-            if (user_vote != undefined)
-                return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
-            else
-                return !!$rootScope.user.votes[this.id];
-        },
-
-        date_start: function(){
-            return moment(this.starts_at).format("ll")
-        },
-        date_end: function(){
-            return moment(this.ends_at).format("ll")
-        }
-    }
 
     $scope.init_textes = function(mode){
         mode = mode || 'default';
 
         $scope.textes = Textes.get({mode: mode});
-        /*
-        // Loading des textes, ajoutées au scope global pour pas les recharger qd on change de page
-        if (!$rootScope['mode_'+mode+'_done']){
-            
-            $http({method: 'GET', url: '/textes', params:{
-                'mode' : mode
-            }})
-            .success(function(textes, status, headers, config) {
-                $rootScope['mode_'+mode+'_done'] = true;
-                $rootScope.textes2 = $rootScope.textes2 || {};
-                $scope.textes = $scope.textes || {};
-                for( var i=0, l = textes.length; i<l;i++){
-                    angular.extend(textes[i], Texte);
-                    $rootScope.textes2[textes[i].id] = textes[i];
-                    $scope.textes[textes[i].id] = textes[i];
-                }
-            })
-            .error(function(data, status, headers, config) {
-                console.log("GET texteS : Erreur !");
-            });
-        }
-        else{
-            $scope.textes = $scope.textes || {};
-            angular.forEach($rootScope.textes2, function(texte, id){
-                if (texte.mode == mode)
-                    $scope.textes[id] = texte;
-            });
-        }
-        */
 
     }
 
@@ -68,28 +24,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
         $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
 
-        /*        
-        if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
-            $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
-            .success(function(texte, status, headers, config) {
-                angular.extend(texte, Texte);
-                $rootScope.textes2 = $rootScope.textes2 || {};
-                $rootScope.textes2[texte.id] = texte;
-                $scope.texte = $rootScope.textes2[texte.id];
-
-                $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
-
-
-            })
-            .error(function(data, status, headers, config) {
-                console.log("GET texte : Erreur !");
-            });
-        }
-        else{
-            $scope.texte = $rootScope.textes2[$routeParams.texte_id];
-            $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
-        }
-        */
     }
 
     // Open the right popin depending the user status
