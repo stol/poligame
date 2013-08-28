@@ -22,6 +22,9 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
     $scope.init_textes = function(mode){
         mode = mode || 'default';
+
+        $scope.textes = Textes.get({mode: mode});
+        /*
         // Loading des textes, ajoutées au scope global pour pas les recharger qd on change de page
         if (!$rootScope['mode_'+mode+'_done']){
             
@@ -49,6 +52,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
                     $scope.textes[id] = texte;
             });
         }
+        */
 
     }
 

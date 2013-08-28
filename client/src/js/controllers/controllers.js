@@ -85,16 +85,11 @@ moiElu.factory('Textes', function($http, $q) {
     var cache = {};
     
     function get(params, callback){
-        /*
-        var key = JSON.stringify(params).hashCode();
-        if (cache[key]){
-            var ret = [];
-            for( var i=0; i<cache[key].length; i++){
-                ret.push(textes[cache[key][i]]);
-            }
-            return ret;
+
+        if (params.id && textes[params.id]){
+            callback && callback(textes[params.id]);
+            return textes[params.id];
         }
-        */
 
         var url = '/textes';
         if (params.id){
@@ -123,12 +118,11 @@ moiElu.factory('Textes', function($http, $q) {
             if (!angular.isArray(data)){
                 textes[data.id] = textes[data.id] || data;
                 ret = textes[data.id];
-
             }
             else{
                 ret = {};
                 for(var i=0; i<data.length; i++){
-                    textes[data[i].id] = textes[data[i].id] || data;
+                    textes[data[i].id] = textes[data[i].id] || data[i];
                     ret[data[i].id] = textes[data[i].id];
                 }
             }

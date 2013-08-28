@@ -207,7 +207,11 @@ exports.textes = function(req, res){
 
   		var stats_done = 0;
 
-        for( var i=0, l = textes.length; i<l;i++){
+  		if (textes.length == 0){
+  			res.json()
+  		}
+
+        for( var i=0; i<textes.length; i++){
 			textes[i].mode = mode;
 			alter_texte(textes[i]);
 
