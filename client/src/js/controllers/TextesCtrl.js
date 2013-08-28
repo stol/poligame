@@ -1,5 +1,5 @@
-moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes',
-function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, Textes) {
+moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes', 'User',
+function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, Textes, User) {
     
 
     $scope.moreInfo = false;
@@ -69,6 +69,11 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
     function doVote(user_vote, texte){
         if ($rootScope.user.status != "connected"){
             console.log("doVote: user pas loggé. Trying to logg in facebook...")
+
+            User.login().then(function(){
+
+            });
+            
             FB.login(function(response) {
                 console.log('doVote: FB login DONE. reponse = ', response);
                 if (response.authResponse) {
