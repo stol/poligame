@@ -1,18 +1,20 @@
 
-moiElu.directive('results', function() {
-    return function($scope, element, attrs) {
+moiElu.directive('results', function(Textes) {
+    return function($scope, element, attrs, Textes) {
+
+        var texte = $scope.texte.then && $scope.texte.$$v || $scope.texte;
 
         if (attrs.results == "net"){
-            var votes = $scope.texte.votes;
+            var votes = texte.votes;
             var r_label = "Votes des internautes";
         }
         else if (attrs.results == "assemblee"){
-            if ($scope.texte.votes_assemblee.total == 0){
+            if (texte.votes_assemblee.total == 0){
                 $(element[0]).text("Les votes de vos députés n'ont pas encore été enregistrés dans la base de donnée. Revenez un peu plus tard !");
                 return;
             }
 
-            var votes = $scope.texte.votes_assemblee;
+            var votes = texte.votes_assemblee;
             var r_label = "Votes des députés";
         }
 
@@ -22,8 +24,8 @@ moiElu.directive('results', function() {
             var node = element[0];
             $(node).addClass("row");
 
-            for (var i=0; i<$scope.texte.stats[toDisplay].length; i++){
-                var votes = $scope.texte.stats[toDisplay][i];
+            for (var i=0; i<texte.stats[toDisplay].length; i++){
+                var votes = texte.stats[toDisplay][i];
                 var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
                 if (!nb){
                     continue;
@@ -49,7 +51,7 @@ moiElu.directive('results', function() {
 
             }
             var r_label = "Catégories socio-professionnelles";
-            //var votes = $scope.texte.stats.;
+            //var votes = texte.stats.;
             return;
         }
 

@@ -85,7 +85,6 @@ moiElu.factory('Textes', function($http, $q) {
     var cache = {};
     
     function get(params, callback){
-        console.log("Textes.get START");
         /*
         var key = JSON.stringify(params).hashCode();
         if (cache[key]){
@@ -96,6 +95,7 @@ moiElu.factory('Textes', function($http, $q) {
             return ret;
         }
         */
+
         var url = '/textes';
         if (params.id){
             url += '/'+params.id;
@@ -110,13 +110,14 @@ moiElu.factory('Textes', function($http, $q) {
 
         var deferred = $q.defer();
 
-        $http({
+        var config = {
             method: 'GET',
             url: url,
             cache: true,
             params: nb && params
-        }).success(function(data, status, headers, config){
-
+        };
+        
+        $http(config).success(function(data, status, headers, config){
             var ret;
 
             if (!angular.isArray(data)){
@@ -134,9 +135,9 @@ moiElu.factory('Textes', function($http, $q) {
 
             deferred.resolve(ret);
 
-            console.log("INSIDE $http.SUCCESS")
             callback && callback.apply(self, arguments);
-        })
+        });
+
         return deferred.promise;
 
     }

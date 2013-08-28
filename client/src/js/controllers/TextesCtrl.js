@@ -53,27 +53,18 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
     }
 
     $scope.init_texte = function (){
-
-        
-        $scope.texte2 = Textes.get({id: 4}, function(texte){
-            console.log("Textes.get done. texte = ", texte); 
-        });
-
-        setTimeout(function(){
-            console.log("TIMEOUT DONE");
-            $scope.texte2.text = 'AAAAAAAA';
-            Textes.get({id: 4}, function(texte){
-                console.log("HOPHOP => ", texte); 
-            });
-        },5000)
-        
-
         var texte_id = $routeParams.texte_id;
 
         if (!texte_id){
             return;
         }
 
+        
+        $scope.texte = Textes.get({id: $routeParams.texte_id});
+
+        $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
+
+        /*        
         if (!$rootScope.textes2 || !$rootScope.textes2[$routeParams.texte_id]){
             $http({method: 'GET', url: '/textes/'+$routeParams.texte_id})
             .success(function(texte, status, headers, config) {
@@ -94,6 +85,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
             $scope.texte = $rootScope.textes2[$routeParams.texte_id];
             $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         }
+        */
     }
 
     // Open the right popin depending the user status
