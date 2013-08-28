@@ -103,11 +103,37 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
 
     function get(params, callback){
 
+        var ret;
+
+        // 1 texte demandé ? On le resort s'il est dans le cache objet
         if (params.id && textes[params.id]){
             callback && callback(textes[params.id]);
             return textes[params.id];
         }
 
+        // Plusieurs textes spécifiques demandés ?
+        if (params.ids && _.isArray(params.ids)) {
+            ret = [];
+            var to_get = [];
+            for(var i=0; i<params.ids.length; i++) {
+                if (textes[params.ids[i]]){
+                    ret.push(textes[params.ids[i]])
+                }
+                else{
+                    to_get.push(parseInt(params.ids[i],10));
+                }
+                    
+            }
+            // On avait déjà tout en cache ?
+            if (ret.length == params.ids.length){
+                return ret;
+            }
+            else{
+                params.ids = to_get;
+            }
+        }
+
+        // MaJ de l'ur en fonction d'un élément demandé ou pas
         var url = '/textes';
         if (params.id){
             url += '/'+params.id;
@@ -122,16 +148,12 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
 
         var deferred = $q.defer();
 
-        var config = {
+        $http(config = {
             method: 'GET',
             url: url,
             cache: true,
             params: nb && params
-        };
-        
-        $http(config).success(function(data, status, headers, config){
-            var ret;
-
+        }).success(function(data, status, headers, config){
             if (!angular.isArray(data)){
                 if (!textes[data.id]){
                     textes[data.id] = data;
@@ -141,14 +163,14 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
                 ret = textes[data.id];
             }
             else{
-                ret = {};
+                ret = ret || [] ;
                 for(var i=0; i<data.length; i++){
                     if (!textes[data[i].id]){
                         textes[data[i].id] = data[i];
                         angular.extend(textes[data[i].id], Texte);
                     }
                     
-                    ret[data[i].id] = textes[data[i].id];
+                    ret.push(textes[data[i].id]);
                 }
             }
 
@@ -169,6 +191,10 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
 
 
 
+moiElu.controller('UsersCtrl', ['$rootScope', '$scope', 'Textes', function($rootScope, $scope, Textes) {
+    var ids = _.keys($rootScope.user.votes);
+    $scope.textes = Textes.get({ids: ids});
+}]);
 
 
 

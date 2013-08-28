@@ -1,5 +1,5 @@
-<h2>Vos votes</h2>
+<h2>Listes des textes que vous avez votés</h2>
 
-<div ng-repeat="(texte_id, vote) in user.votes">
-	provider_user_id : {{user2.provider_user_id}}
+<div ng-repeat="texte in textes">
+	<h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4>
 </div>

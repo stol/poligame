@@ -1,5 +1,6 @@
 var util = require('util');
 var moment = require('moment');
+var _ = require('underscore');
 
 function voteObj(label){
 	this.pour = {
@@ -198,9 +199,18 @@ exports.textes = function(req, res){
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || false;
 
-	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
-	else if (mode == "current") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
-	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
+	if      (mode == "past")    sql+= ' WHERE ends_at < NOW() LIMIT 1';
+	else if (mode == "current") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW() LIMIT 1';
+	else if (mode == "future")  sql+= ' WHERE starts_at > NOW() LIMIT 1';
+
+	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || false;
+	if (ids){
+		console.log("ids = ", ids);
+		sql+= ' WHERE id IN('+ids.join(',')+')';
+	}
+
+	console.log(sql);
+		
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
@@ -208,7 +218,7 @@ exports.textes = function(req, res){
   		var stats_done = 0;
 
   		if (textes.length == 0){
-  			res.json()
+  			res.json([]);
   		}
 
         for( var i=0; i<textes.length; i++){
