@@ -1,5 +1,5 @@
-moiElu.controller('TextesCtrl', ['$rootScope', '$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes', 'User',
-function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, Textes, User) {
+moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes', 'User',
+function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User) {
     
 
     $scope.moreInfo = false;

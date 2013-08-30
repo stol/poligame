@@ -23,7 +23,7 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 /**
  * Gestion des popins
  */
-moiElu.controller('ReminderPopinCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+moiElu.controller('ReminderPopinCtrl', ['$scope', 'dialog', function($scope, dialog) {
     $scope.close = function(result){
         dialog.close(result);
     };
@@ -31,7 +31,7 @@ moiElu.controller('ReminderPopinCtrl', ['$rootScope', '$scope', 'dialog', functi
     $scope.socialShare = true;
 }]);
 
-moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', 'User', function($rootScope, $scope, dialog, User) {
+moiElu.controller('UserInfosPopinCtrl', ['$scope', 'dialog', 'User', function($scope, dialog, User) {
 
 	$scope.csp    = angular.copy(User.infos.csp);
 	$scope.gender = angular.copy(User.infos.gender);
@@ -72,7 +72,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', 'User
 		User.infos.csp = $scope.csp;
 		User.infos.bord = $scope.bord;
 		User.infos.gender = $scope.gender;
-		$rootScope.$broadcast('userChanged');
+		User.changed();
         dialog.close(result);
     };
     
@@ -80,7 +80,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', 'User
 
 
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', function($rootScope, $http, $q, User) {
+moiElu.factory('Textes', function($http, $q, User) {
     var textes = {};
     var cache = {};
     
@@ -191,12 +191,12 @@ moiElu.factory('Textes', function($rootScope, $http, $q, User) {
 
 
 
-moiElu.controller('UsersCtrl', ['$rootScope', '$scope', 'Textes', 'User', function($rootScope, $scope, Textes, User) {
+moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', function($scope, Textes, User) {
     var ids = _.keys(User.votes);
     $scope.textes = Textes.get({ids: ids});
 }]);
 
-moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', function($rootScope, $window, $http, $cookieStore, $q) {
+moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($window, $http, $cookieStore, $q) {
 
     var accessToken = null,
         isLogged = false,
@@ -294,8 +294,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         return user_is_logged_deferred.promise;
     }
 
-    $rootScope.$on('userChanged', function(e) {
-        
+    function changed(){
         $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
         .success(function(data, status, headers, config) {
             console.log("USER UPDATE is great success ! ");
@@ -303,7 +302,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         .error(function(data, status, headers, config) {
             console.log("Erreur update user !");
         });
-    });
+    }
 
     // Envoie le vote à facebook
     function publishVote(user_vote, texte){
@@ -345,6 +344,8 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
     user.login       = login;
     user.publishVote = publishVote;
     user.isLogged    = isLogged;
+    user.changed     = changed;
+
     
     return user;
 }]);
