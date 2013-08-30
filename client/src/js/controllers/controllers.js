@@ -207,7 +207,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         accessToken: null,
         isLogged: false,
         votes: {},
-        status: 'unknown'
+        status: null
     };
 
 
@@ -228,6 +228,9 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         fb_loaded();
     });
 
+
+    var user_is_logged_deferred;
+
     function fb_loaded(){
         // Executed when the SDK is loaded
         $window.FB.init({ 
@@ -238,62 +241,44 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
             xfbml: true
         });
 
-
         $window.FB.Event.subscribe('auth.statusChange', function(response) {
+            console.log("fb_loaded() => status changed ("+response.status+")");
             if (response.status === 'connected') {
-                var token_new = response.authResponse.accessToken;
-                var token_local = $cookieStore.get("tok");
+                console.log("fb.status is connected");
+                $rootScope.user.status = "connected";
+                $rootScope.user.accessToken = response.authResponse.accessToken;
 
-                if( !token_local){
-
-                    $window.FB.api('/me', function(response) {
-
-                        $http({method: 'POST', url: '/users/login', data: {
-                            firstname: response.first_name,
-                            lastname : response.last_name,
-                            fullname : response.name,
-                            nickname : response.username,
-                            provider_user_id: response.id,
-                            gender   : response.gender == "male" ? 1 : response.gender == "female" ? 2 : 0,
-                            bio      : response.bio,
-                            link     : response.link
-                        }})
-                        .success(function(data, status, headers, config) {
-                            $rootScope.user.infos = data.infos;
-                            $rootScope.user.votes = data.votes;
-                            $rootScope.user.isLogged = true;
-                            $cookieStore.put("tok", token_new);
-                            afterLoginAction();
-                        })
-                        .error(function(data, status, headers, config) {
-                            console.log("Erreur !");
-                        });
-                    });
-                }
-                else{
+                $window.FB.api('/me', function(response) {
                     $http({method: 'POST', url: '/users/login', data: {
-                        provider_user_id: response.authResponse.userID
+                        firstname: response.first_name,
+                        lastname : response.last_name,
+                        fullname : response.name,
+                        nickname : response.username,
+                        provider_user_id: response.id,
+                        gender   : response.gender == "male" ? 1 : response.gender == "female" ? 2 : 0,
+                        bio      : response.bio,
+                        link     : response.link
                     }})
                     .success(function(data, status, headers, config) {
                         $rootScope.user.infos = data.infos;
                         $rootScope.user.votes = data.votes;
                         $rootScope.user.isLogged = true;
-                        $cookieStore.put("tok", token_new);
-                        afterLoginAction();
+                        user_is_logged_deferred && user_is_logged_deferred.resolve(response);
+                    })
+                    .error(function(data, status, headers, config) {
+                        console.log("Erreur !");
+                        user_is_logged_deferred && user_is_logged_deferred.reject(response);
                     });
-
-                }
-
-                $rootScope.user.status = "connected";
-                $rootScope.user.accessToken = response.authResponse.accessToken;
-                //var uid = response.authResponse.userID;
+                });
 
             } else if (response.status === 'not_authorized') {
+                console.log("fb.status is not_authorized");
+                user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 $rootScope.user.status = "not_authorized";
-                $cookieStore.remove("tok");
             } else {
+                console.log("fb.status is unknown");
+                user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 $rootScope.user.status = "unknown";
-                $cookieStore.remove("tok");
                 // the user isn't logged in to Facebook.
             }
         });
@@ -306,32 +291,19 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         $rootScope.afterLogin = [];
     }
 
-    /*
-    function login(){
-            FB.login(function(response) {
-                console.log('doVote: FB login DONE. reponse = ', response);
-                if (response.authResponse) {
-                    console.log('doVote: registering after login action ');
-                    $rootScope.afterLogin.push(function(){
-                        console.log("doVote : anonymous call before savevote");
-                        saveVote(user_vote, texte);
-                    });
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
-                }
-            }, {scope: 'publish_actions'});
-
-    }
-    */
 
     function login(){
-        var deferred = $q.defer();
-
-        FB.login(function(response) {
-            deferred.resolve(response);
-        });
-
-        return deferred.promise;
+        console.log("User.login() START");
+        user_is_logged_deferred = $q.defer();
+        
+        if ($rootScope.user.status === "connected"){
+            user_is_logged_deferred.resolve();
+        }
+        else{
+            FB.login(null, {scope: 'publish_actions'});
+        }
+        
+        return user_is_logged_deferred.promise;
     }
 
     $rootScope.$on('userChanged', function(e) {
@@ -345,9 +317,9 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         });
     });
 
-
-    return $rootScope.user;
-
+    return {
+        login: login
+    }
 }]);
 
 

@@ -67,61 +67,39 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
     // Starts the vote process
     function doVote(user_vote, texte){
-        if ($rootScope.user.status != "connected"){
-            console.log("doVote: user pas loggé. Trying to logg in facebook...")
+        console.log("doVote START");
+        User.login().then(function(){
+            console.log("doVote => login.then START");
+            // Optimistic vote
+            $rootScope.user.infos.votes_nb++;
+            $rootScope.user.votes[texte.id] = user_vote;
 
-            User.login().then(function(){
+            console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
 
-            });
-            
-            FB.login(function(response) {
-                console.log('doVote: FB login DONE. reponse = ', response);
-                if (response.authResponse) {
-                    console.log('doVote: registering after login action ');
-                    $rootScope.afterLogin.push(function(){
-                        console.log("doVote : anonymous call before savevote");
-                        saveVote(user_vote, texte);
-                    });
-                } else {
-                    console.log('User cancelled login or did not fully authorize.');
+            // Sends the vote to the server
+            $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
+                user_id: $rootScope.user.infos.id,
+                texte_id: texte.id,
+                user_vote: user_vote
+            }})
+            // cancel vote if error
+            .success(function(data, status, headers, config) {
+                if (data.success){
+                    publishVote(user_vote, texte);
                 }
-            }, {scope: 'publish_actions'});
-
-            return;
-        }
-        saveVote(user_vote, texte);
-    }
-
-    // Saves the vote to server
-    function saveVote(user_vote, texte){
-        // Optimistic vote
-        $rootScope.user.infos.votes_nb++;
-        $rootScope.user.votes[texte.id] = user_vote;
-
-        console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
-
-        // Sends the vote to the server
-        $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
-            user_id: $rootScope.user.infos.id,
-            texte_id: texte.id,
-            user_vote: user_vote
-        }})
-        // cancel vote if error
-        .success(function(data, status, headers, config) {
-            if (data.success){
-                publishVote(user_vote, texte);
-            }
-            else {
+                else {
+                    delete $rootScope.user.votes[texte.id];
+                    $rootScope.user.infos.votes_nb--;
+                }
+            })
+            .error(function(data, status, headers, config) {
                 delete $rootScope.user.votes[texte.id];
                 $rootScope.user.infos.votes_nb--;
-            }
-        })
-        .error(function(data, status, headers, config) {
-            delete $rootScope.user.votes[texte.id];
-            $rootScope.user.infos.votes_nb--;
-            console.log("VOTE texte : Erreur !");
-        });
+                console.log("VOTE texte : Erreur !");
+            });
 
+
+        });
     }
 
     // Sends the vote to facebook
