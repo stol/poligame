@@ -304,8 +304,47 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         });
     });
 
+    // Envoie le vote à facebook
+    function publishVote(user_vote, texte){
+
+        var deferred = $q.defer();
+
+        // Lib pas chargée, on fait rien
+        if (!fb_is_loaded){
+            deferred.reject(response);
+            return deferred.promise;
+        }
+
+
+        if (false){
+            console.log("publishVote() => sending action");
+            $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
+                access_token: $rootScope.user.accessToken,
+                bill_project: 'http://samples.ogp.me/609805575706972'
+            }, function(response) {
+                console.log(response);
+                deferred.resolve(response);
+            });
+
+        }
+        else{
+            console.log("publishVote canceled (debug)");
+            deferred.resolve();
+        }
+
+        return deferred.promise;
+    }
+
+    // Renvoie true/false selon le statut de connextion du user
+    function isLogged(){
+        return $rootScope.user.isLogged;
+    }
+
+    // Module API
     return {
-        login: login
+        login      : login,
+        publishVote: publishVote,
+        isLogged   : isLogged
     }
 }]);
 

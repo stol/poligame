@@ -46,7 +46,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
             controller: 'ReminderPopinCtrl'
         }).open().then(function(result){
             result = !!result; // Casts result to boolean
-            console.log('dialog closed with result: ' + result);
             result && doVote(user_vote, texte);
         });
     }
@@ -67,14 +66,10 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
     // Starts the vote process
     function doVote(user_vote, texte){
-        console.log("doVote START");
         User.login().then(function(){
-            console.log("doVote => login.then START");
             // Optimistic vote
             $rootScope.user.infos.votes_nb++;
             $rootScope.user.votes[texte.id] = user_vote;
-
-            console.log("saving vote ("+user_vote+") for texte "+texte.id+"...")
 
             // Sends the vote to the server
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
@@ -85,7 +80,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
             // cancel vote if error
             .success(function(data, status, headers, config) {
                 if (data.success){
-                    publishVote(user_vote, texte);
+                    User.publishVote(user_vote, texte);
                 }
                 else {
                     delete $rootScope.user.votes[texte.id];
@@ -99,19 +94,6 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
             });
 
 
-        });
-    }
-
-    // Sends the vote to facebook
-    function publishVote(user_vote, texte){
-        console.log("publishVote canceled (debug)");
-        return;
-        console.log("sending action...");
-        FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
-            access_token: $rootScope.user.accessToken,
-            bill_project: 'http://samples.ogp.me/609805575706972'
-        }, function(response) {
-            console.log(response);
         });
     }
 
