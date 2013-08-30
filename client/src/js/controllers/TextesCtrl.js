@@ -28,7 +28,7 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
 
     // Open the right popin depending the user status
     function openPopinAndVote(user_vote, texte) {
-        if ($rootScope.user.isLogged && $rootScope.user.infos.votes_nb && $rootScope.user.infos.votes_nb % 2 == 0){
+        if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
             openUserInfosPopin(user_vote, texte);
         }
         else{
@@ -68,12 +68,12 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
     function doVote(user_vote, texte){
         User.login().then(function(){
             // Optimistic vote
-            $rootScope.user.infos.votes_nb++;
-            $rootScope.user.votes[texte.id] = user_vote;
+            User.infos.votes_nb++;
+            User.votes[texte.id] = user_vote;
 
             // Sends the vote to the server
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
-                user_id: $rootScope.user.infos.id,
+                user_id: User.infos.id,
                 texte_id: texte.id,
                 user_vote: user_vote
             }})
@@ -83,13 +83,13 @@ function($rootScope, $scope, $location, $http, $dialog, $routeParams, $window, T
                     User.publishVote(user_vote, texte);
                 }
                 else {
-                    delete $rootScope.user.votes[texte.id];
-                    $rootScope.user.infos.votes_nb--;
+                    delete User.votes[texte.id];
+                    User.infos.votes_nb--;
                 }
             })
             .error(function(data, status, headers, config) {
-                delete $rootScope.user.votes[texte.id];
-                $rootScope.user.infos.votes_nb--;
+                delete User.votes[texte.id];
+                User.infos.votes_nb--;
                 console.log("VOTE texte : Erreur !");
             });
 

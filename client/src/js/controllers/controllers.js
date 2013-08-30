@@ -31,11 +31,11 @@ moiElu.controller('ReminderPopinCtrl', ['$rootScope', '$scope', 'dialog', functi
     $scope.socialShare = true;
 }]);
 
-moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', function($rootScope, $scope, dialog) {
+moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', 'User', function($rootScope, $scope, dialog, User) {
 
-	$scope.csp    = angular.copy($rootScope.user.infos.csp);
-	$scope.gender = angular.copy($rootScope.user.infos.gender);
-	$scope.bord   = angular.copy($rootScope.user.infos.bord);
+	$scope.csp    = angular.copy(User.infos.csp);
+	$scope.gender = angular.copy(User.infos.gender);
+	$scope.bord   = angular.copy(User.infos.bord);
 
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
@@ -69,9 +69,9 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
 	}
 
     $scope.close = function(result){
-		$rootScope.user.infos.csp = $scope.csp;
-		$rootScope.user.infos.bord = $scope.bord;
-		$rootScope.user.infos.gender = $scope.gender;
+		User.infos.csp = $scope.csp;
+		User.infos.bord = $scope.bord;
+		User.infos.gender = $scope.gender;
 		$rootScope.$broadcast('userChanged');
         dialog.close(result);
     };
@@ -80,16 +80,16 @@ moiElu.controller('UserInfosPopinCtrl', ['$rootScope', '$scope', 'dialog', funct
 
 
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', function($rootScope, $http, $q) {
+moiElu.factory('Textes', function($rootScope, $http, $q, User) {
     var textes = {};
     var cache = {};
     
     var Texte = {
         isVoted: function(user_vote){
             if (user_vote != undefined)
-                return $rootScope.user.votes[this.id] && $rootScope.user.votes[this.id] === user_vote || false;
+                return User.votes[this.id] && User.votes[this.id] === user_vote || false;
             else
-                return !!$rootScope.user.votes[this.id];
+                return !!User.votes[this.id];
         },
 
         date_start: function(){
@@ -192,22 +192,23 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
 
 
 moiElu.controller('UsersCtrl', ['$rootScope', '$scope', 'Textes', 'User', function($rootScope, $scope, Textes, User) {
-    var ids = _.keys($rootScope.user.votes);
+    var ids = _.keys(User.votes);
     $scope.textes = Textes.get({ids: ids});
 }]);
 
 moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', function($rootScope, $window, $http, $cookieStore, $q) {
 
-    $rootScope.user = {
+    var accessToken = null,
+        isLogged = false,
+        status = null,
+        fb_is_loaded = false,    // La lib FB est-elle chargée ?
+        user_is_logged_deferred; // Promesse du login du user
+
+    var user = {
         infos: null,
-        accessToken: null,
-        isLogged: false,
-        votes: {},
-        status: null
+        votes: {}
     };
 
-    var fb_is_loaded = false;    // La lib FB est-elle chargée ?
-    var user_is_logged_deferred; // Promesse du login du user
 
     // Chargement de la lib facebook
     (function(d, s, id){
@@ -229,8 +230,8 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
 
         $window.FB.Event.subscribe('auth.statusChange', function(response) {
             if (response.status === 'connected') {
-                $rootScope.user.status = "connected";
-                $rootScope.user.accessToken = response.authResponse.accessToken;
+                status = "connected";
+                accessToken = response.authResponse.accessToken;
 
                 $window.FB.api('/me', function(response) {
                     $http({method: 'POST', url: '/users/login', data: {
@@ -244,9 +245,9 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
                         link     : response.link
                     }})
                     .success(function(data, status, headers, config) {
-                        $rootScope.user.infos = data.infos;
-                        $rootScope.user.votes = data.votes;
-                        $rootScope.user.isLogged = true;
+                        user.infos = data.infos;
+                        user.votes = data.votes;
+                        isLogged = true;
                         user_is_logged_deferred && user_is_logged_deferred.resolve(response);
                     })
                     .error(function(data, status, headers, config) {
@@ -256,10 +257,10 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
 
             } else if (response.status === 'not_authorized') {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                $rootScope.user.status = "not_authorized";
+                status = "not_authorized";
             } else {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                $rootScope.user.status = "unknown";
+                status = "unknown";
                 // the user isn't logged in to Facebook.
             }
         });
@@ -277,7 +278,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         user_is_logged_deferred = $q.defer();
         
         // User déjà connecté ? On ne déclenche pas le popup de login
-        if ($rootScope.user.status === "connected"){
+        if (status === "connected"){
             user_is_logged_deferred.resolve();
         }
         // user pas connecté mais lib facebook loadée ? On ouvre la popup
@@ -295,7 +296,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
 
     $rootScope.$on('userChanged', function(e) {
         
-        $http({method: 'POST', url: '/users/'+$rootScope.user.infos.id, data: $rootScope.user.infos})
+        $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
         .success(function(data, status, headers, config) {
             console.log("USER UPDATE is great success ! ");
         })
@@ -319,7 +320,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         if (false){
             console.log("publishVote() => sending action");
             $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
-                access_token: $rootScope.user.accessToken,
+                access_token: accessToken,
                 bill_project: 'http://samples.ogp.me/609805575706972'
             }, function(response) {
                 console.log(response);
@@ -337,15 +338,15 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
 
     // Renvoie true/false selon le statut de connextion du user
     function isLogged(){
-        return $rootScope.user.isLogged;
+        return isLogged;
     }
 
-    // Module API
-    return {
-        login      : login,
-        publishVote: publishVote,
-        isLogged   : isLogged
-    }
+    // Exposition de l'api
+    user.login       = login;
+    user.publishVote = publishVote;
+    user.isLogged    = isLogged;
+    
+    return user;
 }]);
 
 
