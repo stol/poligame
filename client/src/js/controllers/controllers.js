@@ -9,6 +9,7 @@ String.prototype.hashCode = function(){
     return Math.abs(hash);
 }
 
+
 /**
  * Gestion de la navigation
  */
@@ -192,11 +193,21 @@ moiElu.factory('Textes', function($http, $q, User) {
 
 
 moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', function($scope, Textes, User) {
+    User.waitForAuth().then(function(){
+        console.log("waitForAuth.then => success");
+    }, function(){
+        console.log("waitForAuth.then => error");
+    });
+    /*
     var ids = _.keys(User.votes);
     $scope.textes = Textes.get({ids: ids});
+    */
 }]);
 
 
+moiElu.controller('AppCtrl', ['$scope', 'User', function($scope, User) {
+    $scope.user = User;
+}]);
 
 
 

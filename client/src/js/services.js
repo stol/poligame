@@ -4,7 +4,8 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
         isLogged = false,
         status = null,
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
-        user_is_logged_deferred; // Promesse du login du user
+        user_is_logged_deferred, // Promesse du login du user
+        fb_is_loaded_deferred = $q.defer();
 
     var user = {
         infos: null,
@@ -30,7 +31,10 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
             xfbml: true
         });
 
+        fb_is_loaded_deferred.resolve();
+
         $window.FB.Event.subscribe('auth.statusChange', function(response) {
+            console.log("auth.statusChange : ", response.status);
             if (response.status === 'connected') {
                 status = "connected";
                 accessToken = response.authResponse.accessToken;
@@ -148,6 +152,16 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
     user.isLogged    = isLogged;
     user.changed     = changed;
 
+    user.waitForAuth = function(){
+        console.log("waitForAuth() START");
+        var deferred = $q.defer();
+        fb_is_loaded_deferred.promise.then(function(){
+            console.log("waitForAuth() => fb_is_loaded_deferred.promise.then START");
+            deferred.resolve();
+        })
+        return deferred.promise;
+    }
+
     
     return user;
 }]);
@@ -168,3 +182,4 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
 
 
 
+     

@@ -28,10 +28,8 @@ moiElu.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 
-// application initialization : declare $httpBackend.when*() behaviors
-moiElu.run(['User', function(User) {
-
-}]);
+// application initialization
+moiElu.run();
 
 moment.lang('fr', {
     months : "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),
