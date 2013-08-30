@@ -192,15 +192,11 @@ moiElu.factory('Textes', function($rootScope, $http, $q) {
 
 
 moiElu.controller('UsersCtrl', ['$rootScope', '$scope', 'Textes', 'User', function($rootScope, $scope, Textes, User) {
-    console.log(User);
-    console.log("$rootScope.user.votes = ", $rootScope.user.votes);
     var ids = _.keys($rootScope.user.votes);
     $scope.textes = Textes.get({ids: ids});
 }]);
 
 moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', function($rootScope, $window, $http, $cookieStore, $q) {
-
-    $rootScope.afterLogin = [];
 
     $rootScope.user = {
         infos: null,
@@ -210,28 +206,18 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         status: null
     };
 
+    var fb_is_loaded = false;    // La lib FB est-elle chargée ?
+    var user_is_logged_deferred; // Promesse du login du user
 
-    function init(){
-        var deferred = $q.defer();
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/fr_FR/all.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-        $window.fbAsyncInit = deferred.resolve;
-
-        return deferred.promise;
-    }
+    // Chargement de la lib facebook
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/fr_FR/all.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
     
-    init().then(function(){
-        fb_loaded();
-    });
-
-
-    var user_is_logged_deferred;
-
-    function fb_loaded(){
+    // Initialisation de la lib facebook
+    $window.fbAsyncInit = function(){
         // Executed when the SDK is loaded
         $window.FB.init({ 
             appId: '609395745747955', 
@@ -242,9 +228,7 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
         });
 
         $window.FB.Event.subscribe('auth.statusChange', function(response) {
-            console.log("fb_loaded() => status changed ("+response.status+")");
             if (response.status === 'connected') {
-                console.log("fb.status is connected");
                 $rootScope.user.status = "connected";
                 $rootScope.user.accessToken = response.authResponse.accessToken;
 
@@ -266,41 +250,44 @@ moiElu.service('User', ['$rootScope', '$window', '$http', '$cookieStore', '$q', 
                         user_is_logged_deferred && user_is_logged_deferred.resolve(response);
                     })
                     .error(function(data, status, headers, config) {
-                        console.log("Erreur !");
                         user_is_logged_deferred && user_is_logged_deferred.reject(response);
                     });
                 });
 
             } else if (response.status === 'not_authorized') {
-                console.log("fb.status is not_authorized");
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 $rootScope.user.status = "not_authorized";
             } else {
-                console.log("fb.status is unknown");
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 $rootScope.user.status = "unknown";
                 // the user isn't logged in to Facebook.
             }
         });
+
+        fb_is_loaded = true;
     }
 
-    function afterLoginAction(){
-        for( var i=0; i < $rootScope.afterLogin.length; i++){
-            $rootScope.afterLogin[i]();
-        }
-        $rootScope.afterLogin = [];
-    }
-
-
+    // Déclenche la procédure de login de l'utilisateur. Renvoie une promesse utilisable ainsi :
+    // User.login().then(
+    //     function(reason){ console.log("Identification réussie") },
+    //     function(reason){ console.log("Identification échouée") }
+    // );
     function login(){
         console.log("User.login() START");
         user_is_logged_deferred = $q.defer();
         
+        // User déjà connecté ? On ne déclenche pas le popup de login
         if ($rootScope.user.status === "connected"){
             user_is_logged_deferred.resolve();
         }
+        // user pas connecté mais lib facebook loadée ? On ouvre la popup
+        else if (fb_is_loaded){
+            $window.FB.login(null, {scope: 'publish_actions'});
+        }
+        // Lib facebook pas chargée, statut du user pas connu, donc on fait rien
         else{
-            FB.login(null, {scope: 'publish_actions'});
+            alert("Authentification en cours... Merci de réessayer dans quelques secondes");
+            user_is_logged_deferred.reject();
         }
         
         return user_is_logged_deferred.promise;
