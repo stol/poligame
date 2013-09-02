@@ -193,15 +193,14 @@ moiElu.factory('Textes', function($http, $q, User) {
 
 
 moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', function($scope, Textes, User) {
-    User.waitForAuth().then(function(){
+    console.log("UsersCtrl => calling User.waitForLogged");
+    User.waitIfNotLogged().then(function(){
         console.log("waitForAuth.then => success");
-    }, function(){
+        var ids = _.keys(User.votes);
+        $scope.textes = Textes.get({ids: ids});
+    }, function(reason){
         console.log("waitForAuth.then => error");
     });
-    /*
-    var ids = _.keys(User.votes);
-    $scope.textes = Textes.get({ids: ids});
-    */
 }]);
 
 

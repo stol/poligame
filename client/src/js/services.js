@@ -1,7 +1,7 @@
 moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($window, $http, $cookieStore, $q) {
 
     var accessToken = null,
-        isLogged = false,
+        is_logged = false,
         status = null,
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
         user_is_logged_deferred, // Promesse du login du user
@@ -20,25 +20,38 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
     
-    // Initialisation de la lib facebook
+    // Executé au chargement de la lib facebook
     $window.fbAsyncInit = function(){
-        // Executed when the SDK is loaded
+        var statusAlreadyChecked = false;
+
+        // Initialisation
         $window.FB.init({ 
             appId: '609395745747955', 
             channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
-            status: true, 
+            status: false, 
             cookie: true, 
             xfbml: true
         });
 
-        fb_is_loaded_deferred.resolve();
+        // Quoi faire si changement de statut
+        $window.FB.Event.subscribe('auth.statusChange', statusHandler);
+        $window.FB.getLoginStatus(loginStatusHandler);
 
-        $window.FB.Event.subscribe('auth.statusChange', function(response) {
+        function loginStatusHandler(response){
+            statusAlreadyChecked || statusHandler(response);
+        }
+
+        // Le gestionnaire de changement de statut
+        function statusHandler(response){
+            statusAlreadyChecked = true;
             console.log("auth.statusChange : ", response.status);
+
+            // User connecté ET inscrit
             if (response.status === 'connected') {
                 status = "connected";
                 accessToken = response.authResponse.accessToken;
 
+                // Maj des infos sur le serveur
                 $window.FB.api('/me', function(response) {
                     $http({method: 'POST', url: '/users/login', data: {
                         firstname: response.first_name,
@@ -53,24 +66,32 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
                     .success(function(data, status, headers, config) {
                         user.infos = data.infos;
                         user.votes = data.votes;
-                        isLogged = true;
+                        is_logged = true;
                         user_is_logged_deferred && user_is_logged_deferred.resolve(response);
+                        fb_is_loaded_deferred.resolve();
                     })
                     .error(function(data, status, headers, config) {
                         user_is_logged_deferred && user_is_logged_deferred.reject(response);
+                        fb_is_loaded_deferred.reject();
                     });
                 });
 
+            // User connecté MAIS PAS inscrit
             } else if (response.status === 'not_authorized') {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
+                fb_is_loaded_deferred.reject();
                 status = "not_authorized";
+
+            // User pas connecté
             } else {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
+                fb_is_loaded_deferred.reject();
                 status = "unknown";
-                // the user isn't logged in to Facebook.
+                
             }
-        });
+        }
 
+        // On marque la lib comme chargée
         fb_is_loaded = true;
     }
 
@@ -80,7 +101,6 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
     //     function(reason){ console.log("Identification échouée") }
     // );
     function login(){
-        console.log("User.login() START");
         user_is_logged_deferred = $q.defer();
         
         // User déjà connecté ? On ne déclenche pas le popup de login
@@ -143,24 +163,28 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
 
     // Renvoie true/false selon le statut de connextion du user
     function isLogged(){
-        return isLogged;
+        return is_logged;
+    }
+
+    function waitIfNotLogged(){
+        if (is_logged){
+            var deferred = $q.defer();
+            deferred.resolve();
+            return deferred.promise;
+        }
+        else{
+            return fb_is_loaded_deferred.promise;
+        }
+        
     }
 
     // Exposition de l'api
-    user.login       = login;
-    user.publishVote = publishVote;
-    user.isLogged    = isLogged;
-    user.changed     = changed;
+    user.login           = login;
+    user.publishVote     = publishVote;
+    user.isLogged        = isLogged;
+    user.changed         = changed;
+    user.waitIfNotLogged = waitIfNotLogged;
 
-    user.waitForAuth = function(){
-        console.log("waitForAuth() START");
-        var deferred = $q.defer();
-        fb_is_loaded_deferred.promise.then(function(){
-            console.log("waitForAuth() => fb_is_loaded_deferred.promise.then START");
-            deferred.resolve();
-        })
-        return deferred.promise;
-    }
 
     
     return user;
