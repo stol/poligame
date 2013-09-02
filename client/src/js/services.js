@@ -5,7 +5,8 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
         status = null,
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
         user_is_logged_deferred, // Promesse du login du user
-        fb_is_loaded_deferred = $q.defer();
+        fb_is_loaded_deferred = new jQuery.Deferred(); // Angular déconne, donc => c'est jquery "é pis f'est tout"
+        // TODO : tester les events
 
     var user = {
         infos: null,
@@ -173,7 +174,7 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
             return deferred.promise;
         }
         else{
-            return fb_is_loaded_deferred.promise;
+            return fb_is_loaded_deferred.promise();
         }
         
     }
@@ -185,8 +186,6 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
     user.changed         = changed;
     user.waitIfNotLogged = waitIfNotLogged;
 
-
-    
     return user;
 }]);
 

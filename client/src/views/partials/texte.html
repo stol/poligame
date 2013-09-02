@@ -41,7 +41,7 @@
 	<div ng-switch-when="current">
 		<div ng-switch on="texte.isVoted()">
 			<div class="text-center" ng-switch-when="true">
-				Vous avez déjà voté !
+				<button class="btn" disabled>Vous avez déjà voté !</button>
 			</div>
 			<div class="text-center" ng-switch-default>
 				<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
