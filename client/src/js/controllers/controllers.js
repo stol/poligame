@@ -193,20 +193,11 @@ moiElu.factory('Textes', function($http, $q, User) {
 
 
 moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
-
-    $scope.textes = User.waitIfNotLogged().then(function(){
-        console.log("pendant : $scope.textes = ", $scope.textes);
-        var ids = _.keys(User.votes);
-        return Textes.get({ids: ids});
+    User.onConnected(function(e){
+        $scope.textes = Textes.get({ids: _.keys(User.votes)});
     }, function(){
         $scope.$apply(function() { $location.path("/"); });
     });
-
-    /*
-    User.onConnected(function(e){
-        console.log("User.onConnected called");
-    });
-    */
 }]);
 
 

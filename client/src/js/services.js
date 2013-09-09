@@ -4,8 +4,7 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
         is_logged = false,
         status = null,
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
-        user_is_logged_deferred, // Promesse du login du user
-        fb_is_loaded_deferred = $q.defer();
+        user_is_logged_deferred; // Promesse du login du user
         // TODO : tester les events
 
     var user = {
@@ -71,12 +70,11 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
                         user.votes = data.votes;
                         is_logged = true;
                         user_is_logged_deferred && user_is_logged_deferred.resolve(response);
-                        fb_is_loaded_deferred.resolve();
                         $rootScope.$broadcast('userConnected');
                     })
                     .error(function(data, status, headers, config) {
+                        status = "error";
                         user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                        fb_is_loaded_deferred.reject();
                         $rootScope.$broadcast('userError');
                     });
                 });
@@ -84,7 +82,6 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
             // User connecté MAIS PAS inscrit
             } else if (response.status === 'not_authorized') {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                fb_is_loaded_deferred.reject();
                 status = "not_authorized";
                 $rootScope.$broadcast('userNotAuthorized');
 
@@ -92,7 +89,7 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
             // User pas connecté
             } else {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                fb_is_loaded_deferred.reject();
+                status = "unknown";
                 $rootScope.$broadcast('userUnknown');
             }
         }
@@ -172,28 +169,64 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
         return is_logged;
     }
 
-    function waitIfNotLogged(){
-        if (is_logged){
-            var deferred = $q.defer();
-            deferred.resolve();
-            return deferred.promise;
-        }
+    // Usage :  
+    // User.onConnected(function(e){
+    //     console.log("User is/just connected !");
+    // }, function(){
+    //     console.log("User was/is not connected !");
+    // }).onNotAuthorized(function(){
+    //     console.log("User is/just not authorized!");
+    // });
+    user.onConnected = function(success, error){
+        if (status === 'connected') success && success();
+        else if (status !== null)   error && error();
         else{
-            return fb_is_loaded_deferred.promise;
+            $rootScope.$on('userConnected', success);
+            $rootScope.$on('userError', error);
+            $rootScope.$on('userNotAuthorized', error);
+            $rootScope.$on('userUnknown', error);
         }
-        
-    }
+        return user;
+    };
+    user.onError = function(success, error){
+        if (status === 'error') success && success();
+        else if (status !== null)   error && error();
+        else{
+            $rootScope.$on('userConnected', error);
+            $rootScope.$on('userError', success);
+            $rootScope.$on('userNotAuthorized', error);
+            $rootScope.$on('userUnknown', error);
+        }
+        return user;
+    };
+    user.onNotAuthorized = function(success, error){
+        if (status === 'not_authorized') success && success();
+        else if (status !== null)   error && error();
+        else{
+            $rootScope.$on('userConnected', error);
+            $rootScope.$on('userError', error);
+            $rootScope.$on('userNotAuthorized', success);
+            $rootScope.$on('userUnknown', error);
+        }
+        return user;
+    };
+    user.onUnknown = function(success, error){
+        if (status === 'unknown') success && success();
+        else if (status !== null)   error && error();
+        else{
+            $rootScope.$on('userConnected', error);
+            $rootScope.$on('userError', error);
+            $rootScope.$on('userNotAuthorized', error);
+            $rootScope.$on('userUnknown', success);
+        }
+        return user;
+    };
 
     // Exposition de l'api
     user.login           = login;
     user.publishVote     = publishVote;
     user.isLogged        = isLogged;
     user.changed         = changed;
-    user.waitIfNotLogged = waitIfNotLogged;
-
-    user.onConnected = function(callback){
-        $rootScope.$on('userConnected', callback);
-    };
 
     return user;
 }]);
