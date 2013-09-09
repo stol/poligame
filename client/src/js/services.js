@@ -1,11 +1,11 @@
-moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($window, $http, $cookieStore, $q) {
+moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', function($window, $http, $cookieStore, $q, $rootScope) {
 
     var accessToken = null,
         is_logged = false,
         status = null,
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
         user_is_logged_deferred, // Promesse du login du user
-        fb_is_loaded_deferred = new jQuery.Deferred(); // Angular déconne, donc => c'est jquery "é pis f'est tout"
+        fb_is_loaded_deferred = $q.defer();
         // TODO : tester les events
 
     var user = {
@@ -33,6 +33,8 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
             cookie: true, 
             xfbml: true
         });
+
+        $rootScope.$broadcast('fbLoaded');
 
         // Quoi faire si changement de statut
         $window.FB.Event.subscribe('auth.statusChange', statusHandler);
@@ -70,10 +72,12 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
                         is_logged = true;
                         user_is_logged_deferred && user_is_logged_deferred.resolve(response);
                         fb_is_loaded_deferred.resolve();
+                        $rootScope.$broadcast('userConnected');
                     })
                     .error(function(data, status, headers, config) {
                         user_is_logged_deferred && user_is_logged_deferred.reject(response);
                         fb_is_loaded_deferred.reject();
+                        $rootScope.$broadcast('userError');
                     });
                 });
 
@@ -82,13 +86,14 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 fb_is_loaded_deferred.reject();
                 status = "not_authorized";
+                $rootScope.$broadcast('userNotAuthorized');
+
 
             // User pas connecté
             } else {
                 user_is_logged_deferred && user_is_logged_deferred.reject(response);
                 fb_is_loaded_deferred.reject();
-                status = "unknown";
-                
+                $rootScope.$broadcast('userUnknown');
             }
         }
 
@@ -174,7 +179,7 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
             return deferred.promise;
         }
         else{
-            return fb_is_loaded_deferred.promise();
+            return fb_is_loaded_deferred.promise;
         }
         
     }
@@ -185,6 +190,10 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', function($wind
     user.isLogged        = isLogged;
     user.changed         = changed;
     user.waitIfNotLogged = waitIfNotLogged;
+
+    user.onConnected = function(callback){
+        $rootScope.$on('userConnected', callback);
+    };
 
     return user;
 }]);

@@ -1,10 +1,7 @@
-<h2>Listes des textes que vous avez votés</h2>
+<h2>Listes des textes que vous avez votés ({{textes.length}})</h2>
 
-<div ng-switch on="textes.length">
-	<div ng-switch-when=">0" ng-repeat="texte in textes">
-		<h4><a href="/textes/{{texte.id}}">{{texte.text}}</a></h4>
-	</div>
-	<p ng-switch-default>Vous n'avez participé à aucun vote.</p>
+<div ng-repeat="texte in textes">
+	<h4><a href="/textes/{{texte.id}}">Texte : {{texte.text}}</a></h4>
 </div>
 
 
