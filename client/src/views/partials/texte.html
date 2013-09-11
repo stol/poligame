@@ -2,6 +2,10 @@
 
 <p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
 
+<p><b>Extrait : </b></p>
+
+<p>{{texte.description}}</p>
+
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>

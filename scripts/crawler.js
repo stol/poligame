@@ -56,7 +56,8 @@ moment.lang('fr', {
 });
 
 var c = new Crawler({
-	"maxConnections":2,
+	maxConnections: 2,
+	forceUTF8: true
 });
 
 // Queue URLs with custom callbacks & parameters
@@ -75,15 +76,12 @@ c.queue([{
 		var jour = null;
 		var textes = {};
 		$(".MsoNormal").each(function(i, ligne){
-			console.log("------------\n"+$.trim($(ligne).text()).substr(0,20)+"...")
 			
 			// Nouveau jour
 			// Suspiscion de nouveau jour
 			if ($(ligne).parents(".MsoNormalTable").length){
-				console.log("Suspiscion de nouveau jour...")
 				
 				if ($(ligne).parents("td").attr("bgcolor")){
-					console.log("C'est un nouveau jour !")
 
 					jour && jours.push(jour);
 					var text_content = $.trim($(ligne).text());
@@ -91,10 +89,6 @@ c.queue([{
 						date: moment(text_content, "dddd D MMMM").year("2013"),
 						textes: []
 					};
-					console.log(jour.date.format("DD/MM/YYYY"));
-				}
-				else{
-					console.log("c'est une heure !");
 				}
 				// On return, car c'était un jour, ou une heure
 				return;
@@ -105,7 +99,6 @@ c.queue([{
 
 			// ligne vide ?
 			if (!text_content){
-				console.log("ligne vide !")
 				return;
 			}
 
@@ -113,13 +106,14 @@ c.queue([{
 
 			// Ligne n'est pas un texte ?
 			if (text_content.indexOf("Discussion") !== 0 && text_content.indexOf("Suite de la discussion")){
-				console.log("pas un texte !")
 				return;
 			}
 
-			console.log("Texte !");
-
 			var texte_url = $(ligne).find("a").attr("href");
+			// On nettoie l'url des trucs genre "#xxx"
+			if (texte_url.indexOf("#") > 0){
+				texte_url = texte_url.substr(0, texte_url.indexOf("#"));
+			}
 
 			if (!textes[texte_url]){
 				textes[texte_url] = {
@@ -139,12 +133,13 @@ c.queue([{
 			});
 		});
 
-		console.log(textes);
+		//console.log(textes);
 
 		$.each(textes, function(i, texte){
 			c.queue([{
 				uri: "http://www.assemblee-nationale.fr"+texte.url,
-				callback: parse_detail
+				callback: parse_detail,
+				texte: texte
 			}]);
 		});
 	}
@@ -153,10 +148,33 @@ c.queue([{
 
 
 function parse_detail(error,result, $){
-	var titre = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
-	console.log("DONE '"+titre+"'");
-	//var description = $.trim($("#AutoNumber4").text());
+	var texte = this.texte;
 
+	texte.titre = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
+	console.log("Analysing "+texte.titre+"...");
+
+	// Boucle sur les cadres à la con
+	var $coms = $("commentaire");
+	$coms.each(function(i, commentaire){
+	    var $ps = $(commentaire).find("td p");
+
+		if ($ps.length != 2){
+			return;
+		}
+		var bloc_titre = $.trim($ps.eq(0).text());
+		if (bloc_titre.indexOf("Extrait") === 0){
+			texte.description = $.trim($ps.eq(1).text());
+		}
+	});
+
+	var data = {
+		text: texte.titre,
+		description: texte.description
+	}
+
+	db.query("INSERT INTO textes SET ?", data, function(err, rows, fields) {
+		if (err) throw err;
+	});
 
 }
 
