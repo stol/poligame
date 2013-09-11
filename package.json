@@ -1,5 +1,5 @@
 {
-  "name": "moiElu",
+  "name": "moielu",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-cssmin": "*",
     "grunt-contrib-concat": "*",
-    "grunt-usemin": "*"
+    "grunt-usemin": "*",
+    "crawler": "*"
   }
 }
