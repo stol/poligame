@@ -2,9 +2,9 @@
 
 <p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
 
-<p><b>Extrait : </b></p>
+<p><b ng-bind-html-unsafe='texte.description_titre'></b></p>
 
-<p>{{texte.description}}</p>
+<p ng-bind-html-unsafe='texte.description | nl2br'></p>
 
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">

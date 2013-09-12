@@ -28,6 +28,14 @@ moiElu.config(['$locationProvider', function($locationProvider) {
     $locationProvider.html5Mode(true);
 }]);
 
+moiElu.filter('nl2br', function () {
+    return function(text) {
+        if (!text)
+            return '';
+        return text.replace(/\n/g, '<br/>');
+    }
+})
+
 // application initialization
 moiElu.run();
 
@@ -75,3 +83,4 @@ moment.lang('fr', {
         doy : 4  // The week that contains Jan 4th is the first week of the year.
     }
 });
+

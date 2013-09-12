@@ -109,35 +109,44 @@ c.queue([{
 				return;
 			}
 
-			var texte_url = $(ligne).find("a").attr("href");
+			var texte_link = $(ligne).find("a").attr("href");
 			// On nettoie l'url des trucs genre "#xxx"
-			if (texte_url.indexOf("#") > 0){
-				texte_url = texte_url.substr(0, texte_url.indexOf("#"));
+			if (texte_link.indexOf("#") > 0){
+				texte_link = texte_link.substr(0, texte_link.indexOf("#"));
 			}
 
-			if (!textes[texte_url]){
-				textes[texte_url] = {
-					url: texte_url,
+			if (!textes[texte_link]){
+				textes[texte_link] = {
+					link: "http://www.assemblee-nationale.fr"+texte_link,
 					dates : [
 						jour.date
 					]
 				}
 			}
 			else{
-				textes[texte_url].dates.push(jour.date);
+				textes[texte_link].dates.push(jour.date);
 			}
 
 			jour.textes.push({
 				node: ligne,
-				url: texte_url
+				link: texte_link
 			});
 		});
 
-		//console.log(textes);
+		console.log(textes);
 
+		// Boucle sur chaque texte pour déterminer les dates et lancer le crawl détaillé
 		$.each(textes, function(i, texte){
+			if (!texte.dates[0]){
+				return;
+			}
+
+			texte.starts_at = texte.dates[0].format("YYYY-MM-DD 00:00:00");
+			texte.ends_at = texte.dates[texte.dates.length-1].format("YYYY-MM-DD 23:59:59");
+			console.log(texte.starts_at + " => " + texte.ends_at);
+
 			c.queue([{
-				uri: "http://www.assemblee-nationale.fr"+texte.url,
+				uri: texte.link,
 				callback: parse_detail,
 				texte: texte
 			}]);
@@ -163,13 +172,19 @@ function parse_detail(error,result, $){
 		}
 		var bloc_titre = $.trim($ps.eq(0).text());
 		if (bloc_titre.indexOf("Extrait") === 0){
-			texte.description = $.trim($ps.eq(1).text());
+			texte.description_titre = bloc_titre;
+			var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
+			texte.description = $(txt).text();
 		}
 	});
 
 	var data = {
 		text: texte.titre,
-		description: texte.description
+		description: texte.description,
+		description_titre: texte.description_titre,
+		link: texte.link,
+		starts_at: texte.starts_at,
+		ends_at: texte.ends_at
 	}
 
 	db.query("INSERT INTO textes SET ?", data, function(err, rows, fields) {
