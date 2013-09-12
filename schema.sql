@@ -98,12 +98,32 @@ KEY (`texte_id`)
 );
 
 -- ---
+-- Table 'points'
+-- 
+-- ---
+
+DROP TABLE IF EXISTS `points`;
+    
+CREATE TABLE `points` (
+  `texte_id` INTEGER NULL DEFAULT NULL,
+  `type` INTEGER NULL DEFAULT NULL,
+  `numero` INTEGER NULL DEFAULT NULL,
+  `titre` MEDIUMTEXT NULL DEFAULT NULL,
+  `text` MEDIUMTEXT NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT NULL,
+  PRIMARY KEY (`texte_id`, `type`, `numero`),
+KEY (`texte_id`)
+);
+
+-- ---
 -- Foreign Keys 
 -- ---
 
 ALTER TABLE `votes` ADD FOREIGN KEY (user_id) REFERENCES `users` (`id`);
 ALTER TABLE `votes` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
 ALTER TABLE `votes_anon` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
+ALTER TABLE `points` ADD FOREIGN KEY (texte_id) REFERENCES `textes` (`id`);
 
 -- ---
 -- Table Properties
@@ -113,6 +133,7 @@ ALTER TABLE `textes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `votes` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `users` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 ALTER TABLE `votes_anon` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+ALTER TABLE `points` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 -- ---
 -- Test Data

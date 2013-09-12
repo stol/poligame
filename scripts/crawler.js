@@ -115,8 +115,6 @@ c.queue([{
 				texte_link = texte_link.substr(0, texte_link.indexOf("#"));
 			}
 
-			console.log(Math.abs(texte_link.hashCode()));
-
 			if (!textes[texte_link]){
 				textes[texte_link] = {
 					id_hash: Math.abs(texte_link.hashCode()),
@@ -159,7 +157,9 @@ c.queue([{
 
 
 function parse_detail(error,result, $){
+
 	var texte = this.texte;
+	texte.points = [];
 
 	texte.titre = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
 	console.log("Analysing "+texte.titre+"...");
@@ -178,6 +178,43 @@ function parse_detail(error,result, $){
 			var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
 			texte.description = $(txt).text();
 		}
+		else if (bloc_titre.indexOf("Principales dispositions") === 0){
+			var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
+			txt = $(txt).text();	
+			//console.log(txt);
+			var lignes = txt.split("\n");
+			var ligne = null;
+			var point_titre = null;
+			var point_texte = null;
+			for(var i=0; i<lignes.length; i++){
+				ligne = $.trim(lignes[i]); 
+
+				// ligne vide ? On fait rien
+				if (!ligne.length) {
+					continue;
+				}
+
+				// Titre d'article ?
+				if (ligne.match(/^article\s+\d+/gi)){
+					point_titre && texte.points.push({
+						titre: point_titre,
+						texte: point_texte,
+						numero: point_titre.match(/\d+/)[0]
+					});
+					point_titre = $.trim(ligne.replace(/\s?:/g, ""));
+					point_texte = "";
+				}
+				// Contenu d'article ?
+				else{
+					point_texte+=ligne+"\n";
+				}
+			}
+			point_titre && texte.points.push({
+				titre: point_titre,
+				texte: point_texte,
+				numero: point_titre.match(/\d+/)[0]
+			});
+		}
 	});
 
 	var data = {
@@ -189,22 +226,24 @@ function parse_detail(error,result, $){
 		starts_at: texte.starts_at,
 		ends_at: texte.ends_at
 	}
-
+	
 	db.query("SELECT * FROM textes WHERE id_hash = ?", texte.id_hash, function(err, rows, fields) {
 		if (rows.length == 0){
-			console.log("inserting...");
-			db.query("INSERT INTO textes SET ?", data, function(err, rows, fields) {
+			console.log("NOUVEAU : texte.text");
+			db.query("INSERT INTO textes SET ?", data, function(err, result) {
 				if (err) throw err;
+				texte.id = result.insertId;
+				insert_points(texte);
 			});
 			return;
 		}
-		console.log("déjà présent...");
+
+		texte.id = rows[0].id;
 
 		var starts_at = moment(rows[0].starts_at);
 		var texte_start_at = moment(texte.starts_at);
 		var ends_at = moment(rows[0].ends_at);
 		var texte_ends_at = moment(texte.ends_at);
-
 
 		if (starts_at < texte_start_at){
 			data.starts_at = starts_at.format('YYYY-MM-DD 00:00:00');
@@ -216,7 +255,28 @@ function parse_detail(error,result, $){
 		db.query("UPDATE textes SET ?  WHERE id_hash = "+texte.id_hash, data, function(err, rows, fields) {
   			if (err) throw err;
 		});
+		insert_points(texte);
 	});
+}
+
+
+function insert_points(texte){
+	var point = null;
+	for(var i=0; i<texte.points.length; i++){
+		point = texte.points[i];
+		var data = {
+			texte_id: texte.id,
+			type: 1,
+			numero: point.numero,
+			titre: point.titre,
+			text: point.texte
+		};
+
+		db.query("INSERT IGNORE INTO points SET ?", data, function(err, result) {
+			if (err) throw err;
+		});
+	}
+
 }
 
 String.prototype.hashCode = function(){
