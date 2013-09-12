@@ -238,34 +238,43 @@ exports.textes = function(req, res){
 
 
 exports.show = function(req, res){
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+	}
+
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
-  		if (req.xhr){
-  			var texte = rows[0];
 
-  			var current   = moment(),
-  				starts_at = moment(texte.starts_at),
-  				ends_at   = moment(texte.ends_at);
+		var texte = rows[0];
 
-  			if (ends_at < current)
-  				texte.mode = "past";
-  			else if (starts_at < current && ends_at > current)
-  				texte.mode = "current";
-  			else
-  				texte.mode = "future";
+		var current   = moment(),
+			starts_at = moment(texte.starts_at),
+			ends_at   = moment(texte.ends_at);
 
-  			alter_texte(texte);
+		if (ends_at < current)
+			texte.mode = "past";
+		else if (starts_at < current && ends_at > current)
+			texte.mode = "current";
+		else
+			texte.mode = "future";
 
-  			get_stats(texte, function(texte){
-				res.json(texte);
-  			});
-  		}
-  		else
-  			res.render('index', { title: 'Express' });
+		alter_texte(texte);
+
+		get_stats(texte, function(texte){
+			res.json(texte);
+		});
 	});
-
-
 };
+
+exports.articles = function(req, res){
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+	}
+
+	db.query('SELECT * from points WHERE texte_id = ? AND type = 1', [req.params.texte_id], function(err, rows, fields) {
+		res.json(rows);
+	});
+}
 
 exports.vote = function(req, res){
 

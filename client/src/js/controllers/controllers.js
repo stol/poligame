@@ -149,7 +149,7 @@ moiElu.factory('Textes', function($http, $q, User) {
 
         var deferred = $q.defer();
 
-        $http(config = {
+        $http({
             method: 'GET',
             url: url,
             cache: true,

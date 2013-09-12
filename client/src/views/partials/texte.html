@@ -6,6 +6,15 @@
 
 <p ng-bind-html-unsafe='texte.description | nl2br'></p>
 
+<p><b>Principaux articles ({{articles.length}})</b></b>
+<dl ng-repeat="article in articles">
+	<dt>{{article.titre}}</dt>
+	<dd>{{article.text}}</dd>
+</dl>
+
+
+</div>
+
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
 		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>

@@ -13,16 +13,22 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
     }
 
     $scope.init_texte = function (){
-        var texte_id = $routeParams.texte_id;
-
-        if (!texte_id){
+        if (!$routeParams.texte_id){
             return;
         }
-
         
         $scope.texte = Textes.get({id: $routeParams.texte_id});
 
         $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
+
+        
+        $http({
+            method: 'GET',
+            url: '/textes/'+$routeParams.texte_id+'/articles',
+            cache: true
+        }).success(function(data, status, headers, config) {
+            $scope.articles = data;
+        });
 
     }
 
