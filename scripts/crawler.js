@@ -115,8 +115,11 @@ c.queue([{
 				texte_link = texte_link.substr(0, texte_link.indexOf("#"));
 			}
 
+			console.log(Math.abs(texte_link.hashCode()));
+
 			if (!textes[texte_link]){
 				textes[texte_link] = {
+					id_hash: Math.abs(texte_link.hashCode()),
 					link: "http://www.assemblee-nationale.fr"+texte_link,
 					dates : [
 						jour.date
@@ -133,7 +136,7 @@ c.queue([{
 			});
 		});
 
-		console.log(textes);
+		//console.log(textes);
 
 		// Boucle sur chaque texte pour déterminer les dates et lancer le crawl détaillé
 		$.each(textes, function(i, texte){
@@ -143,7 +146,6 @@ c.queue([{
 
 			texte.starts_at = texte.dates[0].format("YYYY-MM-DD 00:00:00");
 			texte.ends_at = texte.dates[texte.dates.length-1].format("YYYY-MM-DD 23:59:59");
-			console.log(texte.starts_at + " => " + texte.ends_at);
 
 			c.queue([{
 				uri: texte.link,
@@ -179,6 +181,7 @@ function parse_detail(error,result, $){
 	});
 
 	var data = {
+		id_hash: texte.id_hash,
 		text: texte.titre,
 		description: texte.description,
 		description_titre: texte.description_titre,
@@ -187,18 +190,45 @@ function parse_detail(error,result, $){
 		ends_at: texte.ends_at
 	}
 
-	db.query("INSERT INTO textes SET ?", data, function(err, rows, fields) {
-		if (err) throw err;
-	});
+	db.query("SELECT * FROM textes WHERE id_hash = ?", texte.id_hash, function(err, rows, fields) {
+		if (rows.length == 0){
+			console.log("inserting...");
+			db.query("INSERT INTO textes SET ?", data, function(err, rows, fields) {
+				if (err) throw err;
+			});
+			return;
+		}
+		console.log("déjà présent...");
 
+		var starts_at = moment(rows[0].starts_at);
+		var texte_start_at = moment(texte.starts_at);
+		var ends_at = moment(rows[0].ends_at);
+		var texte_ends_at = moment(texte.ends_at);
+
+
+		if (starts_at < texte_start_at){
+			data.starts_at = starts_at.format('YYYY-MM-DD 00:00:00');
+		}
+		if (ends_at > texte_ends_at){
+			data.ends_at = ends_at.format('YYYY-MM-DD 23:59:59');
+		}
+
+		db.query("UPDATE textes SET ?  WHERE id_hash = "+texte.id_hash, data, function(err, rows, fields) {
+  			if (err) throw err;
+		});
+	});
 }
 
-
-
-
-
-
-
+String.prototype.hashCode = function(){
+    var hash = 0, i, char;
+    if (this.length == 0) return hash;
+    for (i = 0, l = this.length; i < l; i++) {
+        char  = this.charCodeAt(i);
+        hash  = ((hash<<5)-hash)+char;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
 
 
 
