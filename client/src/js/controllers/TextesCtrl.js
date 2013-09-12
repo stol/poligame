@@ -114,4 +114,5 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
 
     // API exposition
     $scope.openPopinAndVote = openPopinAndVote;
+    $scope.openPopinAndVoteArticle = openPopinAndVoteArticle;
 }]); 

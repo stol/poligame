@@ -47,10 +47,12 @@ DROP TABLE IF EXISTS `votes`;
 CREATE TABLE `votes` (
   `user_id` INTEGER NULL DEFAULT NULL,
   `texte_id` INTEGER NULL DEFAULT NULL,
+  `type` INTEGER NULL DEFAULT 0,
+  `numero` INTEGER NULL DEFAULT 0,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 KEY (`user_id`),
 KEY (`texte_id`),
-  PRIMARY KEY (`user_id`, `texte_id`)
+  PRIMARY KEY (`user_id`, `texte_id`, `type`, `numero`)
 );
 
 -- ---
