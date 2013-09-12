@@ -32,6 +32,15 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
 
     }
 
+    function openPopinAndVoteArticle(user_vote, texte, article){
+        if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
+            openUserInfosPopin(user_vote, texte);
+        }
+        else{
+            openReminderPopin(user_vote, texte);
+        }        
+    }
+
     // Open the right popin depending the user status
     function openPopinAndVote(user_vote, texte) {
         if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
