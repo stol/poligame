@@ -18,6 +18,10 @@ db = mysql.createConnection({
     password : '',
     database : 'poligame'
 });
+TYPE_TEXTE = 1;
+TYPE_ARTICLE = 2;
+TYPE_AMENDEMENT = 3;
+
 
 var app = express();
 

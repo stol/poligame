@@ -3,6 +3,11 @@ var Crawler = require("crawler").Crawler
     , mysql = require('mysql')
 ;
 
+var TYPE_TEXTE = 1,
+	TYPE_ARTICLE = 2,
+	TYPE_AMENDEMENT = 3;
+
+
 db = mysql.createConnection({
     host     : 'localhost',
     user     : 'root',
@@ -199,7 +204,7 @@ function parse_detail(error,result, $){
 					point_title && texte.points.push({
 						title: point_title,
 						texte: point_texte,
-						numero: point_title.match(/\d+/)[0]
+						number: point_title.match(/\d+/)[0]
 					});
 					point_title = $.trim(ligne.replace(/\s?:/g, ""));
 					point_texte = "";
@@ -212,13 +217,14 @@ function parse_detail(error,result, $){
 			point_title && texte.points.push({
 				title: point_title,
 				texte: point_texte,
-				numero: point_title.match(/\d+/)[0]
+				number: point_title.match(/\d+/)[0]
 			});
 		}
 	});
 
 	var data = {
 		id_hash: texte.id_hash,
+		type: TYPE_TEXTE,
 		title: texte.title,
 		description: texte.description,
 		description_title: texte.description_title,
@@ -266,13 +272,13 @@ function insert_points(texte){
 		point = texte.points[i];
 		var data = {
 			texte_id: texte.id,
-			type: 1,
-			numero: point.numero,
+			type: TYPE_ARTICLE,
+			number: point.number,
 			title: point.title,
 			content: point.texte
 		};
 
-		db.query("INSERT IGNORE INTO points SET ?", data, function(err, result) {
+		db.query("INSERT IGNORE INTO articles SET ?", data, function(err, result) {
 			if (err) throw err;
 		});
 	}

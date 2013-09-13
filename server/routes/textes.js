@@ -184,7 +184,7 @@ function alter_texte(texte){
 function get_stats(texte, callback){
 	var stats = new StatsClass();
 
-	db.query('SELECT * from votes_anon WHERE texte_id = ?', [texte.id], function(err, rows, fields) {
+	db.query('SELECT * from votes_anon WHERE obj_id = ? AND obj_type = ?', [texte.id, texte.type], function(err, rows, fields) {
 		for( var i=0; i<rows.length; i++){
 			stats.addVote(rows[i]);
 		}
@@ -271,7 +271,7 @@ exports.articles = function(req, res){
 		res.render('index', { title: 'Express' });
 	}
 
-	db.query('SELECT * from points WHERE texte_id = ? AND type = 1', [req.params.texte_id], function(err, rows, fields) {
+	db.query('SELECT * from articles WHERE texte_id = ?', [req.params.texte_id], function(err, rows, fields) {
 		res.json(rows);
 	});
 }
@@ -284,7 +284,8 @@ exports.vote = function(req, res){
 		// Set texte voted for user
 		db.query("INSERT INTO votes SET ?", {
 			user_id: req.body.user_id,
-			texte_id: req.params.texte_id
+			obj_id: req.params.texte_id,
+			obj_type: TYPE_TEXTE
 		}, function(err, rows, fields) {
 	  		if (err) {
 				res.json({
@@ -311,7 +312,8 @@ exports.vote = function(req, res){
 
 	function set_anon_vote(infos){
 		var data = {
-			texte_id: req.params.texte_id,
+			obj_id: req.params.texte_id,
+			obj_type: TYPE_TEXTE,
 			gender: infos.gender,
 			bord: infos.bord,
 			csp: infos.csp,
