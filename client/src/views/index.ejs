@@ -4,10 +4,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css"-->
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,700,900' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300,700' rel='stylesheet' type='text/css'>
     <!-- build:css app.css -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/jumbotron-narrow.css">
+    <link rel="stylesheet" href="/css/main.css">
     <!-- endbuild -->
+    <!--
+    <link rel="stylesheet" href="/css/jumbotron-narrow.css">
+    -->
 
     <!--title><%= title %></title-->
     <!--link rel='stylesheet' href='/stylesheets/style.css' /-->
@@ -16,26 +21,39 @@
     <div id="fb-root"></div>
 
 
-    <div class="container-narrow">
+    <div class="wrapper">
         <div class="header">
-            <ul class="nav nav-pills pull-right" ng-controller="NavigationCtrl">
-                <li ng-class="navClass('home')"><a href="/">Home</a></li>
-                <li ng-class="navClass('a-propos')"><a href="/a-propos">À propos</a></li>
-                <li ng-class="navClass('user')" ng-show="user.isLogged()"><a href="/user/{{user.id}}">Vos votes</a></li>
-            </ul>
-            <h3 class="text-muted">Moi, élu...</h3>
+
+            <div class="header-content">
+                <h1 class="logo pull-left">Moi, élu</h1>
+                <ul class="nav nav-pills pull-right" ng-controller="NavigationCtrl">
+                    <li ng-class="navClass('home')"><a href="/">Home</a></li>
+                    <li ng-class="navClass('a-propos')"><a href="/a-propos">À propos</a></li>
+                    <li ng-class="navClass('user')" ng-show="user.isLogged()"><a href="/user/{{user.id}}">Vos votes</a></li>
+                </ul>
+                <div class="punchline">
+                    <h2>Et si vous êtiez député&nbsp;?</h2>
+                    <h3>Suivez l’activité de l’Assemblée Nationale, surveillez les projets <br/>et propositions de loi, et votez en votre âme et conscience !</h3>
+                    <!--
+                    <div class="jumbotron">
+                        <h1>Et si vous êtiez député&nbsp;?</h1>
+                        <p class="lead">
+                            Quelles lois voteriez-vous&nbsp;?<br/>
+                            Voteriez-vous dans le même sens que les députés de votre camp&nbsp;?<br/>
+                            Tous les textes vous intéresseraient-ils&nbsp;?
+                        </p>
+                        <h3>Prenez la place de vos députés et faites entendre votre voix&nbsp;!</h3>
+
+                        <p>Avec "Moi, élu...", suivez l'actualité de l'assemblée nationale, surveillez les projets et propositions de lois votées et votez en votre âme et conscience. Peut-être aurez-vous des surprises&nbsp;?</p>
+                    -->
+                </div>
+            </div>
         </div>
+        <div class="content" ng-view></div>
+    </div>
 
-        <div class="jumbotron">
-            <h1>Et si vous êtiez député&nbsp;?</h1>
-            <p class="lead">
-                Quelles lois voteriez-vous&nbsp;?<br/>
-                Voteriez-vous dans le même sens que les députés de votre camp&nbsp;?<br/>
-                Tous les textes vous intéresseraient-ils&nbsp;?
-            </p>
-            <h3>Prenez la place de vos députés et faites entendre votre voix&nbsp;!</h3>
+    <div class="container-narrow">
 
-            <p>Avec "Moi, élu...", suivez l'actualité de l'assemblée nationale, surveillez les projets et propositions de lois votées et votez en votre âme et conscience. Peut-être aurez-vous des surprises&nbsp;?</p>
         </div>
         <div>
             <div class="fb-like" data-href="http://developers.facebook.com/docs/reference/plugins/like" data-width="450" data-action="recommend" data-show-faces="true" data-send="true"></div>
@@ -45,7 +63,7 @@
 
         <div class="row marketing">
             <div class="col-lg-12">
-                <div ng-view></div>
+                
             </div>
         </div>
 

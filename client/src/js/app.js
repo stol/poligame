@@ -61,7 +61,7 @@ moment.lang('fr', {
         sameElse: 'L'
     },
     relativeTime : {
-        future : "dans %s",
+        future : "%s",
         past : "il y a %s",
         s : "quelques secondes",
         m : "une minute",

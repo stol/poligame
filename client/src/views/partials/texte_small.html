@@ -1,0 +1,54 @@
+<div class="texte_small clearfix">
+
+	<div class="texte_small-question">
+		<h4 class="h4"><a href="/textes/{{texte.id}}">{{texte.title}}</a></h4>
+
+		<div ng-switch on="texte.mode">
+			<div ng-switch-when="past">
+				Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
+				<div class="row">
+					<div results="net" class="span4"></div>
+					<div results="assemblee" class="span4"></div>
+				</div>
+			</div>
+			<div ng-switch-when="current">
+				<div ng-switch on="texte.isVoted()" class="pull-left">
+					<div ng-switch-when="true">
+						<button class="btn" disabled>Vous avez déjà voté !</button>
+					</div>
+					<div ng-switch-default>
+						<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+							ng-click="openPopinAndVote(1,texte)"
+							ng-class="{active : texte.isVoted(1)}"
+						>Pour</button>
+						<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+							ng-click="openPopinAndVote(2,texte)"
+							ng-class="{active : texte.isVoted(2)}"
+						>Contre</button>
+						<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+							ng-click="openPopinAndVote(0,texte)"
+							ng-class="{active : texte.isVoted(0)}"
+						>Absention</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="texte_small-time remaining" ng-switch on="texte.mode">
+		<div ng-switch-when="past">
+			Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
+		</div>
+		<div ng-switch-when="current">
+			<span class="remaining-clock"></span><br/>
+			<span class="remaining-label">Temps restant</span><br/>
+			<span class="remaining-time" my-current-time></span><br/>
+		</div>
+		<div ng-switch-when="future">
+			<span class="remaining-calendar"></span><br/>
+			<span class="remaining-label">Ouverture du vote</span><br/>
+			<span class="remaining-time" my-current-time></span><br/>
+		</div>
+	</div>
+
+</div>

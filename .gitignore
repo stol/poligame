@@ -1,3 +1,4 @@
 /node_modules/
 /public/bower_components/
 /client/build/
+/client/src/css/.sass-cache/
