@@ -19,9 +19,9 @@ DROP TABLE IF EXISTS `textes`;
 CREATE TABLE `textes` (
   `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
   `id_hash` INTEGER NULL DEFAULT NULL,
-  `text` MEDIUMTEXT NULL DEFAULT NULL,
+  `title` MEDIUMTEXT NULL DEFAULT NULL,
   `description` MEDIUMTEXT NULL DEFAULT NULL,
-  `description_titre` MEDIUMTEXT NULL DEFAULT NULL,
+  `description_title` MEDIUMTEXT NULL DEFAULT NULL,
   `pour` INTEGER NOT NULL DEFAULT 0,
   `contre` INTEGER NOT NULL DEFAULT 0,
   `abstention` INTEGER NOT NULL DEFAULT 0,
@@ -110,8 +110,8 @@ CREATE TABLE `points` (
   `texte_id` INTEGER NULL DEFAULT NULL,
   `type` INTEGER NULL DEFAULT NULL,
   `numero` INTEGER NULL DEFAULT NULL,
-  `titre` MEDIUMTEXT NULL DEFAULT NULL,
-  `text` MEDIUMTEXT NULL DEFAULT NULL,
+  `title` MEDIUMTEXT NULL DEFAULT NULL,
+  `content` MEDIUMTEXT NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`texte_id`, `type`, `numero`),
@@ -141,7 +141,7 @@ ALTER TABLE `points` ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- Test Data
 -- ---
 
-INSERT INTO `textes` (`id`, `text`, `link`, `pour`, `contre`, `abstention`, `pour_assemblee`, `contre_assemblee`, `abstention_assemblee`, `starts_at`, `ends_at`) VALUES
+INSERT INTO `textes` (`id`, `title`, `link`, `pour`, `contre`, `abstention`, `pour_assemblee`, `contre_assemblee`, `abstention_assemblee`, `starts_at`, `ends_at`) VALUES
   (null, 'Proposition de loi de M. Philippe Armand Martin (Marne) et plusieurs de ses collègues garantissant le versement des allocations familiales du premier au quatrième enfant à charge', 'http://www.google.fr', 480, 350, 30, 0, 0, 0, NOW() - INTERVAL 1 DAY, NOW() + INTERVAL 1 DAY),
   (null, 'loremipsum', 'http://www.google.fr', 480, 350, 30, 0, 0, 0, NOW() - INTERVAL 5 HOUR, NOW() + INTERVAL 1 HOUR),
   (null, 'Proposition de loi de M. Michel Heinrich visant à rétablir les droits des veuves de fonctionnaires civils dans les cas où existe un enfant naturel de moins de 21 ans', 'http://www.google.fr', 650, 1580, 180, 0, 0, 0, NOW() + INTERVAL 5 DAY,  NOW() + INTERVAL 10 DAY),

@@ -161,8 +161,8 @@ function parse_detail(error,result, $){
 	var texte = this.texte;
 	texte.points = [];
 
-	texte.titre = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
-	console.log("Analysing "+texte.titre+"...");
+	texte.title = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
+	console.log("Analysing "+texte.title+"...");
 
 	// Boucle sur les cadres à la con
 	var $coms = $("commentaire");
@@ -172,19 +172,19 @@ function parse_detail(error,result, $){
 		if ($ps.length != 2){
 			return;
 		}
-		var bloc_titre = $.trim($ps.eq(0).text());
-		if (bloc_titre.indexOf("Extrait") === 0){
-			texte.description_titre = bloc_titre;
+		var bloc_title = $.trim($ps.eq(0).text());
+		if (bloc_title.indexOf("Extrait") === 0){
+			texte.description_title = bloc_title;
 			var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
 			texte.description = $(txt).text();
 		}
-		else if (bloc_titre.indexOf("Principales dispositions") === 0){
+		else if (bloc_title.indexOf("Principales dispositions") === 0){
 			var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
 			txt = $(txt).text();	
 			//console.log(txt);
 			var lignes = txt.split("\n");
 			var ligne = null;
-			var point_titre = null;
+			var point_title = null;
 			var point_texte = null;
 			for(var i=0; i<lignes.length; i++){
 				ligne = $.trim(lignes[i]); 
@@ -196,12 +196,12 @@ function parse_detail(error,result, $){
 
 				// Titre d'article ?
 				if (ligne.match(/^article\s+\d+/gi)){
-					point_titre && texte.points.push({
-						titre: point_titre,
+					point_title && texte.points.push({
+						title: point_title,
 						texte: point_texte,
-						numero: point_titre.match(/\d+/)[0]
+						numero: point_title.match(/\d+/)[0]
 					});
-					point_titre = $.trim(ligne.replace(/\s?:/g, ""));
+					point_title = $.trim(ligne.replace(/\s?:/g, ""));
 					point_texte = "";
 				}
 				// Contenu d'article ?
@@ -209,19 +209,19 @@ function parse_detail(error,result, $){
 					point_texte+=ligne+"\n";
 				}
 			}
-			point_titre && texte.points.push({
-				titre: point_titre,
+			point_title && texte.points.push({
+				title: point_title,
 				texte: point_texte,
-				numero: point_titre.match(/\d+/)[0]
+				numero: point_title.match(/\d+/)[0]
 			});
 		}
 	});
 
 	var data = {
 		id_hash: texte.id_hash,
-		text: texte.titre,
+		title: texte.title,
 		description: texte.description,
-		description_titre: texte.description_titre,
+		description_title: texte.description_title,
 		link: texte.link,
 		starts_at: texte.starts_at,
 		ends_at: texte.ends_at
@@ -268,8 +268,8 @@ function insert_points(texte){
 			texte_id: texte.id,
 			type: 1,
 			numero: point.numero,
-			titre: point.titre,
-			text: point.texte
+			title: point.title,
+			content: point.texte
 		};
 
 		db.query("INSERT IGNORE INTO points SET ?", data, function(err, result) {
