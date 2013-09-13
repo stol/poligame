@@ -37,17 +37,19 @@
 
 	<div class="texte_small-time remaining" ng-switch on="texte.mode">
 		<div ng-switch-when="past">
-			Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
+			<span class="remaining-voted"></span><br/>
+			<span class="remaining-label">Discuté le</span><br/>
+			<span class="remaining-time">{{texte.date_end()}}</span>
 		</div>
 		<div ng-switch-when="current">
 			<span class="remaining-clock"></span><br/>
 			<span class="remaining-label">Temps restant</span><br/>
-			<span class="remaining-time" my-current-time></span><br/>
+			<span class="remaining-time" my-current-time></span>
 		</div>
 		<div ng-switch-when="future">
 			<span class="remaining-calendar"></span><br/>
 			<span class="remaining-label">Ouverture du vote</span><br/>
-			<span class="remaining-time" my-current-time></span><br/>
+			<span class="remaining-time" my-current-time></span>
 		</div>
 	</div>
 

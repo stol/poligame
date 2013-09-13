@@ -498,6 +498,12 @@ a {
   height: 40px;
   background: url(../img/calendar.png) no-repeat 0 0;
 }
+.remaining .remaining-voted {
+  display: inline-block;
+  width: 48px;
+  height: 55px;
+  background: url(../img/voted.png) no-repeat 0 0;
+}
 .remaining .remaining-label {
   font-family: arial;
   font-size: 13px;
