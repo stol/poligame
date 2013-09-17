@@ -12,6 +12,8 @@
 .header{
 	background: #0a3f5a url(../img/header.jpg) no-repeat 50% 60px;
 	color: #fff;
+	position: relative;
+
 	.header-content{
 		width: 980px;
 		margin: 0 auto;
@@ -52,6 +54,9 @@
 			margin: 0;
 			padding: 10px;
 		}
+	}
+	.nav{
+		margin: 13px 0 0 0;
 	}
 }
 
@@ -150,12 +155,45 @@ a{
 	padding: 30px 110px 60px 110px;
 
 }
+/*
 .fb-comments.fb_iframe_widget {
     display: block;
     margin: 0 auto;
     width: 600px;
 }
+*/
 
 .hidden{
 	display: none;
+}
+.fb-like.fb_edge_widget_with_comment{
+ 	left: 350px;
+    position: absolute;
+    top: 20px;
+}
+
+.twitter-share-button{
+ 	left: 520px;
+    position: absolute;
+    top: 20px;
+}
+
+.article{
+	clear: both;
+	padding: 20px 10px;
+	border-top: 1px solid #e6e6e6;
+	.article-content{
+		float: left;
+		width: 70%;
+	}
+
+	.article-votes{
+		float: right;
+		width: 30%;
+	}
+	& + &{
+	}
+	&:last-child{
+		border-bottom: 1px solid #e6e6e6;
+	}
 }

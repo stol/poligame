@@ -116,14 +116,12 @@ moiElu.directive('slideToggle', function() {
             element.on("click", function(){
                 console.log("coucou");
             });
-            /*
-            var slideDuration = parseInt(attr.slideToggleDuration, 10) || 200;      
-            scope.$watch('isOpen', function(newVal,oldVal){
-                if(newVal !== oldVal){ 
-                    element.stop().slideToggle(slideDuration);
-                }
-            });
-            */
+            //var slideDuration = parseInt(attr.slideToggleDuration, 10) || 200;      
+            //scope.$watch('isOpen', function(newVal,oldVal){
+            //    if(newVal !== oldVal){ 
+            //        element.stop().slideToggle(slideDuration);
+            //    }
+            //});
         }
     };  
 });

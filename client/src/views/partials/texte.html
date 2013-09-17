@@ -102,15 +102,17 @@
 
 <p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
 
-<p data-slide-toggle><b ng-bind-html-unsafe='texte.description_title'></b></p>
+<p ng-init="descVisible = false" ng-click="descVisible = !descVisible">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
 
-<p ng-bind-html-unsafe='texte.description | nl2br'></p>
+<p collapse="!descVisible" ng-bind-html='texte.description | nl2br'></p>
 
-<p><b>Principaux articles ({{articles.length}})</b></p>
-<dl ng-repeat="article in articles">
-	<dt>{{article.title}}</dt>
-	<dd>
-		{{article.content}}<br/>
+<p>&gt;&nbsp;<b>Principaux articles ({{articles.length}})</b></p>
+<div ng-repeat="article in articles" class="article">
+	<div class="article-content">
+		<p><b ng-bind-html="article.title"></b></p>
+		<p ng-bind-html="article.content"></p>
+	</div>
+	<div class="article-votes">
 		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
 			ng-click="openPopinAndVoteArticle(1,texte, article)"
 			ng-class="{active : texte.isVoted(1)}"
@@ -123,5 +125,7 @@
 			ng-click="openPopinAndVoteArticle(0,texte, article)"
 			ng-class="{active : texte.isVoted(0)}"
 		>Absention</button>
-	</dd>
-</dl>
+	</div>
+</div>
+
+<div class="fb-comments" data-href="http://example.com" data-width="980"></div>

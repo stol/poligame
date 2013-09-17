@@ -15,6 +15,7 @@
     "angular-bootstrap": "0.6.0",
     "angular-cookies": "*",
     "angular-resource": "*",
+    "angular-sanitize": "*",
     "angular-route": "*",
     "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },
