@@ -4,12 +4,39 @@
 		<h4 class="h4"><a href="/textes/{{texte.id}}">{{texte.title}}</a></h4>
 
 		<div ng-switch on="texte.mode">
+
 			<div ng-switch-when="past">
 				<div class="row">
 					<div results="net" class="span4"></div>
 					<div results="assemblee" class="span4"></div>
 				</div>
+
+
+				<div ng-show="!!texte.stats">
+					<h4>Vous pouvez affiner les résultats du vote par :</h4>
+					<div class="btn-group">
+			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
+			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
+			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
+			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
+			    	</div>
+			    	<div ng-switch on="moreInfo">
+			    		<div class="text-center" ng-switch-when="csps">
+							<div results="csps"></div>
+			    		</div>
+			    		<div class="text-center" ng-switch-when="bords">
+							<div results="bords"></div>
+			    		</div>
+			    		<div class="text-center" ng-switch-when="genders">
+							<div results="genders"></div>
+			    		</div>
+			    		<div class="text-center" ng-switch-when="ages">
+							<div results="ages"></div>
+			    		</div>
+			    	</div>
+				</div>
 			</div>
+
 			<div ng-switch-when="current">
 				<div ng-switch on="texte.isVoted()" class="pull-left">
 					<div ng-switch-when="true">
@@ -54,77 +81,36 @@
 
 </div>
 
-<div ng-switch on="texte.mode">
-	<div ng-switch-when="past">
-		Ce texte a déjà été voté, et discuté le <b>{{texte.date_end()}}</b>
-		<div class="row">
-			<div results="net" class="span4"></div>
-			<div results="assemblee" class="span4"></div>
+<p ng-show="!texte.link">Lien indisponible</p>
+<p ng-show="texte.link">&gt;&nbsp;<b><a href="{{texte.link}}">Lien vers le texte complet</a></b></p>
+
+<p ng-show="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
+<p ng-show="texte.description_title" ng-init="descVisible = false" ng-click="descVisible = !descVisible">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
+
+<p ng-show="texte.description" collapse="!descVisible" ng-bind-html='texte.description | nl2br'></p>
+
+<div ng-show="!articles.length">&gt;&nbsp;<b>Articles indisponibles</b></div>
+<div ng-show="articles.length">
+	<p>&gt;&nbsp;<b>Principaux articles ({{articles.length}})</b></p>
+	<div ng-repeat="article in articles" class="article">
+		<div class="article-content">
+			<p><b ng-bind-html="article.title"></b></p>
+			<p ng-bind-html="article.content"></p>
 		</div>
-		<div ng-switch on="!!texte.stats">
-			<div ng-switch-when="false">
-				<a href="/textes/{{texte.id}}">Cliquez ici pour obtenir plus d'information sur les votes</a>
-			</div>
-			<div ng-switch-default>
-				<h4>Vous pouvez affiner les résultats du vote par :</h4>
-				<div class="btn-group">
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
-		    	</div>
-		    	<div ng-switch on="moreInfo">
-		    		<div class="text-center" ng-switch-when="csps">
-						<div results="csps"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="bords">
-						<div results="bords"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="genders">
-						<div results="genders"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="ages">
-						<div results="ages"></div>
-		    		</div>
-		    	</div>
-			</div>
+		<div class="article-votes">
+			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+				ng-click="openPopinAndVoteArticle(1,texte, article)"
+				ng-class="{active : texte.isVoted(1)}"
+			>Pour</button>
+			<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+				ng-click="openPopinAndVoteArticle(2,texte, article)"
+				ng-class="{active : texte.isVoted(2)}"
+			>Contre</button>
+			<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+				ng-click="openPopinAndVoteArticle(0,texte, article)"
+				ng-class="{active : texte.isVoted(0)}"
+			>Absention</button>
 		</div>
-	</div>
-	<div ng-switch on="texte.votes.actives">
-		<div ng-switch-default>
-			Aucun vote pour l'instant.
-		</div>
-	</div>
-	<div ng-switch-when="future">
-		Ce texte n'est pas encore en discussion. Le vote sera ouvert le <b>{{texte.date_start()}}</b>
-	</div>
-</div>
-
-<p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
-
-<p ng-init="descVisible = false" ng-click="descVisible = !descVisible">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
-
-<p collapse="!descVisible" ng-bind-html='texte.description | nl2br'></p>
-
-<p>&gt;&nbsp;<b>Principaux articles ({{articles.length}})</b></p>
-<div ng-repeat="article in articles" class="article">
-	<div class="article-content">
-		<p><b ng-bind-html="article.title"></b></p>
-		<p ng-bind-html="article.content"></p>
-	</div>
-	<div class="article-votes">
-		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-			ng-click="openPopinAndVoteArticle(1,texte, article)"
-			ng-class="{active : texte.isVoted(1)}"
-		>Pour</button>
-		<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-			ng-click="openPopinAndVoteArticle(2,texte, article)"
-			ng-class="{active : texte.isVoted(2)}"
-		>Contre</button>
-		<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-			ng-click="openPopinAndVoteArticle(0,texte, article)"
-			ng-class="{active : texte.isVoted(0)}"
-		>Absention</button>
 	</div>
 </div>
 
