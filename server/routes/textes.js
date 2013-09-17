@@ -344,6 +344,7 @@ function vote(req, res){
 			csp: req.body.csp,
 			age: req.body.age
 		}
+		console.log(data);
 
 		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {
 	  		if (err) {
@@ -352,7 +353,13 @@ function vote(req, res){
 					msg: err.message
 				});
 	  		}
-	  		req.body.article_id || update_stats();
+	  		if (req.body.article_id){
+	  			res.json({success: true})
+	  		}
+	  		else{
+	  			update_stats();
+	  		}
+
 		});
 	}
 
