@@ -10,34 +10,32 @@
 
 	<p>Nous rappelons que tous les votes effectués sont anonymes. Aucune information de vote ne sera liée à votre compte</p>
 
-
 	<label class="control-label" for="inputSexe">catégorie sociale professionnelle</label>
 	<div class="controls nullable">
-		<select ng-model="csp" ng-options="csp.id as csp.label for csp in csps">
+		<select ng-model="infos.csp" ng-options="csp.id as csp.label for csp in csps">
 			<option value="">Garder cette information secrète</option>
 		</select>
 	</div>
+
 	<label class="control-label" for="inputSexe">Sexe</label>
 	<div class="controls nullable">
-		<select ng-model="gender" ng-options="gender.id as gender.label for gender in genders">
+		<select ng-model="infos.gender" ng-options="gender.id as gender.label for gender in genders">
 			<option value="">Garder cette information secrète</option>
 		</select>
 	</div>
 
 	<label class="control-label" for="inputSexe">Sensibilité politique</label>
 	<div class="controls nullable">
-		<select ng-model="bord" ng-options="bord.id as bord.label for bord in bords">
+		<select ng-model="infos.bord" ng-options="bord.id as bord.label for bord in bords">
 			<option value="">Garder cette information secrète</option>
 		</select>
 	</div>
 
 	<label class="control-label" for="inputSexe">Age</label>
 	<div class="controls nullable">
-
-		<select ng-model="age" ng-options="index as age for age in ages">
+		<select ng-model="infos.age" ng-options="index as age for age in ages">
 			<option value="">Garder cette information secrète</option>
 		</select>
-
 	</div>
 
 

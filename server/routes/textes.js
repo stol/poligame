@@ -331,31 +331,18 @@ function vote(req, res){
 					msg: err.message
 				});
 	  		}
-	  		get_user_data();
+	  		set_anon_vote();
 		});
 	}
 
-	function get_user_data(){
-		db.query("SELECT * FROM users WHERE id = ?", req.body.user_id, function(err, rows, fields) {
-	  		if (err) {
-				res.json({
-					success: false,
-					msg: err.message
-				});
-	  		}
-
-	  		set_anon_vote(rows[0]);
-		});
-	}
-
-	function set_anon_vote(infos){
+	function set_anon_vote(){
 		var data = {
 			obj_id: req.params.texte_id,
 			obj_type: TYPE_TEXTE,
-			gender: infos.gender,
-			bord: infos.bord,
-			csp: infos.csp,
-			age: infos.age
+			gender: req.body.gender,
+			bord: req.body.bord,
+			csp: req.body.csp,
+			age: req.body.age
 		}
 
 		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {

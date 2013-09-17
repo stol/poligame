@@ -58,6 +58,7 @@ app.get ('/textes/:texte_id/articles', textes.articles);
 app.post('/textes/:texte_id/vote', textes.vote);
 app.post('/users/login', users.login);
 app.post('/users/:user_id', users.update);
+app.post('/users/:user_id/qualified', users.qualified);
 app.get ('/user', users.show);
 app.get ('/users/:user_id', users.show);
 

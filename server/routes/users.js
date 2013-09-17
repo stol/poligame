@@ -20,10 +20,10 @@ exports.login = function(req, res){
 	});
 
 	function get_votes(user){
-		var votes = {};
+		var votes = [{},{},{},{}];
 		db.query("SELECT * from votes WHERE user_id = ?", [user.id], function(err, rows, fields) {
 			for(var i=0; i<rows.length; i++){
-				votes[rows[i].texte_id] = true;
+				votes[rows[i].obj_type][rows[i].obj_id] = true;
 			}
 			console.log("VOTES = ", votes);
 			user.votes_nb = rows.length;
@@ -36,6 +36,14 @@ exports.login = function(req, res){
 	}
 
 };
+
+exports.qualified = function(req, res){
+	var user_id = parseInt(req.params.user_id,10);
+	db.query("UPDATE users SET is_qualified = 1 WHERE id = ?", [user_id], function(err, rows, fields) {
+  		if (err) throw err;
+		res.json({ success: true});
+	});
+}
 
 exports.update = function(req, res){
 	var user_id = parseInt(req.params.user_id,10);

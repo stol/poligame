@@ -59,10 +59,7 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
                         firstname: response.first_name,
                         lastname : response.last_name,
                         fullname : response.name,
-                        nickname : response.username,
                         provider_user_id: response.id,
-                        gender   : response.gender == "male" ? 1 : response.gender == "female" ? 2 : 0,
-                        bio      : response.bio,
                         link     : response.link
                     }})
                     .success(function(data, status, headers, config) {
@@ -124,6 +121,9 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
     }
 
     function changed(){
+        $http({method: 'POST', url: '/users/'+user.infos.id+'/qualified'});
+        return;
+
         $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
         .success(function(data, status, headers, config) {
             console.log("USER UPDATE is great success ! ");

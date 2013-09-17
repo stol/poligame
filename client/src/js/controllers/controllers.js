@@ -17,7 +17,11 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
     $scope.navClass = function (page) {
         var currentRoute = $location.path().substring(1) || 'home';
         return page === currentRoute ? 'active' : '';
-    };        
+    };
+
+    $scope.showBigHeader = function(){
+        return ($location.path().substring(1) || 'home') == 'home';
+    }
 }]);
 
 
@@ -32,11 +36,13 @@ moiElu.controller('ReminderPopinCtrl', ['$scope', '$modalInstance', function($sc
     $scope.socialShare = true;
 }]);
 
-moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', function($scope, $modalInstance, User) {
-
-	$scope.csp    = angular.copy(User.infos.csp);
-	$scope.gender = angular.copy(User.infos.gender);
-	$scope.bord   = angular.copy(User.infos.bord);
+moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {
+	$scope.infos = {
+        csp    : parseInt(Cookies.getItem("csp"),10),
+        bord   : parseInt(Cookies.getItem("bord"),10),
+        gender : parseInt(Cookies.getItem("gender"),10),
+        age    : parseInt(Cookies.getItem("age"),10)
+    };
 
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
@@ -65,14 +71,18 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', fun
 	];
 
 	$scope.ages = [];
-	for( var i=12; i<=100; i++){
+	for( var i=18; i<=100; i++){
 		$scope.ages.push(i);
 	}
 
     $scope.close = function(result){
-		User.infos.csp = $scope.csp;
-		User.infos.bord = $scope.bord;
-		User.infos.gender = $scope.gender;
+        console.log("SETTING COOKIES WITH ", $scope.infos);
+
+        $scope.infos.csp && Cookies.setItem("csp", $scope.infos.csp, Infinity);
+        $scope.infos.bord && Cookies.setItem("bord", $scope.infos.bord, Infinity);
+        $scope.infos.gender && Cookies.setItem("gender", $scope.infos.gender, Infinity);
+        $scope.infos.age && Cookies.setItem("age", $scope.infos.age, Infinity);
+
 		User.changed();
         $modalInstance.close(result);
     };
@@ -86,11 +96,8 @@ moiElu.factory('Textes', function($http, $q, User) {
     var cache = {};
     
     var Texte = {
-        isVoted: function(user_vote){
-            if (user_vote != undefined)
-                return User.votes[this.id] && User.votes[this.id] === user_vote || false;
-            else
-                return !!User.votes[this.id];
+        isVoted: function(){
+            return !!(User.votes[this.type] && User.votes[this.type][this.id]);
         },
 
         date_start: function(){

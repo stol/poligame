@@ -22,18 +22,32 @@
 
 
     <div class="wrapper">
-        <div class="header">
-
-            <div class="header-content">
-                <h1 class="logo pull-left">Moi, élu</h1>
-                <ul class="nav nav-pills pull-right" ng-controller="NavigationCtrl">
+        <div class="header" ng-controller="NavigationCtrl">
+            <div class="header-top">
+                <h1 class="logo pull-left"><a href="/">Moi, président</a></h1>
+                <ul class="nav nav-pills pull-right">
                     <li ng-class="navClass('home')"><a href="/">Home</a></li>
                     <li ng-class="navClass('a-propos')"><a href="/a-propos">À propos</a></li>
                     <li ng-class="navClass('user')" ng-show="user.isLogged()"><a href="/user/{{user.id}}">Vos votes</a></li>
                 </ul>
+                <div class="fb-like" data-href="http://developers.facebook.com/docs/reference/plugins/like" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
+
+                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr" data-size="medium">Tweeter</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div>
+            <div class="header-content" ng-show="showBigHeader()">
                 <div class="punchline">
                     <h2>Et si vous êtiez député&nbsp;?</h2>
-                    <h3>Suivez l’activité de l’Assemblée Nationale, surveillez les projets <br/>et propositions de loi, et votez en votre âme et conscience !</h3>
+                    <h3>Sur ce site, vous pouvez :
+                        <ul>
+                            <li>Vous informer en suivant l’activité de l’Assemblée Nationale</li>
+                            <li>Voter les textes de loi, en votre âme et conscience</li>
+                            <li>Faire entendre votre voix en partageant vos choix sur facebook ou twitter</li>
+                        </ul>
+                    <h3>
+
+
+                        
                     <!--
                     <div class="jumbotron">
                         <h1>Et si vous êtiez député&nbsp;?</h1>
@@ -47,13 +61,6 @@
                         <p>Avec "Moi, élu...", suivez l'actualité de l'assemblée nationale, surveillez les projets et propositions de lois votées et votez en votre âme et conscience. Peut-être aurez-vous des surprises&nbsp;?</p>
                     -->
                 </div>
-
-
-                <div class="fb-like" data-href="http://developers.facebook.com/docs/reference/plugins/like" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
-
-                <a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr" data-size="medium">Tweeter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
             </div>
         </div>
         <div class="content" ng-view></div>
@@ -72,6 +79,7 @@
     <script src="/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="/bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="/bower_components/angularjs-cookies/cookiesModule.js"></script>
 
     <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 

@@ -14,6 +14,7 @@
     "angular": "1.2.*",
     "angular-bootstrap": "0.6.0",
     "angular-cookies": "*",
+    "angularjs-cookies": "git://github.com/xapu/angularjs-cookies.git",
     "angular-resource": "*",
     "angular-sanitize": "*",
     "angular-route": "*",

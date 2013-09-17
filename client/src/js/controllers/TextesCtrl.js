@@ -1,5 +1,5 @@
-moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User',
-function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) {
+moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies',
+function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, Cookies) {
     
 
     $scope.moreInfo = false;
@@ -19,7 +19,6 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) 
         
         $scope.texte = Textes.get({id: $routeParams.texte_id});
 
-        $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
 
         
         $http({
@@ -28,6 +27,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) 
             cache: true
         }).success(function(data, status, headers, config) {
             $scope.articles = data;
+            $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         });
 
     }
@@ -80,8 +80,6 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) 
         }).result.then(function (result) {
             result = !!result; // Casts result to boolean
             result && openReminderPopin(user_vote, texte);
-        }, function () {
-            console.log('Modal dismissed at: ' + new Date());
         });
     }
 
@@ -96,7 +94,11 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) 
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
                 user_id: User.infos.id,
                 texte_id: texte.id,
-                user_vote: user_vote
+                user_vote: user_vote,
+                csp: Cookies.getItem('csp'),
+                bord: Cookies.getItem('bord'),
+                gender: Cookies.getItem('gender'),
+                age: Cookies.getItem('age')
             }})
             // cancel vote if error
             .success(function(data, status, headers, config) {

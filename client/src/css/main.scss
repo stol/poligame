@@ -10,13 +10,24 @@
 }
 
 .header{
-	background: #0a3f5a url(../img/header.jpg) no-repeat 50% 60px;
 	color: #fff;
 	position: relative;
 
+	.header-top{
+		background-color: #0a3f5a;
+		padding: 0 110px;
+		overflow: hidden;
+	}
 	.header-content{
-		width: 980px;
-		margin: 0 auto;
+		display: block !important;
+		overflow: hidden;
+		height: 450px;
+		background: url(../img/header.jpg) no-repeat 50% 0;
+		padding: 0 110px;
+		@include transition(height 0.3s linear);
+		&.ng-hide{
+			height: 0;
+		}
 	}
 	.logo{
 		font-family: 'Lato', sans-serif;
@@ -25,15 +36,20 @@
 		font-weight: 900;
 		margin: 0;
 		line-height: 60px;
+		a{
+			color: inherit;
+			&:hover{
+				color: inherit;
+			}
+		}
 	}
 
 	.punchline{
-		height: 450px;
 		clear: both;
 		position: relative;
 		h2{
 			position: absolute;
-			top: 200px;
+			top: 100px;
 			margin: 0;
 			padding: 10px;
 			font-family: 'Lato', sans-serif;
@@ -49,7 +65,7 @@
 			font-size: 21px;
 			line-height: normal;
 			position: absolute;
-			top: 330px;
+			top: 230px;
 			@include rgba-background-inline(rgba(0,0,0,0.6));
 			margin: 0;
 			padding: 10px;
@@ -58,13 +74,28 @@
 	.nav{
 		margin: 13px 0 0 0;
 	}
+
+	.fb-like.fb_edge_widget_with_comment{
+	 	left: 400px;
+	    position: absolute;
+	    top: 20px;
+	}
+
+	.twitter-share-button{
+	 	left: 570px;
+	    position: absolute;
+	    top: 20px;
+	}
+
 }
 
 a{
 	color: inherit;
 	text-decoration: inherit;
 }
-
+p > a, p > b > a{
+	color: #1b7bab;
+}
 
 .h3{
 	font-family: 'Roboto Condensed', sans-serif;
@@ -165,17 +196,6 @@ a{
 
 .hidden{
 	display: none;
-}
-.fb-like.fb_edge_widget_with_comment{
- 	left: 350px;
-    position: absolute;
-    top: 20px;
-}
-
-.twitter-share-button{
- 	left: 520px;
-    position: absolute;
-    top: 20px;
 }
 
 .article{
