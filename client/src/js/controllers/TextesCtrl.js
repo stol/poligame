@@ -34,10 +34,10 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     function openPopinAndVoteArticle(user_vote, texte, article){
         if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
-            openUserInfosPopin(user_vote, texte);
+            openUserInfosPopin(user_vote, texte, article);
         }
         else{
-            openReminderPopin(user_vote, texte);
+            openReminderPopin(user_vote, texte, article);
         }        
     }
 
@@ -52,7 +52,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     };
 
     // Opens the "Reminder about your infos" popin
-    function openReminderPopin(user_vote, texte){
+    function openReminderPopin(user_vote, texte, article){
 
         $modal.open({
             backdrop: true,
@@ -64,12 +64,12 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             }
         }).result.then(function (result) {
             result = !!result; // Casts result to boolean
-            result && doVote(user_vote, texte);
+            result && doVote(user_vote, texte, article);
         });
     }
 
     // Opens the "Share your infos" popin
-    function openUserInfosPopin(user_vote, texte){
+    function openUserInfosPopin(user_vote, texte, article){
 
         $modal.open({
             backdrop: true,
@@ -79,12 +79,12 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             controller: 'UserInfosPopinCtrl'
         }).result.then(function (result) {
             result = !!result; // Casts result to boolean
-            result && openReminderPopin(user_vote, texte);
+            result && openReminderPopin(user_vote, texte, article);
         });
     }
 
     // Starts the vote process
-    function doVote(user_vote, texte){
+    function doVote(user_vote, texte, article){
         User.login().then(function(){
             // Optimistic vote
             User.infos.votes_nb++;
@@ -94,6 +94,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
                 user_id: User.infos.id,
                 texte_id: texte.id,
+                article_id: article && article.id,
                 user_vote: user_vote,
                 csp: Cookies.getItem('csp'),
                 bord: Cookies.getItem('bord'),
@@ -128,8 +129,4 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     // API exposition
     $scope.openPopinAndVote = openPopinAndVote;
     $scope.openPopinAndVoteArticle = openPopinAndVoteArticle;
-    $scope.tooogle = function(){
-        console.log("YOP : ", $scope.desc_visible);
-        $scope.desc_visible = !$scope.desc_visible; 
-    }
 }]); 

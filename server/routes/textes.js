@@ -322,8 +322,8 @@ function vote(req, res){
 		// Set texte voted for user
 		db.query("INSERT INTO votes SET ?", {
 			user_id: req.body.user_id,
-			obj_id: req.params.texte_id,
-			obj_type: TYPE_TEXTE
+			obj_id: req.body.article_id || req.params.texte_id,
+			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE
 		}, function(err, rows, fields) {
 	  		if (err) {
 				res.json({
@@ -337,8 +337,8 @@ function vote(req, res){
 
 	function set_anon_vote(){
 		var data = {
-			obj_id: req.params.texte_id,
-			obj_type: TYPE_TEXTE,
+			obj_id: req.body.article_id || req.params.texte_id,
+			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE,
 			gender: req.body.gender,
 			bord: req.body.bord,
 			csp: req.body.csp,
@@ -352,7 +352,7 @@ function vote(req, res){
 					msg: err.message
 				});
 	  		}
-	  		update_stats();
+	  		req.body.article_id || update_stats();
 		});
 	}
 
