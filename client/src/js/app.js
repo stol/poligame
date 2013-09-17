@@ -24,8 +24,9 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-moiElu.config(['$locationProvider', function($locationProvider) {
+moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
+    $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 }]);
 
 moiElu.filter('nl2br', function () {

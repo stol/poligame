@@ -261,11 +261,9 @@ function fetch(req, res, ids){
 };
 
 function textes(req, res){
-	/*
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
 	}
-	*/
 
 	return fetch(req, res);
 }
@@ -273,11 +271,10 @@ function textes(req, res){
 
 function show(req, res){
 
-	/*
+
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
 	}
-	*/
 
 	return fetch(req, res, [req.params.texte_id]);
 	/*
