@@ -115,6 +115,9 @@ c.queue([{
 			}
 
 			var texte_link = $(ligne).find("a").attr("href");
+			if(!texte_link)
+				return;
+			
 			// On nettoie l'url des trucs genre "#xxx"
 			if (texte_link.indexOf("#") > 0){
 				texte_link = texte_link.substr(0, texte_link.indexOf("#"));
