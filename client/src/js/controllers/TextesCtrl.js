@@ -1,5 +1,5 @@
-moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$dialog', '$routeParams', '$window', 'Textes', 'User',
-function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User) {
+moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User',
+function($scope, $location, $http, $modal, $routeParams, $window, Textes, User) {
     
 
     $scope.moreInfo = false;
@@ -53,13 +53,16 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
 
     // Opens the "Reminder about your infos" popin
     function openReminderPopin(user_vote, texte){
-        $dialog.dialog({
+
+        $modal.open({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             templateUrl:  '/views/partials/modal-vote.html',
-            controller: 'ReminderPopinCtrl'
-        }).open().then(function(result){
+            controller: 'ReminderPopinCtrl',
+            resolve: {
+            }
+        }).result.then(function (result) {
             result = !!result; // Casts result to boolean
             result && doVote(user_vote, texte);
         });
@@ -67,16 +70,19 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
 
     // Opens the "Share your infos" popin
     function openUserInfosPopin(user_vote, texte){
-        $dialog.dialog({
+
+        $modal.open({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             templateUrl:  '/views/partials/modal-userinfo.html',
             controller: 'UserInfosPopinCtrl'
-        }).open().then(function(result){
+        }).result.then(function (result) {
             result = !!result; // Casts result to boolean
             result && openReminderPopin(user_vote, texte);
-        });        
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
     }
 
     // Starts the vote process

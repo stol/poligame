@@ -8,13 +8,14 @@
   ],
   "dependencies": {
     "jquery": "2.0.3",
-    "angular": "*",
     "raphael": "2.1.1",
     "moment": "*",
     "underscore": "*",
+    "angular": "*",
     "angular-bootstrap": "*",
     "angular-cookies": "*",
     "angular-resource": "*",
+    "angular-route": "*",
     "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },
   "devDependencies": {

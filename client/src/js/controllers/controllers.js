@@ -24,15 +24,15 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 /**
  * Gestion des popins
  */
-moiElu.controller('ReminderPopinCtrl', ['$scope', 'dialog', function($scope, dialog) {
+moiElu.controller('ReminderPopinCtrl', ['$scope', '$modalInstance', function($scope, $modalInstance) {
     $scope.close = function(result){
-        dialog.close(result);
+        $modalInstance.close(result);
     };
 
     $scope.socialShare = true;
 }]);
 
-moiElu.controller('UserInfosPopinCtrl', ['$scope', 'dialog', 'User', function($scope, dialog, User) {
+moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', function($scope, $modalInstance, User) {
 
 	$scope.csp    = angular.copy(User.infos.csp);
 	$scope.gender = angular.copy(User.infos.gender);
@@ -74,7 +74,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', 'dialog', 'User', function($s
 		User.infos.bord = $scope.bord;
 		User.infos.gender = $scope.gender;
 		User.changed();
-        dialog.close(result);
+        $modalInstance.close(result);
     };
     
 }]);
