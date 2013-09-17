@@ -1,6 +1,58 @@
-<h4><a href="/textes/{{texte.id}}">{{texte.title}}</a></h4>
+<div class="texte_small clearfix">
 
-<p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
+	<div class="texte_small-question">
+		<h4 class="h4"><a href="/textes/{{texte.id}}">{{texte.title}}</a></h4>
+
+		<div ng-switch on="texte.mode">
+			<div ng-switch-when="past">
+				<div class="row">
+					<div results="net" class="span4"></div>
+					<div results="assemblee" class="span4"></div>
+				</div>
+			</div>
+			<div ng-switch-when="current">
+				<div ng-switch on="texte.isVoted()" class="pull-left">
+					<div ng-switch-when="true">
+						<button class="btn" disabled>Vous avez déjà voté !</button>
+					</div>
+					<div ng-switch-default>
+						<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+							ng-click="openPopinAndVote(1,texte)"
+							ng-class="{active : texte.isVoted(1)}"
+						>Pour</button>
+						<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+							ng-click="openPopinAndVote(2,texte)"
+							ng-class="{active : texte.isVoted(2)}"
+						>Contre</button>
+						<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+							ng-click="openPopinAndVote(0,texte)"
+							ng-class="{active : texte.isVoted(0)}"
+						>Absention</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="texte_small-time remaining" ng-switch on="texte.mode">
+		<div ng-switch-when="past">
+			<span class="remaining-voted"></span><br/>
+			<span class="remaining-label">Discuté le</span><br/>
+			<span class="remaining-time">{{texte.date_end()}}</span>
+		</div>
+		<div ng-switch-when="current">
+			<span class="remaining-clock"></span><br/>
+			<span class="remaining-label">Temps restant</span><br/>
+			<span class="remaining-time" my-current-time></span>
+		</div>
+		<div ng-switch-when="future">
+			<span class="remaining-calendar"></span><br/>
+			<span class="remaining-label">Ouverture du vote</span><br/>
+			<span class="remaining-time" my-current-time></span>
+		</div>
+	</div>
+
+</div>
 
 <div ng-switch on="texte.mode">
 	<div ng-switch-when="past">
@@ -38,31 +90,9 @@
 			</div>
 		</div>
 	</div>
-	<div ng-switch-when="current">
-		<div ng-switch on="texte.isVoted()">
-			<div class="text-center" ng-switch-when="true">
-				<button class="btn" disabled>Vous avez déjà voté !</button>
-			</div>
-			<div class="text-center" ng-switch-default>
-				<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-					ng-click="openPopinAndVote(1,texte)"
-					ng-class="{active : texte.isVoted(1)}"
-				>Pour</button>
-				<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-					ng-click="openPopinAndVote(2,texte)"
-					ng-class="{active : texte.isVoted(2)}"
-				>Contre</button>
-				<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-					ng-click="openPopinAndVote(0,texte)"
-					ng-class="{active : texte.isVoted(0)}"
-				>Absention</button>
-			</div>
-
-			<div ng-switch on="texte.votes.actives">
-				<div ng-switch-default>
-					Aucun vote pour l'instant. Le vote se termine <span my-current-time></span>
-				</div>
-			</div>
+	<div ng-switch on="texte.votes.actives">
+		<div ng-switch-default>
+			Aucun vote pour l'instant.
 		</div>
 	</div>
 	<div ng-switch-when="future">
@@ -70,11 +100,13 @@
 	</div>
 </div>
 
-<p><b ng-bind-html-unsafe='texte.description_title'></b></p>
+<p><a href="{{texte.link}}">Lien vers le texte complet</a></p>
+
+<p data-slide-toggle><b ng-bind-html-unsafe='texte.description_title'></b></p>
 
 <p ng-bind-html-unsafe='texte.description | nl2br'></p>
 
-<p><b>Principaux articles ({{articles.length}})</b></b>
+<p><b>Principaux articles ({{articles.length}})</b></p>
 <dl ng-repeat="article in articles">
 	<dt>{{article.title}}</dt>
 	<dd>

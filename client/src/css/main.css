@@ -518,3 +518,17 @@ a {
   text-transform: uppercase;
   display: inline-block;
 }
+
+.texte {
+  padding: 30px 110px 60px 110px;
+}
+
+.fb-comments.fb_iframe_widget {
+  display: block;
+  margin: 0 auto;
+  width: 600px;
+}
+
+.hidden {
+  display: none;
+}

@@ -112,7 +112,16 @@ function($scope, $location, $http, $dialog, $routeParams, $window, Textes, User)
         });
     }
 
+    function doToggle(){
+
+
+    }
+
     // API exposition
     $scope.openPopinAndVote = openPopinAndVote;
     $scope.openPopinAndVoteArticle = openPopinAndVoteArticle;
+    $scope.tooogle = function(){
+        console.log("YOP : ", $scope.desc_visible);
+        $scope.desc_visible = !$scope.desc_visible; 
+    }
 }]); 

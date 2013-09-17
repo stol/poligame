@@ -194,7 +194,7 @@ function get_stats(texte, callback){
 }
 
 
-exports.textes = function(req, res){
+function fetch(req, res, ids){
 	
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || false;
@@ -203,7 +203,8 @@ exports.textes = function(req, res){
 	else if (mode == "current") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
-	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || false;
+	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || ids || false;
+
 	if (ids){
 		console.log("ids = ", ids);
 		sql+= ' WHERE id IN('+ids.join(',')+')';
@@ -223,24 +224,60 @@ exports.textes = function(req, res){
 
         for( var i=0; i<textes.length; i++){
 			textes[i].mode = mode;
+
+			var current   = moment(),
+				starts_at = moment(textes[i].starts_at),
+				ends_at   = moment(textes[i].ends_at);
+
+			console.log(current.format("YYYY-MM-DD HH:mm:ss"));
+			console.log(starts_at.format("YYYY-MM-DD HH:mm:ss"));
+			console.log(ends_at.format("YYYY-MM-DD HH:mm:ss"));
+			if (ends_at < current){
+				textes[i].mode = "past";
+			}
+			else if (starts_at < current && ends_at > current){
+				textes[i].mode = "current";
+			}
+			else{
+				textes[i].mode = "future";
+			}
+			console.log(textes[i].mode);
+
 			alter_texte(textes[i]);
 
 			get_stats(textes[i], function(){
 				if (++stats_done == textes.length){
-					res.json(textes);
+					if(ids && ids.length == 1){
+						res.json(textes[0]);
+					}
+					else{
+						res.json(textes);
+					}
+					
 				}
 			})
         }
 	});
 };
 
-
-
-
-exports.show = function(req, res){
+function textes(req, res){
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
 	}
+
+	return fetch(req, res);
+}
+
+
+function show(req, res){
+
+
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+	}
+
+	return fetch(req, res, [req.params.texte_id]);
+	/*
 
 	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
   		if (err) throw err;
@@ -264,9 +301,10 @@ exports.show = function(req, res){
 			res.json(texte);
 		});
 	});
+	*/
 };
 
-exports.articles = function(req, res){
+function articles(req, res){
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
 	}
@@ -276,7 +314,7 @@ exports.articles = function(req, res){
 	});
 }
 
-exports.vote = function(req, res){
+function vote(req, res){
 
 	set_user_vote();
 	
@@ -346,3 +384,8 @@ exports.vote = function(req, res){
 	}
 
 };
+
+exports.textes   = textes;
+exports.show     = show;
+exports.articles = articles;
+exports.vote     = vote;

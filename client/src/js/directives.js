@@ -80,7 +80,8 @@ moiElu.directive('myCurrentTime', function($timeout, dateFilter) {
  
         // used to update the UI
         function updateTime() {
-            var hop = moment($scope.texte.ends_at).fromNow();
+            var texte = $scope.texte.$$v || $scope.texte;
+            var hop = moment(texte.ends_at).fromNow();
             var txt = dateFilter(new Date(), "YYYY");
             element.text(hop);
         }
@@ -100,6 +101,29 @@ moiElu.directive('myCurrentTime', function($timeout, dateFilter) {
             $timeout.cancel(timeoutId);
         });
  
-        updateLater(); // kick off the UI update process.
+        //updateLater(); // kick off the UI update process.
+        updateTime();
     }
+});
+
+moiElu.directive('slideToggle', function() {  
+    return {
+        restrict: 'A',      
+        scope:{
+            isOpen: "=slideToggle"
+        },  
+        link: function(scope, element, attr) {
+            element.on("click", function(){
+                console.log("coucou");
+            });
+            /*
+            var slideDuration = parseInt(attr.slideToggleDuration, 10) || 200;      
+            scope.$watch('isOpen', function(newVal,oldVal){
+                if(newVal !== oldVal){ 
+                    element.stop().slideToggle(slideDuration);
+                }
+            });
+            */
+        }
+    };  
 });
