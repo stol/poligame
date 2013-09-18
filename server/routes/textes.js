@@ -207,6 +207,8 @@ function fetch(req, res, ids){
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
 	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || ids || false;
+	console.log(req.query.ids);
+	console.log(ids);
 
 	if (ids){
 		console.log("ids = ", ids);

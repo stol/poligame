@@ -88,7 +88,9 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         User.login().then(function(){
             // Optimistic vote
             User.infos.votes_nb++;
-            User.votes[texte.id] = user_vote;
+            if (!article){
+                User.votes[TYPE_TEXTE][texte.id] = user_vote;
+            }
 
             // Sends the vote to the server
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
@@ -104,10 +106,11 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             // cancel vote if error
             .success(function(data, status, headers, config) {
                 if (data.success){
-                    User.publishVote(user_vote, texte);
+                    !article && User.publishVote(user_vote, texte);
                 }
                 else {
-                    delete User.votes[texte.id];
+                    if (!article)
+                        delete User.votes[TYPE_TEXTE][texte.id];
                     User.infos.votes_nb--;
                 }
             })

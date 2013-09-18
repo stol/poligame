@@ -113,7 +113,7 @@ moiElu.factory('Textes', function($http, $q, User) {
 
         var ret;
 
-        // 1 texte demandé ? On le resort s'il est dans le cache objet
+        // Un seul texte demandé ? On le resort s'il est dans le cache objet
         if (params.id && textes[params.id]){
             callback && callback(textes[params.id]);
             return textes[params.id];
@@ -154,8 +154,12 @@ moiElu.factory('Textes', function($http, $q, User) {
         });
         var self = this;
 
-        var deferred = $q.defer();
+        // On passe l'id sous forme de json
+        if (params.ids){
+            params.ids = JSON.stringify(params.ids);
+        }
 
+        var deferred = $q.defer();
         $http({
             method: 'GET',
             url: url,
@@ -183,7 +187,9 @@ moiElu.factory('Textes', function($http, $q, User) {
             }
 
             callback && callback.apply(self, arguments);
-
+            if (params.ids){
+                ret = [ret];
+            }
             deferred.resolve(ret);
         });
 
@@ -201,7 +207,8 @@ moiElu.factory('Textes', function($http, $q, User) {
 
 moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
     User.onConnected(function(e){
-        $scope.textes = Textes.get({ids: _.keys(User.votes)});
+        var ids = _.keys(User.votes[TYPE_TEXTE]);
+        $scope.textes = Textes.get({ids: ids});
     }, function(){
         $scope.$apply(function() { $location.path("/"); });
     });
