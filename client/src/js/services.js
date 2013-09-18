@@ -222,11 +222,16 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
         return user;
     };
 
+    function getStatus(){
+        return status;
+    }
+
     // Exposition de l'api
-    user.login           = login;
-    user.publishVote     = publishVote;
-    user.isLogged        = isLogged;
-    user.changed         = changed;
+    user.login       = login;
+    user.publishVote = publishVote;
+    user.isLogged    = isLogged;
+    user.changed     = changed;
+    user.getStatus   = getStatus;
 
     return user;
 }]);

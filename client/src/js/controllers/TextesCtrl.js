@@ -6,7 +6,10 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     var Article = {
         isVoted: function(){
-            return !!(User.votes[TYPE_ARTICLE] && User.votes[TYPE_ARTICLE][this.id]);
+            if (!User.votes[TYPE_ARTICLE]){
+                return null;
+            }
+            return !!User.votes[TYPE_ARTICLE][this.id];
         }
     }
 
