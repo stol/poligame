@@ -1,4 +1,4 @@
-==== Installation ====
+===== Installation =====
 
 - Installer nodejs (nativement ou avec brew)
 
@@ -20,3 +20,22 @@
     ```
     $ bower install
     ```
+
+===== Tips =====
+
+- Utiliser nodemon en DEV pour éviter d'avoir à relancer node après chaque modif
+    
+    ```
+    $ sudo npm install -g nodemon
+    ```
+
+    puis
+
+    ```
+    $ nodemon server/app.js
+
+
+- Utiliser PM2 en prod
+
+
+- divers : voir https://medium.com/tech-talk/e7c0b0e5ce3c
