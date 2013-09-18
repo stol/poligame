@@ -381,7 +381,7 @@ table {
   rgba-background mixin can now be passed an option $dir variable
 */
 .wrapper {
-  width: 1200px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -391,20 +391,30 @@ table {
 }
 .header .header-top {
   background-color: #0a3f5a;
-  padding: 0 110px;
+  padding: 0 9.1%;
   overflow: hidden;
+}
+@media only screen and (max-width: 980px) {
+  .header .header-top {
+    padding: 0 5px;
+  }
 }
 .header .header-content {
   display: block !important;
   overflow: hidden;
   height: 450px;
   background: url(../img/header.jpg) no-repeat 50% 0;
-  padding: 0 110px;
+  padding: 0 9.1%;
   -webkit-transition: height 0.3s linear;
   -moz-transition: height 0.3s linear;
   -ms-transition: height 0.3s linear;
   -o-transition: height 0.3s linear;
   transition: height 0.3s linear;
+}
+@media only screen and (max-width: 980px) {
+  .header .header-content {
+    padding: 0 5px;
+  }
 }
 .header .header-content.ng-hide {
   height: 0;
@@ -428,8 +438,6 @@ table {
   position: relative;
 }
 .header .punchline h2 {
-  position: absolute;
-  top: 100px;
   margin: 0;
   padding: 10px;
   font-family: 'Lato', sans-serif;
@@ -438,31 +446,42 @@ table {
   line-height: normal;
   background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNimAkAAKIAnNwSwMYAAAAASUVORK5CYII=');
   background: rgba(0, 0, 0, 0.6);
+  margin-top: 120px;
+}
+@media only screen and (max-width: 1100px) {
+  .header .punchline h2 {
+    font-size: 40px;
+  }
+}
+@media only screen and (max-width: 700px) {
+  .header .punchline h2 {
+    margin-top: 30px;
+  }
 }
 .header .punchline h3 {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
   font-size: 21px;
   line-height: normal;
-  position: absolute;
-  top: 230px;
   background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNimAkAAKIAnNwSwMYAAAAASUVORK5CYII=');
   background: rgba(0, 0, 0, 0.6);
   margin: 0;
   padding: 10px;
+  margin-top: 20px;
+}
+@media only screen and (max-width: 700px) {
+  .header .punchline h3 {
+    font-size: 16px;
+  }
 }
 .header .nav {
   margin: 13px 0 0 0;
 }
 .header .fb-like.fb_edge_widget_with_comment {
-  left: 400px;
-  position: absolute;
-  top: 20px;
+  margin: 20px 0 0 20px;
 }
 .header .twitter-share-button {
-  left: 570px;
-  position: absolute;
-  top: 20px;
+  margin-left: 20px;
 }
 
 a {
@@ -490,7 +509,12 @@ p > a, p > b > a {
 }
 
 .section-present, .section-past, .section-future {
-  padding: 30px 110px 60px 110px;
+  padding: 30px 9.1% 60px 9.1%;
+}
+@media only screen and (max-width: 980px) {
+  .section-present, .section-past, .section-future {
+    padding: 30px 5px 60px 5px;
+  }
 }
 .section-present + .section-present, .section-past + .section-present, .section-future + .section-present, .section-present + .section-past, .section-past + .section-past, .section-future + .section-past, .section-present + .section-future, .section-past + .section-future, .section-future + .section-future {
   -webkit-box-shadow: inset 0px 5px 10px -10px black;
@@ -558,7 +582,12 @@ p > a, p > b > a {
 }
 
 .texte {
-  padding: 30px 110px 60px 110px;
+  padding: 30px 9.1% 60px 9.1%;
+}
+@media only screen and (max-width: 980px) {
+  .texte {
+    padding: 30px 5px 60px 5px;
+  }
 }
 
 /*
@@ -590,7 +619,8 @@ p > a, p > b > a {
 }
 
 .results_bars {
-  width: 390px;
+  min-width: 320px;
+  width: 50%;
   float: left;
 }
 .results_bars .results_bars-title {
