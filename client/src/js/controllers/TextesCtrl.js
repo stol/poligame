@@ -42,28 +42,18 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     }
 
+    // Open the right popin depending the user status
     function openPopinAndVoteArticle(user_vote, texte, article){
-        if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
-            openUserInfosPopin(user_vote, texte, article);
-        }
-        else{
-            openReminderPopin(user_vote, texte, article);
-        }        
+        info_needed() && openUserInfosPopin(user_vote, texte, article) || openReminderPopin(user_vote, texte, article);
     }
 
     // Open the right popin depending the user status
     function openPopinAndVote(user_vote, texte) {
-        if (User.isLogged() && User.infos.votes_nb && User.infos.votes_nb % 2 == 0){
-            openUserInfosPopin(user_vote, texte);
-        }
-        else{
-            openReminderPopin(user_vote, texte);
-        }
+        info_needed() && openUserInfosPopin(user_vote, texte) || openReminderPopin(user_vote, texte);
     };
 
     // Opens the "Reminder about your infos" popin
     function openReminderPopin(user_vote, texte, article){
-
         $modal.open({
             backdrop: true,
             keyboard: true,
@@ -78,9 +68,23 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         });
     }
 
+    function info_needed(){
+
+        // On veut un user loggé
+        if (!User.isLogged() || !User.infos.votes_nb || User.infos.votes_nb % 2 != 0){
+            return false;
+        }
+
+        // On veut qu'il ait encore des infos à renseigner
+        if (Cookies.getItem('csp') && Cookies.getItem('bord') && Cookies.getItem('gender') && Cookies.getItem('age')){
+            return false;
+        }
+
+        return true;
+    }
+
     // Opens the "Share your infos" popin
     function openUserInfosPopin(user_vote, texte, article){
-
         $modal.open({
             backdrop: true,
             keyboard: true,
@@ -91,6 +95,8 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             result = !!result; // Casts result to boolean
             result && openReminderPopin(user_vote, texte, article);
         });
+
+        return  true;
     }
 
     // Starts the vote process

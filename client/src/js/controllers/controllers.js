@@ -76,8 +76,6 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Co
 	}
 
     $scope.close = function(result){
-        console.log("SETTING COOKIES WITH ", $scope.infos);
-
         $scope.infos.csp && Cookies.setItem("csp", $scope.infos.csp, Infinity);
         $scope.infos.bord && Cookies.setItem("bord", $scope.infos.bord, Infinity);
         $scope.infos.gender && Cookies.setItem("gender", $scope.infos.gender, Infinity);
