@@ -97,15 +97,22 @@
 			<p ng-bind-html="article.content"></p>
 		</div>
 		<div class="article-votes">
-			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-				ng-click="openPopinAndVoteArticle(1,texte, article)"
-			>Pour</button>
-			<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-				ng-click="openPopinAndVoteArticle(2,texte, article)"
-			>Contre</button>
-			<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-				ng-click="openPopinAndVoteArticle(0,texte, article)"
-			>Absention</button>
+			<div ng-switch on="article.isVoted()" class="pull-left">
+				<div ng-switch-when="true">
+					<button class="btn" disabled>Vous avez déjà voté !</button>
+				</div>
+				<div ng-switch-default>
+					<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+						ng-click="openPopinAndVoteArticle(1,texte, article)"
+					>Pour</button>
+					<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+						ng-click="openPopinAndVoteArticle(2,texte, article)"
+					>Contre</button>
+					<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+						ng-click="openPopinAndVoteArticle(0,texte, article)"
+					>Absention</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

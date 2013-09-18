@@ -97,7 +97,7 @@ moiElu.factory('Textes', function($http, $q, User) {
     
     var Texte = {
         isVoted: function(){
-            return !!(User.votes[this.type] && User.votes[this.type][this.id]);
+            return !!(User.votes[TYPE_TEXTE] && User.votes[TYPE_TEXTE][this.id]);
         },
 
         date_start: function(){

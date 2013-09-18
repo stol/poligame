@@ -4,6 +4,12 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     $scope.moreInfo = false;
 
+    var Article = {
+        isVoted: function(){
+            return !!(User.votes[TYPE_ARTICLE] && User.votes[TYPE_ARTICLE][this.id]);
+        }
+    }
+
 
     $scope.init_textes = function(mode){
         mode = mode || 'default';
@@ -25,8 +31,12 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             method: 'GET',
             url: '/textes/'+$routeParams.texte_id+'/articles',
             cache: true
-        }).success(function(data, status, headers, config) {
-            $scope.articles = data;
+        }).success(function(articles, status, headers, config) {
+            for(var i=0; i<articles.length; i++){
+                angular.extend(articles[i], Article);
+            }
+
+            $scope.articles = articles;
             $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         });
 
@@ -88,8 +98,11 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         User.login().then(function(){
             // Optimistic vote
             User.infos.votes_nb++;
-            if (!article){
-                User.votes[TYPE_TEXTE][texte.id] = user_vote;
+            if (article){
+                User.votes[TYPE_ARTICLE][article.id] = true;
+            }
+            else {
+                User.votes[TYPE_TEXTE][texte.id] = true;
             }
 
             // Sends the vote to the server
