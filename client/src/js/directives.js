@@ -37,11 +37,11 @@ moiElu.directive('results', function(Textes) {
 
                 var graph = $('<div class="span3"></div>').appendTo(node)[0];
                 var r = Raphael(graph);
-                r.setSize(200,120);
+                r.setSize(150,200);
 
-                r.text(0, 20, r_label).attr({ font: "14px sans-serif", 'text-anchor': 'start' });
+                r.text(0, 20, r_label).attr({ font: "300 18px Roboto Condensed", fill: '#828282', 'text-anchor': 'start' });
 
-                r.piechart(40, 80, 40, [data[0].nb, data[1].nb, data[2].nb],{
+                r.piechart(40, 100, 40, [data[0].nb, data[1].nb, data[2].nb],{
                     init: false,
                     legendpos: "east",
                     colors: [data[0].color, data[1].color, data[2].color],
@@ -62,7 +62,7 @@ moiElu.directive('results', function(Textes) {
         var r = Raphael(node);
         r.setSize(200,120);
 
-        r.text(0, 20, r_label).attr({ font: "20px sans-serif", 'text-anchor': 'start' });
+        r.text(0, 20, r_label).attr({ font: "300 26px Roboto Condensed", fill: '#828282', 'text-anchor': 'start' });
 
         r.piechart(40, 80, 40, [data[0].nb, data[1].nb, data[2].nb],{
             init: false,
@@ -125,3 +125,81 @@ moiElu.directive('slideToggle', function() {
         }
     };  
 });
+
+
+
+moiElu.directive('resultsBars', function(Textes) {
+    return function($scope, element, attrs, Textes) {
+
+        var texte = $scope.texte.then && $scope.texte.$$v || $scope.texte;
+
+        if (attrs.resultsBars == "net"){
+            var votes = texte.votes;
+            var r_label = "Votes des internautes";
+            if (texte.votes.total == 0){
+                $(element[0]).text("Il n'y a eu aucun vote sur ce texte. Les résultats ne sont pas disponibles.");
+                return;
+            }
+        }
+        else if (attrs.resultsBars == "assemblee"){
+            if (texte.votes_assemblee.total == 0){
+                $(element[0]).text("Les votes de vos députés n'ont pas encore été enregistrés dans la base de donnée. Revenez un peu plus tard !");
+                return;
+            }
+
+            var votes = texte.votes_assemblee;
+            var r_label = "Votes des députés";
+        }
+
+        else {
+
+            var toDisplay = attrs.resultsBars;
+            var node = element[0];
+            $(node).addClass("row");
+
+            for (var i=0; i<texte.stats[toDisplay].length; i++){
+                var votes = texte.stats[toDisplay][i];
+                var nb = votes.pour.nb + votes.contre.nb + votes.abstention.nb;
+                if (!nb){
+                    continue;
+                }
+
+                var data = _.sortBy([votes.pour, votes.contre, votes.abstention], function(vote){ return -vote.nb });
+                
+                var r_label = votes.label + "\n("+nb+" votes)";
+
+                var graph = $('<div class="span3"></div>').appendTo(node)[0];
+                var r = Raphael(graph);
+                r.setSize(200,120);
+
+                r.text(0, 20, r_label).attr({ font: "300 26px Roboto Condensed", fill: '#828282', 'text-anchor': 'start' });
+
+                r.piechart(40, 80, 40, [data[0].nb, data[1].nb, data[2].nb],{
+                    init: false,
+                    legendpos: "east",
+                    colors: [data[0].color, data[1].color, data[2].color],
+                    legend: ["%%.% "+data[0].label, "%%.% "+data[1].label, "%%.% "+data[2].label]
+                });
+
+
+            }
+            var r_label = "Catégories socio-professionnelles";
+            //var votes = texte.stats.;
+            return;
+        }
+
+        var node = element[0];
+        var $title = $('<div class="results_bars-title">'+r_label+'</div>');
+        var $row_pour = $('<div class="row_pour"><span class="row_pour-label">Pour</span><span class="row_pour-bar" style="width:'+votes.pour.perc+'%"></span><span class="row_pour-perc">'+votes.pour.perc+'%</span></div>');
+        var $row_contre = $('<div class="row_contre"><span class="row_pour-label">Contre</span><span class="row_contre-bar" style="width:'+votes.contre.perc+'%"></span><span class="row_contre-perc">'+votes.contre.perc+'%</span></div>');
+        var $row_abstention = $('<div class="row_abstention"><span class="row_pour-label">abstention</span><span class="row_abstention-bar" style="width:'+votes.abstention.perc+'%"></span><span class="row_abstention-perc">'+votes.abstention.perc+'%</span></div>');
+
+        $(node).addClass("results_bars").append($title, $row_pour, $row_contre, $row_abstention);
+    };
+});
+
+
+
+
+
+

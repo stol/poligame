@@ -122,48 +122,51 @@ function StatsClass(){
 
 function alter_texte(texte){
 	
+	var total = texte.pour + texte.contre + texte.abstention;
+
 	texte.votes = {
-		total: texte.pour + texte.contre + texte.abstention,
+		total: total,
 		actives: texte.pour + texte.contre,
 		pour: {
 			label: "pour",
         	nb: texte.pour,
-        	perc: Math.round(100 * texte.pour / (texte.pour + texte.contre)),
+        	perc: Math.round(100 * texte.pour / total * 10)/10,
         	color: '#006DCC'
     	},
     	contre: {
 			label: "contre",
         	nb: texte.contre,
-        	perc: Math.round(100 * texte.contre / (texte.pour + texte.contre)),
+        	perc: Math.round(100 * texte.contre / total * 10)/10,
         	color: '#DA4F49'
     	},
 		abstention: {
 			label: "abstention",
         	nb: texte.abstention,
-        	perc: Math.round(100 * texte.abstention / texte.total),
+        	perc: Math.round(100 * texte.abstention / total * 10)/10,
         	color: '#FAA732'
     	}
 	};
 
+	total = texte.pour_assemblee + texte.contre_assemblee + texte.abstention_assemblee
 	texte.votes_assemblee = {
-		total: texte.pour_assemblee + texte.contre_assemblee + texte.abstention_assemblee,
+		total: total,
 		actives: texte.pour_assemblee + texte.contre_assemblee,
 		pour: {
 			label: "pour",
         	nb: texte.pour_assemblee,
-        	perc: Math.round(100 * texte.pour_assemblee / (texte.pour_assemblee + texte.contre_assemblee)),
+        	perc: Math.round(100 * texte.pour_assemblee / total * 10)/10,
         	color: '#006DCC'
     	},
     	contre: {
 			label: "contre",
         	nb: texte.contre_assemblee,
-        	perc: Math.round(100 * texte.contre_assemblee / (texte.pour_assemblee + texte.contre_assemblee)),
+        	perc: Math.round(100 * texte.contre_assemblee / total * 10)/10,
         	color: '#DA4F49'
     	},
 		abstention: {
 			label: "abstention",
         	nb: texte.abstention_assemblee,
-        	perc: Math.round(100 * texte.abstention_assemblee / texte.total),
+        	perc: Math.round(100 * texte.abstention_assemblee / total * 10)/10,
         	color: '#FAA732'
     	}
 	};
@@ -344,7 +347,6 @@ function vote(req, res){
 			csp: req.body.csp,
 			age: req.body.age
 		}
-		console.log(data);
 
 		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {
 	  		if (err) {

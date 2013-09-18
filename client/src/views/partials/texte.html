@@ -6,15 +6,17 @@
 		<div ng-switch on="texte.mode">
 
 			<div ng-switch-when="past">
-				<div class="row">
+				<div results-bars="net"></div>
+				<div results-bars="assemblee"></div>
+				<!--div class="row">
 					<div results="net" class="span4"></div>
 					<div results="assemblee" class="span4"></div>
-				</div>
+				</div-->
 
 
-				<div ng-show="!!texte.stats">
+				<div ng-show="!!texte.stats" class="results_more">
 					<h4>Vous pouvez affiner les résultats du vote par :</h4>
-					<div class="btn-group">
+					<div class="btn-group" ng-init="moreInfo='csps'">
 			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
 			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
 			        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>

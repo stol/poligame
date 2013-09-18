@@ -5,10 +5,12 @@
 
 		<div ng-switch on="texte.mode">
 			<div ng-switch-when="past">
-				<div class="row">
+				<div results-bars="net"></div>
+				<div results-bars="assemblee"></div>
+				<!--div class="row">
 					<div results="net" class="span4"></div>
 					<div results="assemblee" class="span4"></div>
-				</div>
+				</div-->
 			</div>
 			<div ng-switch-when="current">
 				<div ng-switch on="texte.isVoted()" class="pull-left">
