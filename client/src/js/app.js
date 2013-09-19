@@ -35,7 +35,8 @@ moiElu.filter('nl2br', function () {
             return '';
         return text.replace(/\n/g, '<br/>');
     }
-})
+});
+
 TYPE_TEXTE = 1;
 TYPE_ARTICLE = 2;
 TYPE_AMENDEMENT = 3;

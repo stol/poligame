@@ -12,12 +12,6 @@ var express = require('express')
     , path = require('path');
 
 
-db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
-    database : 'poligame'
-});
 TYPE_TEXTE = 1;
 TYPE_ARTICLE = 2;
 TYPE_AMENDEMENT = 3;
@@ -39,15 +33,29 @@ app.use(app.router);
 
 // development only
 if ('development' == app.get('env')) {
+    console.log("ENV => DEVELOPMENT");
     app.set('views', __dirname + '/../client/src/views');
     app.use(express.errorHandler());
     app.use(require('stylus').middleware(__dirname + '../client/src'));
     app.use(express.static(path.join(__dirname, '../client/src')));
+    db = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'root',
+        password : '',
+        database : 'poligame'
+    });
 }
 else if ('production' == app.get('env')) {
+    console.log("ENV => PRODUCTION");
     app.set('views', __dirname + '/../client/build/views');
     app.use(require('stylus').middleware(__dirname + '../client/build'));
     app.use(express.static(path.join(__dirname, '../client/build')));
+    db = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'stol',
+        password : 'Je suis une chaise',
+        database : 'stol'
+    });
 }
 
 app.get ('/', routes.index);

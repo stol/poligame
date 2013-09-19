@@ -89,7 +89,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Co
 
 
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', function($http, $q, User) {
+moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
     var textes = {};
     var cache = {};
     
@@ -199,7 +199,7 @@ moiElu.factory('Textes', function($http, $q, User) {
         get : get
     };
     
-});
+}]);
 
 
 

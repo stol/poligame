@@ -73,7 +73,7 @@ moiElu.directive('results', function(Textes) {
     };
 });
 
-moiElu.directive('myCurrentTime', function($timeout, dateFilter) {
+moiElu.directive('myCurrentTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
         var timeoutId; // timeoutId, so that we can cancel the time updates
@@ -104,7 +104,7 @@ moiElu.directive('myCurrentTime', function($timeout, dateFilter) {
         //updateLater(); // kick off the UI update process.
         updateTime();
     }
-});
+}]);
 
 moiElu.directive('slideToggle', function() {  
     return {
