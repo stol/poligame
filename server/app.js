@@ -31,8 +31,21 @@ app.use(express.cookieParser('your secret here'));
 app.use(express.session());
 app.use(app.router);
 
-// development only
-if ('development' == app.get('env')) {
+// Production
+if ('production' == app.get('env')) {
+    console.log("ENV => PRODUCTION");
+    app.set('views', __dirname + '/../client/build/views');
+    app.use(require('stylus').middleware(__dirname + '../client/build'));
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    db = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'stol',
+        password : 'Je suis une chaise',
+        database : 'stol'
+    });
+}
+// Development 
+else {
     console.log("ENV => DEVELOPMENT");
     app.set('views', __dirname + '/../client/src/views');
     app.use(express.errorHandler());
@@ -43,18 +56,6 @@ if ('development' == app.get('env')) {
         user     : 'root',
         password : '',
         database : 'poligame'
-    });
-}
-else if ('production' == app.get('env')) {
-    console.log("ENV => PRODUCTION");
-    app.set('views', __dirname + '/../client/build/views');
-    app.use(require('stylus').middleware(__dirname + '../client/build'));
-    app.use(express.static(path.join(__dirname, '../client/build')));
-    db = mysql.createConnection({
-        host     : 'localhost',
-        user     : 'stol',
-        password : 'Je suis une chaise',
-        database : 'stol'
     });
 }
 

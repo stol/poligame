@@ -8,12 +8,22 @@ var TYPE_TEXTE = 1,
 	TYPE_AMENDEMENT = 3;
 
 
-db = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
-    database : 'poligame'
-});
+if (process.env.NODE_ENV && "production" == process.env.NODE_ENV){
+	db = mysql.createConnection({
+	    host     : 'localhost',
+	    user     : 'stol',
+	    password : 'Je suis une chaise',
+	    database : 'stol'
+	});
+}
+else{
+	db = mysql.createConnection({
+	    host     : 'localhost',
+	    user     : 'root',
+	    password : '',
+	    database : 'poligame'
+	});
+}
 
 moment.lang('fr', {
     months : "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),
