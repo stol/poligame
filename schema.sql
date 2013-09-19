@@ -70,7 +70,7 @@ CREATE TABLE `users` (
   `provider_user_id` VARCHAR(255) NULL DEFAULT NULL,
   `link` MEDIUMTEXT NULL DEFAULT NULL,
   `is_qualified` INTEGER NULL DEFAULT NULL,
-  `created_at` TIMESTAMP NULL DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
@@ -102,14 +102,14 @@ CREATE TABLE `articles` (
   `id` INTEGER NULL AUTO_INCREMENT DEFAULT NULL,
   `type` INTEGER NULL DEFAULT NULL,
   `texte_id` INTEGER NULL DEFAULT NULL,
-  `number` INTEGER NULL DEFAULT NULL,
+  `number` VARCHAR(5) NULL DEFAULT NULL,
   `title` MEDIUMTEXT NULL DEFAULT NULL,
   `content` MEDIUMTEXT NULL DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-KEY (`id`, `type`),
-KEY (`texte_id`)
+KEY (`texte_id`),
+  UNIQUE KEY (`type`, `texte_id`, `number`)
 );
 
 -- ---

@@ -120,15 +120,23 @@ c.queue([{
 			text_content = text_content.replace(/^-\s*/g,"");
 
 			// Ligne n'est pas un texte ?
-			if (text_content.indexOf("Discussion") !== 0 && text_content.indexOf("Suite de la discussion")){
+			if (   text_content.indexOf("Discussion") !== 0
+				&& text_content.indexOf("Suite de la discussion") !== 0
+				&& text_content.indexOf("Explications de vote et vote") !== 0
+			){
 				return;
 			}
 
 			var texte_link = $(ligne).find("a").attr("href") || '';
-			
+
 			// On nettoie l'url des trucs genre "#xxx"
 			if (texte_link.indexOf("#") > 0){
 				texte_link = texte_link.substr(0, texte_link.indexOf("#"));
+			}
+
+			// Pas de lien pour le texte = pas de id_hash, donc on peut pas savoir s'il existe dans la liste ou pas 
+			if (!texte_link){
+				return;
 			}
 
 			if (!textes[texte_link]){
@@ -178,7 +186,7 @@ function parse_detail(error,result, $){
 	texte.points = [];
 
 	texte.title = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
-	console.log("Analysing "+texte.title+"...");
+	//console.log("Analysing "+texte.title+"...");
 
 	// Boucle sur les cadres à la con
 	var $coms = $("commentaire");
@@ -215,7 +223,7 @@ function parse_detail(error,result, $){
 					point_title && texte.points.push({
 						title: point_title,
 						texte: point_texte,
-						number: point_title.match(/\d+/)[0]
+						number: point_title.match(/\d+\w{0,5}/)[0]
 					});
 					point_title = $.trim(ligne.replace(/\s?:/g, ""));
 					point_texte = "";
@@ -228,7 +236,7 @@ function parse_detail(error,result, $){
 			point_title && texte.points.push({
 				title: point_title,
 				texte: point_texte,
-				number: point_title.match(/\d+/)[0]
+				number: point_title.match(/\d+\w{0,5}/)[0]
 			});
 		}
 	});
@@ -246,7 +254,7 @@ function parse_detail(error,result, $){
 	
 	db.query("SELECT * FROM textes WHERE id_hash = ?", texte.id_hash, function(err, rows, fields) {
 		if (rows.length == 0){
-			console.log("NOUVEAU : texte.text");
+			console.log("NEW : " + texte.title);
 			db.query("INSERT INTO textes SET ?", data, function(err, result) {
 				if (err) throw err;
 				texte.id = result.insertId;
@@ -254,6 +262,7 @@ function parse_detail(error,result, $){
 			});
 			return;
 		}
+		console.log("UPD : " + texte.title);
 
 		texte.id = rows[0].id;
 
@@ -289,11 +298,13 @@ function insert_points(texte){
 			content: point.texte
 		};
 
-		db.query("INSERT IGNORE INTO articles SET ?", data, function(err, result) {
+		db.query("INSERT INTO articles SET ? ON DUPLICATE KEY UPDATE "+
+			'number='+mysql.escape(data.number)+', '+
+			'title='+mysql.escape(data.title)+', '+
+			'content='+mysql.escape(data.content), data, function(err, result) {
 			if (err) throw err;
 		});
 	}
-
 }
 
 String.prototype.hashCode = function(){

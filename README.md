@@ -46,10 +46,10 @@
 
 - Installer le serveur. nodemon en dev, et pm2 en prod :
 
-```
-$ sudo npm install -g nodemon # en dev
-$ sudo npm install -g pm2     # en prod
-```
+  ```
+  $ sudo npm install -g nodemon # en dev
+  $ sudo npm install -g pm2     # en prod
+  ```
 ===== Déploiement =====
 
 
