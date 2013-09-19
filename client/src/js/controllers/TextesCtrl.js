@@ -40,7 +40,6 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             }
 
             $scope.articles = articles;
-            $window.FB && FB.XFBML.parse(jQuery(".fb-comments").parent()[0]);
         });
 
     }

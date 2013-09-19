@@ -405,11 +405,6 @@ table {
   height: 450px;
   background: url(../img/header.jpg) no-repeat 50% 0;
   padding: 0 9.1%;
-  -webkit-transition: height 0.3s linear;
-  -moz-transition: height 0.3s linear;
-  -ms-transition: height 0.3s linear;
-  -o-transition: height 0.3s linear;
-  transition: height 0.3s linear;
 }
 @media only screen and (max-width: 980px) {
   .header .header-content {
