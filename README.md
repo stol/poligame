@@ -44,39 +44,27 @@
   this.relativeSrc = path.relative(process.cwd(), dest || src);
   ```
 
+- Installer le serveur. nodemon en dev, et pm2 en prod :
 
-
-
-
-
-
+```
+$ sudo npm install -g nodemon # en dev
+$ sudo npm install -g pm2     # en prod
+```
 ===== Déploiement =====
 
 
 === DEV ===
-Utiliser nodemon en DEV pour éviter d'avoir à relancer node après chaque modif
     
 ```
-$ sudo npm install -g nodemon
-$ nodemon server/app.js
-$ node scripts/crawler.js
+$ node scripts/crawler.js # Maj du des infos en BDD
+$ grunt                   # Création et déploiement des assets
+$ nodemon server/app.js   # Démarrage du serveur
 ```
-
-
-
 === PROD ===
 
-
-Installer pm2
-
 ```
-$ sudo npm install -g pm2
-```
-
-Déploiement
-
-```
-$ NODE_ENV=production pm2 start server/app.js -i 1
-$ NODE_ENV=production node scripts/crawler.js
+$ NODE_ENV=production node scripts/crawler.js # Maj du des infos en BDD
+$ grunt # Création et déploiement des assets
+$ NODE_ENV=production pm2 start server/app.js -i 1 # Démarrage du serveur ("pm2 stop all" avant si nécessaire)
 ```
 
