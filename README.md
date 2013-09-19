@@ -20,22 +20,63 @@
     ```
     $ bower install
     ```
-
-===== Tips =====
-
-- Utiliser nodemon en DEV pour éviter d'avoir à relancer node après chaque modif
+- Créer la base de données et éditer les confs
     
     ```
-    $ sudo npm install -g nodemon
+    server/app.js
+    scripts/crawler.js
+    ```
+- Installer la BDD
+
+    ```
+    mysql -u USER -h HOST -p PASSWORD DB_NAME < schema.sql
     ```
 
-    puis
+- éditer node_modules/grunt-usemin/lib/htmlprocessor.js et remplacer la ligne 148 :
+  
+  ```
+  this.relativeSrc = path.relative(process.cwd(), src);
+  ```
 
-    ```
-    $ nodemon server/app.js
+  par 
+
+  ```
+  this.relativeSrc = path.relative(process.cwd(), dest || src);
+  ```
 
 
-- Utiliser PM2 en prod
 
 
-- divers : voir https://medium.com/tech-talk/e7c0b0e5ce3c
+
+
+
+===== Déploiement =====
+
+
+=== DEV ===
+Utiliser nodemon en DEV pour éviter d'avoir à relancer node après chaque modif
+    
+```
+$ sudo npm install -g nodemon
+$ nodemon server/app.js
+$ node scripts/crawler.js
+```
+
+
+
+=== PROD ===
+
+
+Installer pm2
+
+```
+$ sudo npm install -g pm2
+```
+
+Déploiement
+
+```
+$ NODE_ENV=production pm2 start server/app.js -i 1
+$ NODE_ENV=production node scripts/crawler.js
+```
+
