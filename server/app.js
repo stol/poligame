@@ -33,7 +33,7 @@ app.use(app.router);
 
 // Production
 if ('production' == app.get('env')) {
-    console.log("ENV => PRODUCTION");
+    console.log("------------\nENV => PRODUCTION\n");
     app.set('views', __dirname + '/../client/build/views');
     app.use(require('stylus').middleware(__dirname + '../client/build'));
     app.use(express.static(path.join(__dirname, '../client/build')));
@@ -46,7 +46,7 @@ if ('production' == app.get('env')) {
 }
 // Development 
 else {
-    console.log("ENV => DEVELOPMENT");
+    console.log("------------\nENV => DEVELOPMENT\n");
     app.set('views', __dirname + '/../client/src/views');
     app.use(express.errorHandler());
     app.use(require('stylus').middleware(__dirname + '../client/src'));
