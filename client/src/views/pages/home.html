@@ -1,21 +1,35 @@
-<div class="section-present">
+<div class="section-present" ng-controller="TextesCtrl" ng-init="init_textes('current')">
 
 	<h3 class="h3">Textes actuellement en discussion</h3>
 
-	<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('current')"></div>
+	<div
+		ng-repeat="texte in textes"
+		ng-include="'/views/partials/texte_small.html'"
+		class="texte_small clearfix"
+	></div>
+</div>
+
 
 </div>
 
 
-<div class="section-future">
+<div class="section-future" ng-controller="TextesCtrl" ng-init="init_textes('future')">
 	<h3 class="h3">Textes bientôt en discussion</h3>
 
-	<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('future')"></div>
+	<div 
+		ng-repeat="texte in textes"
+		ng-include="'/views/partials/texte_small.html'"
+		class="texte_small clearfix"
+	></div>
 </div>
 
-<div class="section-past">
+<div class="section-past" ng-controller="TextesCtrl" ng-init="init_textes('past')">
 	<h3 class="h3">Textes déjà discutés</h3>
 
-	<div ng-include="'/views/partials/textes.html'" ng-controller="TextesCtrl" ng-init="init_textes('past')"></div>
+	<div 
+		ng-repeat="texte in textes"
+		ng-include="'/views/partials/texte_small.html'"
+		class="texte_small clearfix"
+	></div>
 </div>
 

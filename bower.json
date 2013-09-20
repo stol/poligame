@@ -17,6 +17,7 @@
     "angularjs-cookies": "git://github.com/xapu/angularjs-cookies.git",
     "angular-resource": "*",
     "angular-sanitize": "*",
+    "angular-animate": "*",
     "angular-route": "*",
     "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },

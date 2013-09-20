@@ -1,7 +1,7 @@
 // moiElu module with moiElu.controllers dependency containing all controllers
 // and ngMockE2E dependency containing $httpBackend service
 
-var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule']);
+var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule', 'ngAnimate']);
 
   // routes declaration
 moiElu.config(['$routeProvider', function($routeProvider) {
