@@ -2,6 +2,7 @@
 
 	<h3 class="h3">Textes actuellement en discussion</h3>
 
+	<p ng-if="!textes.length">Il n'y a pas de texte actuellement en discussion.</p>
 	<div
 		ng-repeat="texte in textes"
 		ng-include="'/views/partials/texte_small.html'"
@@ -16,16 +17,19 @@
 <div class="section-future" ng-controller="TextesCtrl" ng-init="init_textes('future')">
 	<h3 class="h3">Textes bientôt en discussion</h3>
 
+	<p ng-if="!textes.length">Il n'y a pas de textes prévus.</p>
 	<div 
 		ng-repeat="texte in textes"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
+
 </div>
 
 <div class="section-past" ng-controller="TextesCtrl" ng-init="init_textes('past')">
 	<h3 class="h3">Textes déjà discutés</h3>
 
+	<p ng-if="!textes.length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
 		ng-repeat="texte in textes"
 		ng-include="'/views/partials/texte_small.html'"
