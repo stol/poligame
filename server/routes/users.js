@@ -1,7 +1,12 @@
-
+var moment = require('moment');
 /*
  * GET users listing.
  */
+
+function generate_token(){
+	
+	
+}
 
 exports.login = function(req, res){
 

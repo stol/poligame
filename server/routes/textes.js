@@ -198,7 +198,7 @@ function get_stats(texte, callback){
 
 
 function fetch(req, res, ids){
-	
+	console.log(req.session);
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || false;
 
@@ -207,16 +207,12 @@ function fetch(req, res, ids){
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
 	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || ids || false;
-	console.log(req.query.ids);
-	console.log(ids);
 
 	if (ids){
-		console.log("ids = ", ids);
 		sql+= ' WHERE id IN('+ids.join(',')+')';
 	}
 
 	console.log(sql);
-		
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
@@ -234,9 +230,6 @@ function fetch(req, res, ids){
 				starts_at = moment(textes[i].starts_at),
 				ends_at   = moment(textes[i].ends_at);
 
-			console.log(current.format("YYYY-MM-DD HH:mm:ss"));
-			console.log(starts_at.format("YYYY-MM-DD HH:mm:ss"));
-			console.log(ends_at.format("YYYY-MM-DD HH:mm:ss"));
 			if (ends_at < current){
 				textes[i].mode = "past";
 			}
@@ -246,7 +239,6 @@ function fetch(req, res, ids){
 			else{
 				textes[i].mode = "future";
 			}
-			console.log(textes[i].mode);
 
 			alter_texte(textes[i]);
 

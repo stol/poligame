@@ -57,12 +57,14 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
 
                 // Maj des infos sur le serveur
                 $window.FB.api('/me', function(response) {
+
                     $http({method: 'POST', url: '/users/login', data: {
                         firstname: response.first_name,
                         lastname : response.last_name,
                         fullname : response.name,
                         provider_user_id: response.id,
-                        link     : response.link
+                        link     : response.link,
+                        _csrf: window.csrftoken
                     }})
                     .success(function(data, status, headers, config) {
                         user.infos = data.infos;
@@ -147,7 +149,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
         }
 
 
-        if (false){
+        if (true){
             console.log("publishVote() => sending action");
             $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
                 access_token: accessToken,

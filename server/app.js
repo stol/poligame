@@ -9,7 +9,8 @@ var express = require('express')
     , users = require('./routes/users')
     , http = require('http')
     , mysql = require('mysql')
-    , path = require('path');
+    , path = require('path')
+    , helmet = require('helmet');
 
 
 TYPE_TEXTE = 1;
@@ -23,13 +24,27 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 
+app.use(express.compress());
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(express.cookieParser('your secret here'));
-app.use(express.session());
+
+app.use(helmet.xframe());
+app.use(helmet.iexss());
+app.use(helmet.contentTypeOptions());
+app.use(helmet.cacheControl());
+
+app.use(express.cookieParser());
+app.use(express.session({secret: '1234567890QWERTY'}));
+
 app.use(app.router);
+
+app.use(function(req, res, next) {
+    
+    next();
+});
+
 
 // Production
 if ('production' == app.get('env')) {

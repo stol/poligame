@@ -119,10 +119,10 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
                 texte_id: texte.id,
                 article_id: article && article.id,
                 user_vote: user_vote,
-                csp: Cookies.getItem('csp'),
-                bord: Cookies.getItem('bord'),
-                gender: Cookies.getItem('gender'),
-                age: Cookies.getItem('age')
+                csp: User.getLocalInfos().csp,
+                bord: User.getLocalInfos().bord,
+                gender: User.getLocalInfos().gender,
+                age: User.getLocalInfos().age
             }})
             // cancel vote if error
             .success(function(data, status, headers, config) {
