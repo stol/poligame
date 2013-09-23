@@ -236,9 +236,25 @@ p > a, p > b > a{
 }
 
 .results_bars{
-	min-width: 320px;
-	width: 50%;
-	float: left;
+	min-width: 230px;
+	width: 48%;
+
+	&.results_bars_1{
+		float: left;
+	}
+	&.results_bars_2{
+		float: right;
+	}
+
+	@media only screen and (max-width: 600px){
+		padding: 0 5px;
+		&.results_bars_1{
+			float: none;
+		}
+		&.results_bars_2{
+			float: none;
+		}
+    }
 
 
 

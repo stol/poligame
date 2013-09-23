@@ -206,8 +206,7 @@ moiElu.directive('resultsBars', function(Textes) {
             var abstention_perc = 100;
         }
 
-        var $title = $('<div class="results_bars-title">'+r_label+'</div>');
-        $(element[0]).addClass("results_bars").append($title);
+        $(element[0]).append('<div class="results_bars-title">'+r_label+'</div>');
 
         if (votes.total > 0 ){
             $(element[0]).append(

@@ -614,9 +614,25 @@ p > a, p > b > a {
 }
 
 .results_bars {
-  min-width: 320px;
-  width: 50%;
+  min-width: 230px;
+  width: 48%;
+}
+.results_bars.results_bars_1 {
   float: left;
+}
+.results_bars.results_bars_2 {
+  float: right;
+}
+@media only screen and (max-width: 600px) {
+  .results_bars {
+    padding: 0 5px;
+  }
+  .results_bars.results_bars_1 {
+    float: none;
+  }
+  .results_bars.results_bars_2 {
+    float: none;
+  }
 }
 .results_bars .results_bars-title {
   color: #828282;
