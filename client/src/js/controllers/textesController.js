@@ -1,4 +1,4 @@
-moiElu.controller('TextesCtrl', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies',
+moiElu.controller('TextesController', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies',
 function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, Cookies) {
     
 
