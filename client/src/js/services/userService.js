@@ -1,4 +1,4 @@
-moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', function($window, $http, $cookieStore, $q, $rootScope) {
+moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', function($window, $http, $q, $rootScope, Cookies) {
 
     var accessToken = null,
         is_logged = false,
@@ -6,6 +6,8 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
         fb_is_loaded = false,    // La lib FB est-elle chargée ?
         user_is_logged_deferred; // Promesse du login du user
         // TODO : tester les events
+
+    var localInfos = null;
 
     var user = {
         infos: null,
@@ -221,6 +223,19 @@ moiElu.service('User', ['$window', '$http', '$cookieStore', '$q', '$rootScope', 
         }
         return user;
     };
+
+    user.getLocalInfos = function(){
+        if (localInfos === null){
+            localInfos = JSON.parse(Cookies.getItem("infos")) || {};
+        }
+        
+        return localInfos;
+    }
+
+    user.setLocalInfos = function (infos){
+        localInfos = infos;
+        Cookies.setItem("infos", JSON.stringify(infos), Infinity, '/');
+    }
 
     function getStatus(){
         return status;

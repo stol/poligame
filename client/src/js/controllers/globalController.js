@@ -38,12 +38,7 @@ moiElu.controller('ReminderPopinCtrl', ['$scope', '$modalInstance', function($sc
 }]);
 
 moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {
-	$scope.infos = {
-        csp    : parseInt(Cookies.getItem("csp"),10),
-        bord   : parseInt(Cookies.getItem("bord"),10),
-        gender : parseInt(Cookies.getItem("gender"),10),
-        age    : parseInt(Cookies.getItem("age"),10)
-    };
+	$scope.infos = User.getLocalInfos();
 
 	$scope.csps = [
         {id: 1, label: 'Agriculteur exploitant' },
@@ -77,10 +72,12 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Co
 	}
 
     $scope.close = function(result){
-        $scope.infos.csp && Cookies.setItem("csp", $scope.infos.csp, Infinity);
-        $scope.infos.bord && Cookies.setItem("bord", $scope.infos.bord, Infinity);
-        $scope.infos.gender && Cookies.setItem("gender", $scope.infos.gender, Infinity);
-        $scope.infos.age && Cookies.setItem("age", $scope.infos.age, Infinity);
+        User.setLocalInfos({
+            csp   : $scope.infos.csp,
+            bord  : $scope.infos.bord,
+            gender: $scope.infos.gender,
+            age   : $scope.infos.age
+        });
 
 		User.changed();
         $modalInstance.close(result);
