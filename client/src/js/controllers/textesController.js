@@ -71,18 +71,18 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     }
 
     function info_needed(){
-        return true;
         // On veut un user loggé
         if (!User.isLogged() || !User.infos.votes_nb || User.infos.votes_nb % 2 != 0){
             return false;
         }
 
+        var infos = User.getLocalInfos();
         // On veut qu'il ait encore des infos à renseigner
-        if (Cookies.getItem('csp') && Cookies.getItem('bord') && Cookies.getItem('gender') && Cookies.getItem('age')){
-            return false;
+        if (!infos.csp || !infos.bord || !infos.gender || !infos.age){
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     // Opens the "Share your infos" popin
