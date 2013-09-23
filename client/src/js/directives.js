@@ -144,17 +144,8 @@ moiElu.directive('resultsBars', function(Textes) {
         if (attrs.resultsBars == "net"){
             var votes = texte.votes;
             var r_label = "Votes des internautes";
-            if (texte.votes.total == 0){
-                $(element[0]).text("Il n'y a eu aucun vote sur ce texte. Les résultats ne sont pas disponibles.");
-                return;
-            }
         }
         else if (attrs.resultsBars == "assemblee"){
-            if (texte.votes_assemblee.total == 0){
-                $(element[0]).text("Les votes de vos députés n'ont pas encore été enregistrés dans la base de donnée. Revenez un peu plus tard !");
-                return;
-            }
-
             var votes = texte.votes_assemblee;
             var r_label = "Votes des députés";
         }
@@ -197,31 +188,37 @@ moiElu.directive('resultsBars', function(Textes) {
         }
 
         // pour gagne
-        if (votes.pour.nb > votes.contre.nb && votes.pour.nb > votes.abstention.nb){ 
+        if (votes.total && votes.pour.nb > votes.contre.nb && votes.pour.nb > votes.abstention.nb){ 
             var pour_perc = 100;
             var contre_perc = Math.round(votes.contre.perc * 100 / votes.pour.perc * 10)/10;
             var abstention_perc = Math.round(votes.abstention.perc * 100 / votes.pour.perc * 10)/10;
         }
         //contre gagne
-        else if (votes.contre.nb > votes.pour.nb && votes.contre.nb > votes.abstention.nb){
+        else if (votes.total && votes.contre.nb > votes.pour.nb && votes.contre.nb > votes.abstention.nb){
             var pour_perc = Math.round(votes.pour.perc * 100 / votes.contre.perc * 10)/10;
             var contre_perc = 100;
             var abstention_perc = Math.round(votes.abstention.perc * 100 / votes.pour.perc * 10)/10;
         }
         // Abstention gagne
-        else{
+        else if (votes.total) {
             var pour_perc = Math.round(votes.pour.perc * 100 / votes.abstention.perc * 10)/10;
             var contre_perc = Math.round(votes.contre.perc * 100 / votes.abstention.perc * 10)/10;
             var abstention_perc = 100;
         }
 
-        var node = element[0];
         var $title = $('<div class="results_bars-title">'+r_label+'</div>');
-        var $row_pour = $('<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>');
-        var $row_contre = $('<div class="rb-row rb-row_contre"><span class="rb-row-label">Contre</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+contre_perc+'%"></span></span><span class="rb-row-perc">'+votes.contre.perc+'%</span></div>');
-        var $row_abstention = $('<div class="rb-row rb-row_abstention"><span class="rb-row-label">Abstention</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+abstention_perc+'%"></span></span><span class="rb-row-perc">'+votes.abstention.perc+'%</span></div>');
+        $(element[0]).addClass("results_bars").append($title);
 
-        $(node).addClass("results_bars").append($title, $row_pour, $row_contre, $row_abstention);
+        if (votes.total > 0 ){
+            $(element[0]).append(
+                '<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>',
+                '<div class="rb-row rb-row_contre"><span class="rb-row-label">Contre</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+contre_perc+'%"></span></span><span class="rb-row-perc">'+votes.contre.perc+'%</span></div>',
+                '<div class="rb-row rb-row_abstention"><span class="rb-row-label">Abstention</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+abstention_perc+'%"></span></span><span class="rb-row-perc">'+votes.abstention.perc+'%</span></div>'
+            );
+        }
+        else{
+            $(element[0]).append('<div>Données indisponibles.</div>');
+        }
     };
 });
 
