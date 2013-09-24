@@ -27,6 +27,19 @@ moiElu.config(['$routeProvider', function($routeProvider) {
 moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+    // register the interceptor via an anonymous factory
+    $httpProvider.interceptors.push(function() {
+        return {
+            request: function(config) {
+                if (config.method == "POST"){
+                    config.data._csrf = window.csrftoken;
+                }
+                return config;
+            }
+        }
+    });
+
 }]);
 
 moiElu.filter('nl2br', function () {

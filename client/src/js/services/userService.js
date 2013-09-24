@@ -63,8 +63,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
                         lastname : response.last_name,
                         fullname : response.name,
                         provider_user_id: response.id,
-                        link     : response.link,
-                        _csrf: window.csrftoken
+                        link     : response.link
                     }})
                     .success(function(data, status, headers, config) {
                         user.infos = data.infos;

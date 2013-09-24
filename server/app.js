@@ -35,8 +35,20 @@ app.use(helmet.iexss());
 app.use(helmet.contentTypeOptions());
 app.use(helmet.cacheControl());
 
-app.use(express.cookieParser());
-app.use(express.session({secret: '1234567890QWERTY'}));
+
+app.use(express.cookieParser('optional secret string'));
+app.use(express.session({
+    secret: 'keyboard cat',
+    key: 'sid',
+    //cookie: {httpOnly: true, secure: true}
+    cookie: {httpOnly: true}
+}));
+app.use(express.csrf());
+app.use(function (req, res, next) {
+    console.log(req);
+    res.locals.csrftoken = req.session._csrf;
+    next();
+});
 
 app.use(app.router);
 
