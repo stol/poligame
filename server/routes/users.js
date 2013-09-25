@@ -1,4 +1,6 @@
-var moment = require('moment');
+var moment = require('moment')
+  , request = require('request');
+
 /*
  * GET users listing.
  */
@@ -10,19 +12,43 @@ function generate_token(){
 
 exports.login = function(req, res){
 
-	db.query("SELECT * FROM users WHERE provider_user_id = ?", [req.body.provider_user_id], function(err, rows, fields) {
-  		if (err) throw err;
+	// On a bien le droit d'accès au user ?
+	request.get({url: 'https://graph.facebook.com/me', qs: {
+        access_token: req.body.accessToken
+    }}, function(err, resp, body) {
+      
+      	// Handle any errors that occur
+      	if (err) return console.error("Error occured: ", err);
+      	body = JSON.parse(body);
 
-  		if (!rows.length){
-  			db.query('INSERT INTO users SET ? ', req.body, function(err, result){
-  				req.body.id = result.insertId;
-  				get_votes(req.body);
-  			});
-  		}
-  		else{
-  			get_votes(rows[0]);
-  		}
-	});
+      	if (body.error){
+      		res.json({ success: false});
+     	}
+     	console.log(body);
+
+		// User est bien dans la BDD ?
+		db.query("SELECT * FROM users WHERE provider_user_id = ?", [body.id], function(err, rows, fields) {
+	  		if (err) throw err;
+
+	  		if (rows.length){
+	  			get_votes(rows[0]);
+	  		}
+	  		else{
+	  			var user = {
+	  				firstname: body.first_name,
+					lastname : body.last_name,
+					fullname : body.name,
+					provider_user_id: body.id,
+					link     : body.link,
+				}
+
+	  			db.query('INSERT INTO users SET ? ', user, function(err, result){
+	  				user.id = result.insertId;
+	  				get_votes(user);
+	  			});
+	  		}
+		});
+    });
 
 	function get_votes(user){
 		var votes = [{},{},{},{}];

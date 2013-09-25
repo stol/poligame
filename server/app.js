@@ -10,7 +10,8 @@ var express = require('express')
     , http = require('http')
     , mysql = require('mysql')
     , path = require('path')
-    , helmet = require('helmet');
+    , helmet = require('helmet')
+    , request = require('request');
 
 
 TYPE_TEXTE = 1;
@@ -45,7 +46,6 @@ app.use(express.session({
 }));
 app.use(express.csrf());
 app.use(function (req, res, next) {
-    console.log(req);
     res.locals.csrftoken = req.session._csrf;
     next();
 });

@@ -55,28 +55,20 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
                 status = "connected";
                 accessToken = response.authResponse.accessToken;
 
-                // Maj des infos sur le serveur
-                $window.FB.api('/me', function(response) {
-
-                    $http({method: 'POST', url: '/users/login', data: {
-                        firstname: response.first_name,
-                        lastname : response.last_name,
-                        fullname : response.name,
-                        provider_user_id: response.id,
-                        link     : response.link
-                    }})
-                    .success(function(data, status, headers, config) {
-                        user.infos = data.infos;
-                        user.votes = data.votes;
-                        is_logged = true;
-                        user_is_logged_deferred && user_is_logged_deferred.resolve(response);
-                        $rootScope.$broadcast('userConnected');
-                    })
-                    .error(function(data, status, headers, config) {
-                        status = "error";
-                        user_is_logged_deferred && user_is_logged_deferred.reject(response);
-                        $rootScope.$broadcast('userError');
-                    });
+                $http({method: 'POST', url: '/users/login', data: {
+                    accessToken: accessToken
+                }})
+                .success(function(data, status, headers, config) {
+                    user.infos = data.infos;
+                    user.votes = data.votes;
+                    is_logged = true;
+                    user_is_logged_deferred && user_is_logged_deferred.resolve(response);
+                    $rootScope.$broadcast('userConnected');
+                })
+                .error(function(data, status, headers, config) {
+                    status = "error";
+                    user_is_logged_deferred && user_is_logged_deferred.reject(response);
+                    $rootScope.$broadcast('userError');
                 });
 
             // User connecté MAIS PAS inscrit
