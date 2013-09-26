@@ -198,7 +198,6 @@ function get_stats(texte, callback){
 
 
 function fetch(req, res, ids){
-	console.log(req.session);
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || false;
 
@@ -211,8 +210,6 @@ function fetch(req, res, ids){
 	if (ids){
 		sql+= ' WHERE id IN('+ids.join(',')+')';
 	}
-
-	console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;

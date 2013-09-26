@@ -11,15 +11,22 @@ exports.getFacebookUser = function(access_token){
     request.get({url: 'https://graph.facebook.com/me', qs: {
         access_token: access_token
     }}, function(err, resp, body) {
-      
-        // Handle any errors that occur
+        
+        // Err de request
         if (err){
             deferred.reject(err);
+            return;
         }
-        else{
-            body = JSON.parse(body);
-            deferred.resolve(body);
+
+        body = JSON.parse(body);
+
+        // Erreur facebook
+        if (body.error){
+            deferred.reject(body.error.message);
+            return;
         }
+
+        deferred.resolve(body);
     });
 
     return deferred.promise;
@@ -30,6 +37,7 @@ exports.checkOrInsertUser = function (data){
     
     // User est bien dans la BDD ?
     db.query("SELECT * FROM users WHERE provider_user_id = ?", [data.id], function(err, rows, fields) {
+
         if (err) {
             deferred.reject("SQL Error");
             return;
@@ -64,11 +72,12 @@ exports.getUserVotes = function(infos){
         for(var i=0; i<rows.length; i++){
             votes[rows[i].obj_type][rows[i].obj_id] = true;
         }
-        deferred.resolve({
+        var ret = {
             votes_nb: rows.length,
             infos   : infos,
             votes   : votes
-        });
+        };
+        deferred.resolve(ret);
     });
 
     return deferred.promise;

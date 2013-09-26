@@ -1,19 +1,25 @@
 var moment = require('moment')
   , User = require('../models/user.js')
-  , q = require('q');
+  , q = require('q')
+  , request = require('request');
 /*
  * GET users listing.
  */
 
 exports.login = function(req, res){
 	User.getFacebookUser(req.body.accessToken) // Récupération des infos facebook
-		.then(User.checkOrInsertUser)		   // Récup des infos en local, ou insertion
+		.then(User.checkOrInsertUser)          // Récup des infos en local, ou insertion
 		.then(User.getUserVotes)			   // Récup des votes
-		.fail(function(){
-			res.json({ success: false});
+		.then(function(data, code){				   // Finally !
+			console.log("INSIDE LAST THEN");
+			res.json(data);
 		})
-		.done(function(user){				   // Envoi des infos en sortie :)
-			res.json(user);
+		.catch(function(msg){				   // Error handling
+			console.log("INSIDE CATCH");
+			res.json(401, {
+				success: false,
+				message: msg 
+			});
 		})
 };
 
