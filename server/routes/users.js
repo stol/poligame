@@ -11,11 +11,9 @@ exports.login = function(req, res){
 		.then(User.insertOrUpdate)          // Récup des infos en local, ou insertion
 		.then(User.getVotes)			   // Récup des votes
 		.then(function(data, code){				   // Finally !
-			console.log("INSIDE LAST THEN");
 			res.json(data);
 		})
 		.catch(function(msg){				   // Error handling
-			console.log("INSIDE CATCH");
 			res.json(401, {
 				success: false,
 				message: msg 
