@@ -313,6 +313,7 @@ function articles(req, res){
 
 function vote(req, res){
 
+
 	set_user_vote();
 	
 	function set_user_vote(){
