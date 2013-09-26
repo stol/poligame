@@ -1,6 +1,7 @@
-var util = require('util');
-var moment = require('moment');
-var _ = require('underscore');
+var moment = require('moment')
+	, _ = require('underscore')
+	, q = require('q')
+    , User = require('../models/user.js');
 
 function voteObj(label){
 	this.pour = {
@@ -271,31 +272,6 @@ function show(req, res){
 	}
 
 	return fetch(req, res, [req.params.texte_id]);
-	/*
-
-	db.query('SELECT * from textes WHERE id = ?', [req.params.texte_id], function(err, rows, fields) {
-  		if (err) throw err;
-
-		var texte = rows[0];
-
-		var current   = moment(),
-			starts_at = moment(texte.starts_at),
-			ends_at   = moment(texte.ends_at);
-
-		if (ends_at < current)
-			texte.mode = "past";
-		else if (starts_at < current && ends_at > current)
-			texte.mode = "current";
-		else
-			texte.mode = "future";
-
-		alter_texte(texte);
-
-		get_stats(texte, function(texte){
-			res.json(texte);
-		});
-	});
-	*/
 };
 
 function articles(req, res){
@@ -310,10 +286,23 @@ function articles(req, res){
 
 function vote(req, res){
 
-
-	set_user_vote();
-	
+	User.get(req.body.user_id)
+		.then(set_user_vote)
+		.then(set_anon_vote)
+		.then(update_stats)
+		.then(function(){
+			res.json({success: true});
+		})
+		.catch(function(msg){
+			res.json(401, {
+				success: false,
+				message: msg
+			});
+		});
+		
 	function set_user_vote(){
+		var deferred = q.defer();
+
 		// Set texte voted for user
 		db.query("INSERT INTO votes SET ?", {
 			user_id: req.body.user_id,
@@ -321,16 +310,18 @@ function vote(req, res){
 			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE
 		}, function(err, rows, fields) {
 	  		if (err) {
-				res.json({
-					success: false,
-					msg: err.message
-				});
+	  			deferred.reject(err.message);
 	  		}
-	  		set_anon_vote();
+	  		else{
+	  			deferred.resolve();
+	  		}
 		});
+		return deferred.promise;
 	}
 
 	function set_anon_vote(){
+		var deferred = q.defer();
+
 		var data = {
 			obj_id: req.body.article_id || req.params.texte_id,
 			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE,
@@ -342,33 +333,40 @@ function vote(req, res){
 
 		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {
 	  		if (err) {
-				res.json({
-					success: false,
-					msg: err.message
-				});
-	  		}
-	  		if (req.body.article_id){
-	  			res.json({success: true})
+	  			deferred.reject(err.message);
+	  			return;
 	  		}
 	  		else{
-	  			update_stats();
+	  			deferred.resolve();
 	  		}
-
 		});
+		return deferred.promise;
 	}
 
 	function update_stats(){
-		// Update texte statistics
-		var user_vote = parseInt(req.body.user_vote,10);
-		if      (user_vote == 1) var choice = "pour";
-		else if (user_vote == 2) var choice = "contre";
-		else if (user_vote == 0) var choice = "abstention";
+		var deferred = q.defer();
 
-		db.query("UPDATE textes SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.texte_id]
-		, function(err, rows, fields) {
-	  		if (err) throw err;
-			res.json({success: true});
-		});
+  		if (req.body.article_id){
+  			deferred.resolve();
+  		}
+  		else{
+			// Update texte statistics
+			var user_vote = parseInt(req.body.user_vote,10);
+			if      (user_vote == 1) var choice = "pour";
+			else if (user_vote == 2) var choice = "contre";
+			else if (user_vote == 0) var choice = "abstention";
+
+			db.query("UPDATE textes SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.texte_id], function(err, rows, fields) {
+		  		if (err) {
+		  			deferred.reject(err.message);
+		  		}
+		  		else{
+		  			deferred.resolve();
+		  		}
+			});
+  		}
+
+		return deferred.promise;
 	}
 
 };

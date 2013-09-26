@@ -74,3 +74,34 @@ exports.getVotes = function(infos){
 
     return deferred.promise;
 }
+
+exports.get = function(id){
+    var deferred = q.defer();
+
+    db.query("SELECT * from users WHERE id = ?", [id], function(err, rows, fields) {
+        if (err) {
+            deferred.reject("SQL Error");
+            return;
+        }
+
+        if (rows.length != 1){
+            deferred.reject("Not few/many results");
+            return;
+        }
+        deferred.resolve(rows[0]);
+    });
+
+    return deferred.promise;
+}
+
+
+
+
+
+
+
+
+
+
+
+
