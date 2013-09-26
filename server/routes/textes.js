@@ -297,17 +297,14 @@ function vote(req, res){
 	}
 
 
-	User.getFacebookInfos(req.body.access_token)
-		.then(function() {
-			return User.get(req.body.user_id)
-		})
-		.then(set_user_vote)
-		.then(set_anon_vote)
-		.then(update_stats)
+	q.all([User.getFacebookInfos(req.body.access_token), User.get(req.body.user_id)]) // x2 login
 		.then(function(){
+			return q.all([set_user_vote(), set_anon_vote(), update_stats()])          // 3x inserts
+		})
+		.then(function(){ // Success :)
 			res.json({success: true});
 		})
-		.catch(function(msg){
+		.catch(function(msg){ // Error :(
 			res.json(401, {
 				success: false,
 				message: msg
