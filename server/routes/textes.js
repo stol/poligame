@@ -286,7 +286,21 @@ function articles(req, res){
 
 function vote(req, res){
 
-	User.get(req.body.user_id)
+
+	var choice = parseInt(req.body.user_vote,10);
+	if (choice !== 0 && choice !== 1 && choice !== 2){
+		res.json(401, {
+			success: false,
+			message: "Wrong choice"
+		});
+		return;
+	}
+
+
+	User.getFacebookInfos(req.body.access_token)
+		.then(function() {
+			return User.get(req.body.user_id)
+		})
 		.then(set_user_vote)
 		.then(set_anon_vote)
 		.then(update_stats)
@@ -299,7 +313,7 @@ function vote(req, res){
 				message: msg
 			});
 		});
-		
+
 	function set_user_vote(){
 		var deferred = q.defer();
 
@@ -325,6 +339,7 @@ function vote(req, res){
 		var data = {
 			obj_id: req.body.article_id || req.params.texte_id,
 			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE,
+			choice : choice,
 			gender: req.body.gender,
 			bord: req.body.bord,
 			csp: req.body.csp,

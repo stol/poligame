@@ -234,12 +234,17 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
         return status;
     }
 
+    function getAccessToken(){
+        return accessToken;
+    }
+
     // Exposition de l'api
     user.login       = login;
     user.publishVote = publishVote;
     user.isLogged    = isLogged;
     user.changed     = changed;
     user.getStatus   = getStatus;
+    user.getAccessToken = getAccessToken;
 
     return user;
 }]);
