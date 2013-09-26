@@ -64,7 +64,7 @@ KEY (`obj_id`, `obj_type`),
 DROP TABLE IF EXISTS `users`;
     
 CREATE TABLE `users` (
-  `id` VARCHAR(15) NULL AUTO_INCREMENT DEFAULT NULL,
+  `id` VARCHAR(15) NULL DEFAULT NULL,
   `firstname` VARCHAR(255) NULL DEFAULT NULL,
   `lastname` VARCHAR(255) NULL DEFAULT NULL,
   `name` VARCHAR(255) NULL DEFAULT NULL,
@@ -129,7 +129,6 @@ CREATE TABLE `votes_anon` (
   `choice` INTEGER NULL DEFAULT NULL,
 KEY (`obj_id`, `obj_type`)
 );
-
 -- ---
 -- Foreign Keys 
 -- ---
