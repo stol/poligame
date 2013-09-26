@@ -7,9 +7,9 @@ var moment = require('moment')
  */
 
 exports.login = function(req, res){
-	User.getFacebookUser(req.body.accessToken) // Récupération des infos facebook
-		.then(User.checkOrInsertUser)          // Récup des infos en local, ou insertion
-		.then(User.getUserVotes)			   // Récup des votes
+	User.getFacebookInfos(req.body.accessToken) // Récupération des infos facebook
+		.then(User.insertOrUpdate)          // Récup des infos en local, ou insertion
+		.then(User.getVotes)			   // Récup des votes
 		.then(function(data, code){				   // Finally !
 			console.log("INSIDE LAST THEN");
 			res.json(data);

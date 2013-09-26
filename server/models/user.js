@@ -4,7 +4,7 @@ var q = require('q')
 /**
  * Récupération des infos facebook
  */
-exports.getFacebookUser = function(access_token){
+exports.getFacebookInfos = function(access_token){
     var deferred = q.defer();
 
     // Req facebook pour voir si le user existe
@@ -32,43 +32,35 @@ exports.getFacebookUser = function(access_token){
     return deferred.promise;
 }
 
-exports.checkOrInsertUser = function (data){
+exports.insertOrUpdate = function (user){
     var deferred = q.defer();
     
-    // User est bien dans la BDD ?
-    db.query("SELECT * FROM users WHERE provider_user_id = ?", [data.id], function(err, rows, fields) {
+    db.query("INSERT INTO users (id, firstname, lastname, name, link) VALUES (?,?,?,?,?)"
+           +" ON DUPLICATE KEY UPDATE firstname = ?, lastname = ?, name = ?, link = ?, updated_at = CURRENT_TIMESTAMP()",
+    [user.id, user.first_name, user.last_name, user.name, user.link,
+     user.first_name, user.last_name, user.name, user.link
+    ], function(err, result, fields) {
+        if (err) {
+            deferred.reject(err.message);
+            return;
+        }
+
+        deferred.resolve(user);
+    });
+
+    return deferred.promise;
+}
+
+exports.getVotes = function(infos){
+    var deferred = q.defer();
+    var votes = [{},{},{},{}];
+    db.query("SELECT * from votes WHERE user_id = ?", [infos.id], function(err, rows, fields) {
 
         if (err) {
             deferred.reject("SQL Error");
             return;
         }
 
-        if (rows.length){
-            deferred.resolve(rows[0]);
-        }
-        else{
-            var user = {
-                firstname: data.first_name,
-                lastname : data.last_name,
-                fullname : data.name,
-                provider_user_id: data.id,
-                link     : data.link,
-            }
-
-            db.query('INSERT INTO users SET ? ', user, function(err, result){
-                user.id = result.insertId;
-                deferred.resolve(user);
-            });
-        }
-    });
-
-    return deferred.promise;
-}
-
-exports.getUserVotes = function(infos){
-    var deferred = q.defer();
-    var votes = [{},{},{},{}];
-    db.query("SELECT * from votes WHERE user_id = ?", [infos.id], function(err, rows, fields) {
         for(var i=0; i<rows.length; i++){
             votes[rows[i].obj_type][rows[i].obj_id] = true;
         }
