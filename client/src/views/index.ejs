@@ -138,6 +138,11 @@
       //  plan:         'Enhanced' // Plan name for the account
       //}
     }]);
+    UserVoice.push(['set', {
+        contact_title: "Vous avez un commentaire ?",
+        smartvote_enabled: false,
+        screenshot_enabled: false
+    }]);
 
     // Add default trigger to the bottom-right corner of the window:
     UserVoice.push(['addTrigger', { mode: 'contact', trigger_position: 'bottom-right' }]);
