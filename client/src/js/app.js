@@ -8,6 +8,10 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: '/views/pages/home.html'
     });
+    $routeProvider.when('/textes', {
+        templateUrl: '/views/pages/textes.html',
+        controller: 'TextesController'
+    });
     $routeProvider.when('/textes/:texte_id', {
         templateUrl: '/views/pages/texte.html'
     });
@@ -18,7 +22,7 @@ moiElu.config(['$routeProvider', function($routeProvider) {
 
     $routeProvider.when('/user', {
         templateUrl: '/views/pages/user.html',
-        controller: 'UsersCtrl'
+        controller: 'UsersController'
     });
 
     $routeProvider.otherwise({ redirectTo: '/' });

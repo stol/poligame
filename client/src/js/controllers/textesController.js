@@ -14,10 +14,14 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     }
 
 
-    $scope.init_textes = function(mode){
-        mode = mode || 'default';
+    $scope.init_textes = function(mode, limit){
+        mode = mode || $routeParams.mode || 'default';
+        $scope.textes = Textes.get({
+            limit: limit || null,
+            mode: mode
+        });
 
-        $scope.textes = Textes.get({mode: mode});
+        $scope.mode = mode;
 
     }
 

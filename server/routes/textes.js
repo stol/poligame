@@ -198,19 +198,30 @@ function get_stats(texte, callback){
 }
 
 
-function fetch(req, res, ids){
+function fetch(req, res, params){
 	var sql = 'SELECT * from textes';
-	var mode = req.query.mode || false;
+	var mode = req.query.mode || (params && params.mode) || false;
+
+	console.log("mode = ", mode);
 
 	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
-	else if (mode == "current") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
+	else if (mode == "present") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
 
-	var ids = req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids) || ids || false;
-
+	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
 		sql+= ' WHERE id IN('+ids.join(',')+')';
 	}
+
+	if      (mode == "past")    sql+= ' ORDER BY ends_at DESC';
+	else if (mode == "present") sql+= ' ORDER BY ends_at ASC';
+	else if (mode == "future")  sql+= ' ORDER BY starts_at ASC';
+
+	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || false;
+	if (limit){
+		sql+= ' LIMIT '+limit;
+	}
+	console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
@@ -219,20 +230,21 @@ function fetch(req, res, ids){
 
   		if (textes.length == 0){
   			res.json([]);
+  			return;
   		}
 
         for( var i=0; i<textes.length; i++){
 			textes[i].mode = mode;
 
-			var current   = moment(),
+			var present   = moment(),
 				starts_at = moment(textes[i].starts_at),
 				ends_at   = moment(textes[i].ends_at);
 
-			if (ends_at < current){
+			if (ends_at < present){
 				textes[i].mode = "past";
 			}
-			else if (starts_at < current && ends_at > current){
-				textes[i].mode = "current";
+			else if (starts_at < present && ends_at > present){
+				textes[i].mode = "present";
 			}
 			else{
 				textes[i].mode = "future";
@@ -244,9 +256,11 @@ function fetch(req, res, ids){
 				if (++stats_done == textes.length){
 					if(ids && ids.length == 1){
 						res.json(textes[0]);
+						return;
 					}
 					else{
 						res.json(textes);
+						return;
 					}
 					
 				}
@@ -255,9 +269,40 @@ function fetch(req, res, ids){
 	});
 };
 
+function future(req, res){
+	
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+		return;
+	}
+
+	return fetch(req, res, {mode: "future"});
+}
+
+function present(req, res){
+	
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+		return;
+	}
+
+	return fetch(req, res, {mode: "present"});
+}
+
+function past(req, res){
+	
+  	if (!req.xhr){
+		res.render('index', { title: 'Express' });
+		return;
+	}
+
+	return fetch(req, res, {mode: "past"});
+}
+
 function textes(req, res){
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
+		return;
 	}
 
 	return fetch(req, res);
@@ -269,14 +314,16 @@ function show(req, res){
 
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
+		return;
 	}
 
-	return fetch(req, res, [req.params.texte_id]);
+	return fetch(req, res, {ids: [req.params.texte_id]});
 };
 
 function articles(req, res){
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
+		return;
 	}
 
 	db.query('SELECT * from articles WHERE texte_id = ?', [req.params.texte_id], function(err, rows, fields) {
@@ -383,7 +430,13 @@ function vote(req, res){
 
 };
 
+
 exports.textes   = textes;
 exports.show     = show;
 exports.articles = articles;
 exports.vote     = vote;
+/*
+exports.future   = future;
+exports.present  = present;
+exports.past     = past;
+*/

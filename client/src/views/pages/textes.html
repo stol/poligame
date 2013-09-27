@@ -1,0 +1,12 @@
+<div class="section-present" ng-init="init_textes()">
+
+	<h3 class="h3">Textes actuellement {{mode}}</h3>
+
+	<p ng-if="!textes.length">Il n'y a pas de texte.</p>
+	<div
+		ng-repeat="texte in textes"
+		ng-include="'/views/partials/texte_small.html'"
+		class="texte_small clearfix"
+	></div>
+
+</div>

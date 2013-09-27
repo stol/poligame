@@ -201,7 +201,7 @@ moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
 
 
 
-moiElu.controller('UsersCtrl', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
+moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
     User.onConnected(function(e){
         var ids = _.keys(User.votes[TYPE_TEXTE]);
         $scope.textes = Textes.get({ids: ids});

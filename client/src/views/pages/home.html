@@ -1,4 +1,4 @@
-<div class="section-present" ng-controller="TextesController" ng-init="init_textes('current')">
+<div class="section-present" ng-controller="TextesController" ng-init="init_textes('present', 3)">
 
 	<h3 class="h3">Textes actuellement en discussion</h3>
 
@@ -8,13 +8,14 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
+	<p><a href="/textes?mode=present">Tous les textes</a></p>
 </div>
 
 
 </div>
 
 
-<div class="section-future" ng-controller="TextesController" ng-init="init_textes('future')">
+<div class="section-future" ng-controller="TextesController" ng-init="init_textes('future', 3)">
 	<h3 class="h3">Textes bientôt en discussion</h3>
 
 	<p ng-if="!textes.length">Il n'y a pas de textes prévus.</p>
@@ -23,10 +24,11 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
+	<p><a href="/textes?mode=future">Tous les textes</a></p>
 
 </div>
 
-<div class="section-past" ng-controller="TextesController" ng-init="init_textes('past')">
+<div class="section-past" ng-controller="TextesController" ng-init="init_textes('past', 3)">
 	<h3 class="h3">Textes déjà discutés</h3>
 
 	<p ng-if="!textes.length">Il n'y a pas encore de textes déjà discutés.</p>
@@ -35,5 +37,6 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
+	<p><a href="/textes?mode=past">Tous les textes</a></p>
 </div>
 
