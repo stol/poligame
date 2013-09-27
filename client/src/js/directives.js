@@ -106,26 +106,6 @@ moiElu.directive('myCurrentTime', ['$timeout', 'dateFilter', function($timeout, 
     }
 }]);
 
-moiElu.directive('slideToggle', function() {  
-    return {
-        restrict: 'A',      
-        scope:{
-            isOpen: "=slideToggle"
-        },  
-        link: function(scope, element, attr) {
-            element.on("click", function(){
-                console.log("coucou");
-            });
-            //var slideDuration = parseInt(attr.slideToggleDuration, 10) || 200;      
-            //scope.$watch('isOpen', function(newVal,oldVal){
-            //    if(newVal !== oldVal){ 
-            //        element.stop().slideToggle(slideDuration);
-            //    }
-            //});
-        }
-    };  
-});
-
 moiElu.directive('fbComments', ['$window', function($window) {  
     return {
         restrict: 'E',      
@@ -220,9 +200,52 @@ moiElu.directive('resultsBars', function(Textes) {
         }
     };
 });
+moiElu.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {  
+    return {
+        restrict: 'A',
+        //template: '<div>{{truncated}}{{more}}</div>',
+        link: function(scope, element, attr) {
+            console.log(attr);
+            var text = scope.texte.description || scope.texte.$$v.description;
+            var options = {
+                size    : attr.words || 10,
+                ellipsis: attr.ellipsis || '...',
+                textEllipsis  : attr.textEllipsis || false
+            }
 
 
+            var textTemp = text.replace(/\n/g, "[NL]");
 
+            var words = textTemp.split(/\s/g);
 
+            if (words.length < options.size){
+                angular.element.append(text);
+                return;
+            }
 
+            var textTruncated = words.slice(0,options.size).join(' ').replace(/\[NL\]/g, "\n");
+            textTruncated = nl2brFilter(textTruncated);
+
+            var hidden = angular.element('<span class="hidden">'
+                +' '+nl2brFilter(words.slice(options.size).join(' ').replace(/\[NL\]/g, "\n"))
+                +'</span>'
+                +'<span>'+options.ellipsis+'</span>');
+
+            element.append(textTruncated);
+            element.append(hidden);
+            
+            if (options.textEllipsis){
+                var toggler = angular.element('<a href="#">'+options.textEllipsis+'</a>');
+                element.append(' ', toggler)
+                toggler.one("click", function(){
+                    angular.element(this)
+                        .toggleClass("hidden")
+                        .prev().toggleClass("hidden")
+                        .prev().toggleClass("hidden");
+                });
+            }
+
+        }
+    };  
+}]);
 

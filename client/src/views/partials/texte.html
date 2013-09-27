@@ -80,16 +80,16 @@
 
 </div>
 
-<p ng-show="!texte.link">Lien indisponible</p>
-<p ng-show="texte.link">&gt;&nbsp;<b><a href="{{texte.link}}">Lien vers le texte complet</a></b></p>
+<p ng-if="!texte.link">Lien indisponible</p>
+<p ng-if="texte.link">&gt;&nbsp;<b><a href="{{texte.link}}">Lien vers le texte complet</a></b></p>
 
-<p ng-show="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
-<p ng-show="texte.description_title" ng-init="descVisible = false" ng-click="descVisible = !descVisible">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
+<p ng-if="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
+<p ng-if="texte.description_title">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
 
-<p ng-show="texte.description" collapse="!descVisible" ng-bind-html='texte.description | nl2br'></p>
+<p ng-if="texte.description" truncate-words data-words="30" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
 
-<div ng-show="!articles.length">&gt;&nbsp;<b>Articles indisponibles</b></div>
-<div ng-show="articles.length">
+<div ng-if="!articles.length">&gt;&nbsp;<b>Articles indisponibles</b></div>
+<div ng-if="articles.length">
 	<p>&gt;&nbsp;<b>Principaux articles ({{articles.length}})</b></p>
 	<div ng-repeat="article in articles" class="article">
 		<div class="article-content">

@@ -1,7 +1,8 @@
 // moiElu module with moiElu.controllers dependency containing all controllers
 // and ngMockE2E dependency containing $httpBackend service
 
-var moiElu = angular.module('moiElu', ['ngCookies', 'ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule', 'ngAnimate']);
+var moiElu = angular.module('moiElu', [
+    'ngCookies', 'ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule', 'ngAnimate']);
 
   // routes declaration
 moiElu.config(['$routeProvider', function($routeProvider) {
@@ -45,14 +46,6 @@ moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider,
     });
 
 }]);
-
-moiElu.filter('nl2br', function () {
-    return function(text) {
-        if (!text)
-            return '';
-        return text.replace(/\n/g, '<br/>');
-    }
-});
 
 TYPE_TEXTE = 1;
 TYPE_ARTICLE = 2;
