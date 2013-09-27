@@ -480,8 +480,18 @@ table {
 .header .fb-like.fb_edge_widget_with_comment {
   margin: 20px 0 0 20px;
 }
+@media only screen and (max-width: 700px) {
+  .header .fb-like.fb_edge_widget_with_comment {
+    display: none;
+  }
+}
 .header .twitter-share-button {
   margin-left: 20px;
+}
+@media only screen and (max-width: 700px) {
+  .header .twitter-share-button {
+    display: none;
+  }
 }
 
 a {
