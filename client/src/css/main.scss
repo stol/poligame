@@ -24,7 +24,7 @@
 
 	}
 	.header-content{
-		display: block !important;
+		display: block;
 		overflow: hidden;
 		height: 450px;
 		background: url(../img/header.jpg) no-repeat 50% 0;
@@ -32,6 +32,10 @@
 		@media only screen and (max-width: 980px){
 			padding: 0 5px;
         }
+        @media only screen and (max-width: 600px){
+			display: none;
+        }
+
 		//@include transition(height 0.3s linear);
 		&.ng-hide{
 			height: 0;
@@ -113,6 +117,14 @@ p > a, p > b > a{
 	font-size: 38px;
 	color: #828282;
 	font-weight: 300;
+	@media only screen and (max-width: 600px){
+		font-size: 24px;
+		line-height: 30px;
+    }
+	@media only screen and (max-width: 400px){
+		font-size: 20px;
+		line-height: 26px;
+    }
 }
 
 .h4{
@@ -121,12 +133,21 @@ p > a, p > b > a{
 	font-size: 24px;
 	color: #0a3f5a;
 	line-height: normal;
+	@media only screen and (max-width: 600px){
+		font-size: 18px;
+    }
+	@media only screen and (max-width: 400px){
+		font-size: 16px;
+    }
 }
 
 %section{
 	padding: 30px 9.1% 60px 9.1%;
 	@media only screen and (max-width: 980px){
 		padding: 30px 5px 60px 5px;
+    }
+	@media only screen and (max-width: 600px){
+		padding: 10px 5px 15px 5px;
     }
 
 	& + &{
@@ -148,6 +169,12 @@ p > a, p > b > a{
 	padding-top: 30px;
 	padding-bottom: 35px;
 	border-bottom: 1px solid #e6e6e6;
+
+	@media only screen and (max-width: 600px){
+		padding-top: 10px;
+		padding-bottom: 10px;
+    }
+
 	.texte_small-question{
 		float: left;
 		width: 80%;
@@ -162,23 +189,40 @@ p > a, p > b > a{
 .remaining{
 	text-align: center;
 	margin-top: 15px;
-	.remaining-clock{
+
+	.remaining-icon{
 		display: inline-block;
+		background-repeat: no-repeat;
+		background-position: 0 0;
+		background-size: 100%;
+	}
+
+	.remaining-clock{
 		width: 39px;
 		height: 39px;		
-		background: url(../img/clock.png) no-repeat 0 0;
+		background-image: url(../img/clock.png);
+		@media only screen and (max-width: 600px){
+			width: 30px;
+			height: 30px;		
+	    }
 	}
 	.remaining-calendar{
-		display: inline-block;
 		width: 41px;
 		height: 40px;		
-		background: url(../img/calendar.png) no-repeat 0 0;
+		background-image: url(../img/calendar.png);
+		@media only screen and (max-width: 600px){
+			width: 30px;
+			height: 30px;		
+	    }
 	}
 	.remaining-voted{
-		display: inline-block;
 		width: 48px;
 		height: 55px;		
-		background: url(../img/voted.png) no-repeat 0 0;
+		background-image: url(../img/voted.png);
+		@media only screen and (max-width: 600px){
+			width: 30px;
+			height: 34px;		
+	    }
 	}
 	.remaining-label{
 		font-family: arial;
@@ -193,8 +237,10 @@ p > a, p > b > a{
 		font-weight: 700;
 		text-transform: uppercase;
 		display: inline-block;
+		@media only screen and (max-width: 600px){
+			font-size: 12px;
+	    }
 	}
-
 }
 
 .texte{
@@ -250,9 +296,11 @@ p > a, p > b > a{
 		padding: 0 5px;
 		&.results_bars_1{
 			float: none;
+			width: 100%;
 		}
 		&.results_bars_2{
 			float: none;
+			width: 100%;
 		}
     }
 
@@ -264,6 +312,10 @@ p > a, p > b > a{
 		font-weight: 300;
 		font-size: 26px;
 		margin: 30px 0;
+		@media only screen and (max-width: 600px){
+			font-size: 16px;
+			margin: 10px 0;
+		}
 	}
 
 	.rb-row{
