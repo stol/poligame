@@ -570,7 +570,9 @@ p > a, p > b > a {
 .texte_small {
   padding-top: 30px;
   padding-bottom: 35px;
-  border-bottom: 1px solid #e6e6e6;
+}
+.texte_small + .texte_small {
+  border-top: 1px solid #e6e6e6;
 }
 @media only screen and (max-width: 600px) {
   .texte_small {
@@ -582,20 +584,40 @@ p > a, p > b > a {
   float: left;
   width: 80%;
 }
+@media only screen and (max-width: 400px) {
+  .texte_small .texte_small-question {
+    width: auto;
+    float: none;
+  }
+}
 .texte_small .texte_small-time {
   float: right;
-  width: 20%;
+  width: 12%;
+  text-align: center;
+  min-width: 50px;
+}
+@media only screen and (max-width: 400px) {
+  .texte_small .texte_small-time {
+    width: auto;
+    float: none;
+    text-align: left;
+  }
 }
 
 .remaining {
-  text-align: center;
   margin-top: 15px;
 }
 .remaining .remaining-icon {
-  display: inline-block;
+  display: block;
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: 100%;
+  margin: 0 auto;
+}
+@media only screen and (max-width: 400px) {
+  .remaining .remaining-icon {
+    display: none;
+  }
 }
 .remaining .remaining-clock {
   width: 39px;
@@ -687,12 +709,24 @@ p > a, p > b > a {
   border-bottom: 1px solid #e6e6e6;
 }
 
+.results_bars-container {
+  width: 80%;
+  overflow: hidden;
+}
+@media only screen and (max-width: 400px) {
+  .results_bars-container {
+    width: auto;
+    overflow: hidden;
+  }
+}
+
 .results_bars {
   min-width: 230px;
   width: 48%;
 }
 .results_bars.results_bars_1 {
   float: left;
+  clear: both;
 }
 .results_bars.results_bars_2 {
   float: right;

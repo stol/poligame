@@ -186,18 +186,17 @@ moiElu.directive('resultsBars', function(Textes) {
             var abstention_perc = 100;
         }
 
+        if (votes.total == 0 ){
+            r_label+= ' indisponibles'
+        }
         $(element[0]).append('<div class="results_bars-title">'+r_label+'</div>');
 
-        if (votes.total > 0 ){
-            $(element[0]).append(
-                '<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>',
-                '<div class="rb-row rb-row_contre"><span class="rb-row-label">Contre</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+contre_perc+'%"></span></span><span class="rb-row-perc">'+votes.contre.perc+'%</span></div>',
-                '<div class="rb-row rb-row_abstention"><span class="rb-row-label">Abstention</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+abstention_perc+'%"></span></span><span class="rb-row-perc">'+votes.abstention.perc+'%</span></div>'
-            );
-        }
-        else{
-            $(element[0]).append('<div>Données indisponibles.</div>');
-        }
+        votes.total > 0 && $(element[0]).append(
+            '<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>',
+            '<div class="rb-row rb-row_contre"><span class="rb-row-label">Contre</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+contre_perc+'%"></span></span><span class="rb-row-perc">'+votes.contre.perc+'%</span></div>',
+            '<div class="rb-row rb-row_abstention"><span class="rb-row-label">Abstention</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+abstention_perc+'%"></span></span><span class="rb-row-perc">'+votes.abstention.perc+'%</span></div>'
+        );
+
     };
 });
 moiElu.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {  
