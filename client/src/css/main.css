@@ -828,25 +828,80 @@ p > a, p > b > a {
   padding-top: 30px;
 }
 
+/*
 .content.ng-enter,
 .content.ng-leave {
-  -webkit-transition: 0.5s linear all;
-  -moz-transition: 0.5s linear all;
-  -ms-transition: 0.5s linear all;
-  -o-transition: 0.5s linear all;
-  transition: 0.5s linear all;
+	@include transition(0.5s linear all);
 }
 
 .content.ng-enter,
 .content.ng-leave.ng-leave-active {
-  position: absolute;
-  opacity: 0;
+	position: absolute;
+	opacity: 0;
 }
-
 .content.ng-leave,
 .content.ng-enter.ng-enter-active {
+	position: relative;
+	opacity: 1;
+}
+*/
+.content-container {
   position: relative;
-  opacity: 1;
+  overflow: hidden;
+}
+
+.content.ng-enter {
+  -webkit-animation: moveFromRight 1s ease both;
+  -moz-animation: moveFromRight 1s ease both;
+  -ms-animation: moveFromRight 1s ease both;
+  -o-animation: moveFromRight 1s ease both;
+  animation: moveFromRight 1s ease both;
+}
+
+.content.ng-leave {
+  position: absolute;
+  top: 0;
+  -webkit-animation: moveToLeft 1s ease both;
+  -moz-animation: moveToLeft 1s ease both;
+  -ms-animation: moveToLeft 1s ease both;
+  -o-animation: moveToLeft 1s ease both;
+  animation: moveToLeft 1s ease both;
+}
+
+@-webkit-keyframes moveToLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+  }
+}
+
+@-moz-keyframes moveToLeft {
+  to {
+    -moz-transform: translateX(-100%);
+  }
+}
+
+@keyframes moveToLeft {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@-webkit-keyframes moveFromRight {
+  from {
+    -webkit-transform: translateX(100%);
+  }
+}
+
+@-moz-keyframes moveFromRight {
+  from {
+    -moz-transform: translateX(100%);
+  }
+}
+
+@keyframes moveFromRight {
+  from {
+    transform: translateX(100%);
+  }
 }
 
 /*

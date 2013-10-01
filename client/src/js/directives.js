@@ -110,7 +110,11 @@ moiElu.directive('fbComments', ['$window', function($window) {
     return {
         restrict: 'E',      
         link: function(scope, element, attr) {
-            $window.FB && FB.XFBML.parse(element[0].parentNode);
+            return;
+            setTimeout(function(){
+                $window.FB && FB.XFBML.parse(element[0].parentNode);
+            },500);
+            
         }
     };  
 }]);

@@ -430,7 +430,7 @@ p > a, p > b > a{
 	padding-top: 30px;
 }
 
-
+/*
 .content.ng-enter,
 .content.ng-leave {
 	@include transition(0.5s linear all);
@@ -445,6 +445,40 @@ p > a, p > b > a{
 .content.ng-enter.ng-enter-active {
 	position: relative;
 	opacity: 1;
+}
+*/
+.content-container{
+	position: relative;
+	overflow: hidden;
+}
+.content.ng-enter{
+	@include animation(moveFromRight 1s ease both);
+}
+
+.content.ng-leave{
+	position: absolute;
+    top: 0;
+    @include animation(moveToLeft 1s ease both);
+}
+
+@-webkit-keyframes moveToLeft {
+	to { -webkit-transform: translateX(-100%); }
+}
+@-moz-keyframes moveToLeft {
+	to { -moz-transform: translateX(-100%); }
+}
+@keyframes moveToLeft {
+	to { transform: translateX(-100%); }
+}
+
+@-webkit-keyframes moveFromRight {
+	from { -webkit-transform: translateX(100%); }
+}
+@-moz-keyframes moveFromRight {
+	from { -moz-transform: translateX(100%); }
+}
+@keyframes moveFromRight {
+	from { transform: translateX(100%); }
 }
 
 

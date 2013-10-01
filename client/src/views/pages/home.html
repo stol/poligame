@@ -10,7 +10,7 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p ng-if="(textes | filter:{mode:'present'}).length > 3"><a href="/textes?mode=present">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'present'}).length > 3"><a href="/textes?mode=present">Accéder à liste complète</a></p>
 </div>
 
 
@@ -28,7 +28,7 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p ng-if="(textes | filter:{mode:'future'}).length > 3"><a href="/textes?mode=future">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'future'}).length > 3"><a href="/textes?mode=future">Accéder à liste complète</a></p>
 
 </div>
 
@@ -43,6 +43,6 @@
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p ng-if="(textes | filter:{mode:'past'}).length > 3"><a href="/textes?mode=past">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'past'}).length > 3"><a href="/textes?mode=past">Accéder à liste complète</a></p>
 </div>
 
