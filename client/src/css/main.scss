@@ -263,6 +263,10 @@ p > a, p > b > a{
 		@media only screen and (max-width: 600px){
 			font-size: 12px;
 	    }
+		@media only screen and (max-width: 400px){
+			text-transform: none;
+			font-family: arial, sans-serif;
+	    }
 	}
 }
 

@@ -671,6 +671,12 @@ p > a, p > b > a {
     font-size: 12px;
   }
 }
+@media only screen and (max-width: 400px) {
+  .remaining .remaining-time {
+    text-transform: none;
+    font-family: arial, sans-serif;
+  }
+}
 
 .texte {
   padding: 30px 9.1% 60px 9.1%;
