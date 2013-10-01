@@ -269,36 +269,6 @@ function fetch(req, res, params){
 	});
 };
 
-function future(req, res){
-	
-  	if (!req.xhr){
-		res.render('index', { title: 'Express' });
-		return;
-	}
-
-	return fetch(req, res, {mode: "future"});
-}
-
-function present(req, res){
-	
-  	if (!req.xhr){
-		res.render('index', { title: 'Express' });
-		return;
-	}
-
-	return fetch(req, res, {mode: "present"});
-}
-
-function past(req, res){
-	
-  	if (!req.xhr){
-		res.render('index', { title: 'Express' });
-		return;
-	}
-
-	return fetch(req, res, {mode: "past"});
-}
-
 function textes(req, res){
   	if (!req.xhr){
 		res.render('index', { title: 'Express' });
@@ -435,8 +405,3 @@ exports.textes   = textes;
 exports.show     = show;
 exports.articles = articles;
 exports.vote     = vote;
-/*
-exports.future   = future;
-exports.present  = present;
-exports.past     = past;
-*/

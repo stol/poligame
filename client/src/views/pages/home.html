@@ -1,42 +1,48 @@
-<div class="section-present" ng-controller="TextesController" ng-init="init_textes('present', 3)">
+<div class="section-present">
 
-	<h3 class="h3">Textes actuellement en discussion</h3>
+	<h3 class="h3">En discussion : <ng-pluralize count="(textes | filter:{mode:'present'}).length" when="{'0': 'aucun texte',
+                     														'one': '1 texte',
+                     														'other': '{} textes'}"></ng-pluralize></h3>
 
-	<p ng-if="!textes.length">Il n'y a pas de texte actuellement en discussion.</p>
+	<p ng-if="!(textes | filter:{mode:'present'}).length">Il n'y a pas de texte actuellement en discussion.</p>
 	<div
-		ng-repeat="texte in textes"
+		ng-repeat="texte in textes | filter:{mode:'present'} | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p><a href="/textes?mode=present">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'present'}).length > 3"><a href="/textes?mode=present">Tous les textes</a></p>
 </div>
 
 
 </div>
 
 
-<div class="section-future" ng-controller="TextesController" ng-init="init_textes('future', 3)">
-	<h3 class="h3">Textes bientôt en discussion</h3>
+<div class="section-future">
+	<h3 class="h3">Bientôt en discussion : <ng-pluralize count="(textes | filter:{mode:'future'}).length" when="{'0': 'aucun texte',
+                     														'one': '1 texte',
+                     														'other': '{} textes'}"></ng-pluralize></h3>
 
-	<p ng-if="!textes.length">Il n'y a pas de textes prévus.</p>
+	<p ng-if="!(textes | filter:{mode:'future'}).length">Il n'y a pas de textes prévus.</p>
 	<div 
-		ng-repeat="texte in textes"
+		ng-repeat="texte in textes | filter:{mode:'future'} | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p><a href="/textes?mode=future">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'future'}).length > 3"><a href="/textes?mode=future">Tous les textes</a></p>
 
 </div>
 
-<div class="section-past" ng-controller="TextesController" ng-init="init_textes('past', 3)">
-	<h3 class="h3">Textes déjà discutés</h3>
+<div class="section-past">
+	<h3 class="h3">Déjà discuté : <ng-pluralize count="(textes | filter:{mode:'past'}).length" when="{'0': 'aucun texte',
+                     														'one': '1 texte',
+                     														'other': '{} textes'}"></ng-pluralize></h3>
 
-	<p ng-if="!textes.length">Il n'y a pas encore de textes déjà discutés.</p>
+	<p ng-if="!(textes | filter:{mode:'past'}).length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
-		ng-repeat="texte in textes"
+		ng-repeat="texte in textes | filter:{mode:'past'} | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p><a href="/textes?mode=past">Tous les textes</a></p>
+	<p ng-if="(textes | filter:{mode:'past'}).length > 3"><a href="/textes?mode=past">Tous les textes</a></p>
 </div>
 

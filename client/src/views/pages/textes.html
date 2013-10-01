@@ -1,10 +1,12 @@
-<div class="section-present" ng-init="init_textes()">
+<div class="section-present">
 
-	<h3 class="h3">Textes actuellement {{mode}}</h3>
+	<h3 class="h3" ng-if="routeParams.mode == 'past'">Textes déjà discutés (({{(textes | filter:{mode:routeParams.mode}).length}})</h3>
+	<h3 class="h3" ng-if="routeParams.mode == 'present'">Textes déjà discutés (({{(textes | filter:{mode:routeParams.mode}).length}})</h3>
+	<h3 class="h3" ng-if="routeParams.mode == 'future'">Textes déjà discutés (({{(textes | filter:{mode:routeParams.mode}).length}})</h3>
 
-	<p ng-if="!textes.length">Il n'y a pas de texte.</p>
+	<p ng-if="!(textes | filter:{mode:routeParams.mode}).length">Il n'y a pas de texte.</p>
 	<div
-		ng-repeat="texte in textes"
+		ng-repeat="texte in textes | filter:{mode:routeParams.mode}"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>

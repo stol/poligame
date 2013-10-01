@@ -1,7 +1,7 @@
 <h2>Listes des textes que vous avez votés ({{textes.length}})</h2>
 
 <div ng-repeat="texte in textes">
-	<h4><a href="/textes/{{texte.id}}">Texte : {{texte.title}}</a></h4>
+	<h4><a ng-href="/textes/{{texte.id}}">Texte : {{texte.title}}</a></h4>
 </div>
 
 

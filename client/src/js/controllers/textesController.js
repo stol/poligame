@@ -25,6 +25,8 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     }
 
+    $scope.textes = Textes.get();
+
     $scope.init_texte = function (){
         if (!$routeParams.texte_id){
             return;

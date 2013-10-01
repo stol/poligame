@@ -7,7 +7,8 @@ var moiElu = angular.module('moiElu', [
   // routes declaration
 moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
-        templateUrl: '/views/pages/home.html'
+        templateUrl: '/views/pages/home.html',
+        controller: 'TextesController'
     });
     $routeProvider.when('/textes', {
         templateUrl: '/views/pages/textes.html',

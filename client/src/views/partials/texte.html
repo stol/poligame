@@ -81,7 +81,7 @@
 </div>
 
 <p ng-if="!texte.link">Lien indisponible</p>
-<p ng-if="texte.link">&gt;&nbsp;<b><a href="{{texte.link}}">Lien vers le texte complet</a></b></p>
+<p ng-if="texte.link">&gt;&nbsp;<b><a ng-href="{{texte.link}}">Lien vers le texte complet</a></b></p>
 
 <p ng-if="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
 <p ng-if="texte.description_title">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
