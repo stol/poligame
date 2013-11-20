@@ -73,7 +73,7 @@ moiElu.directive('results', function(Textes) {
     };
 });
 
-moiElu.directive('myCurrentTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
+moiElu.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
         var timeoutId; // timeoutId, so that we can cancel the time updates
@@ -81,7 +81,7 @@ moiElu.directive('myCurrentTime', ['$timeout', 'dateFilter', function($timeout, 
         // used to update the UI
         function updateTime() {
             var texte = $scope.texte.$$v || $scope.texte;
-            var hop = moment(texte.ends_at).fromNow();
+            var hop = moment(texte[attrs.humanTime]).fromNow();
             var txt = dateFilter(new Date(), "YYYY");
             element.text(hop);
         }

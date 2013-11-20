@@ -10,12 +10,12 @@
 <div ng-if="texte.mode == 'present'" class="texte_small-time remaining">
 	<span class="remaining-icon remaining-clock"></span>
 	<span class="remaining-label">Temps restant</span>
-	<span class="remaining-time" my-current-time></span>
+	<span class="remaining-time" human-time="ends_at"></span>
 </div>
 <div ng-if="texte.mode == 'future'" class="texte_small-time remaining">
 	<span class="remaining-icon remaining-calendar"></span>
 	<span class="remaining-label">Ouverture dans</span>
-	<span class="remaining-time" my-current-time></span>
+	<span class="remaining-time" human-time="starts_at"></span>
 </div>
 
 <div ng-if="texte.mode == 'past'" class="results_bars-container">

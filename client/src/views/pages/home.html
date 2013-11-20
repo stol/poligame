@@ -6,7 +6,7 @@
 
 	<p ng-if="!(textes | filter:{mode:'present'}).length">Il n'y a pas de texte actuellement en discussion.</p>
 	<div
-		ng-repeat="texte in textes | filter:{mode:'present'} | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'starts_at' | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
@@ -24,7 +24,7 @@
 
 	<p ng-if="!(textes | filter:{mode:'future'}).length">Il n'y a pas de textes prévus.</p>
 	<div 
-		ng-repeat="texte in textes | filter:{mode:'future'} | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'future'} | orderBy:'starts_at' | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
@@ -39,7 +39,7 @@
 
 	<p ng-if="!(textes | filter:{mode:'past'}).length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
-		ng-repeat="texte in textes | filter:{mode:'past'} | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>

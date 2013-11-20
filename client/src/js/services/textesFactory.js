@@ -111,6 +111,9 @@ moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
             if (params.ids){
                 ret = [ret];
             }
+
+            //console.table(ret);
+
             deferred.resolve(ret);
         });
 
