@@ -601,6 +601,9 @@ p > a, p > b > a {
     text-align: left;
   }
 }
+.texte_small .texte-status {
+  text-transform: uppercase;
+}
 .texte_small .texte-status.is-1 {
   color: green;
 }

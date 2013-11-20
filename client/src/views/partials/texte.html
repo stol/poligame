@@ -1,7 +1,7 @@
 <div class="texte_small clearfix">
 
 	<div class="texte_small-question">
-		<h4 class="h4">{{texte.title}} <span class="texte-status is-{{texte.status}}" ng-if="texte.status>0">({{texte.status_txt}})</span></h4>
+		<h4 class="h4"><span class="texte-status is-{{texte.status}}" ng-if="texte.status>0">{{texte.status_txt}} :</span> {{texte.title}}</h4>
 	</div>
 
 	<div ng-if="texte.mode == 'past'" class="texte_small-time remaining">

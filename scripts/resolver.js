@@ -104,13 +104,28 @@ function get_scrutin_url(error,result, $){
 		
 		scrutin_url = 'http://www.assemblee-nationale.fr' + scrutin_url;
 		
-		console.log("ANALYSING scrutin_url");
+		console.log("Analyse détaillée de "+scrutin_url);
 		
 		c.queue([{
 			uri: scrutin_url,
 			callback: analyse_scrutin,
 			texte: texte
 		}]);
+	}
+	else if ( $("body").text().match(/adopté.*l'assemblée/ig) ){
+		console.log("TEXTE ADOPTÉ TROUVÉ");
+		db.query("UPDATE textes SET status = 1 WHERE id = "+texte.id, function(err, rows, fields) {
+			if (err) throw err;
+		});
+	}
+	else if ( $("body").text().match(/rejeté.*l'assemblée/ig) ){
+		console.log("TEXTE REJETÉ TROUVÉ");
+		db.query("UPDATE textes SET status = 2 WHERE id = "+texte.id, function(err, rows, fields) {
+			if (err) throw err;
+		});
+	}
+	else{
+		console.log("status inconnu pour "+texte.link);
 	}
 
 }
@@ -128,7 +143,7 @@ function analyse_scrutin(error,result, $){
 		//,analysed 			 : 1
 	};
 
-	console.log(data);
+	//console.log(data);
 
 	db.query("UPDATE textes SET ?  WHERE id = "+texte.id, data, function(err, rows, fields) {
 		if (err) throw err;

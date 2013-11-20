@@ -204,6 +204,7 @@ p > a, p > b > a{
 	    }
 	}
     .texte-status{
+    	text-transform: uppercase;
     	&.is-1{
     		color: green;
     	}
