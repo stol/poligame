@@ -78,25 +78,20 @@
 </div>
 
 
-
-
-<p ng-if="!texte.link">Lien indisponible</p>
-<p ng-if="texte.link">&gt;&nbsp;<b><a ng-href="{{texte.link}}">Lien vers le texte complet</a></b></p>
-
 <p ng-if="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
-<p ng-if="texte.description_title">&gt;&nbsp;<b ng-bind-html='texte.description_title'></b></p>
+<h3 class="sstitre" ng-if="texte.description_title" ng-bind-html='texte.description_title'></h3>
 
-<p ng-if="texte.description" truncate-words data-words="30" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
+<p ng-if="texte.description" truncate-words data-words="120" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
 
 <div ng-if="!articles.length">&gt;&nbsp;<b>Articles indisponibles</b></div>
 <div ng-if="articles.length">
-	<p>&gt;&nbsp;<b>Principaux articles ({{articles.length}})</b></p>
+	<h3 class="sstitre">Principaux articles ({{articles.length}})</h3>
 	<div ng-repeat="article in articles" class="article">
 		<div class="article-content">
 			<p><b ng-bind-html="article.title"></b></p>
 			<p ng-bind-html="article.content"></p>
 		</div>
-		<div class="article-votes">
+		<!--div class="article-votes">
 			<div ng-switch on="article.isVoted()" class="pull-left">
 				<div ng-switch-when="true">
 					<button class="btn" disabled>Vous avez déjà voté !</button>
@@ -113,8 +108,13 @@
 					>Absention</button>
 				</div>
 			</div>
-		</div>
+		</div-->
 	</div>
 </div>
+
+<h3 class="sstitre">Plus d'informations</h3>
+<p ng-if="!texte.link">Lien indisponible</p>
+<p ng-if="texte.link"><b><a ng-href="{{texte.link}}" target="_blank">Lien vers le texte complet</a></b></p>
+<h3 class="sstitre">Vos commentaires</h3>
 
 <fb-comments class="fb-comments" data-href="http://example.com" data-width="980"></fb-comments>

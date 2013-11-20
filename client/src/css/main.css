@@ -684,14 +684,20 @@ p > a, p > b > a {
     padding: 30px 5px 60px 5px;
   }
 }
-
-/*
-.fb-comments.fb_iframe_widget {
-    display: block;
-    margin: 0 auto;
-    width: 600px;
+.texte .sstitre {
+  font-family: 'Lato', sans-serif;
+  font-size: 20px;
+  color: #444;
+  border-bottom: 1px solid #666;
 }
-*/
+
+.fb-comments.fb_iframe_widget {
+  width: 100% !important;
+}
+.fb-comments.fb_iframe_widget span, .fb-comments.fb_iframe_widget iframe {
+  width: 100% !important;
+}
+
 .hidden {
   display: none;
 }
@@ -699,15 +705,20 @@ p > a, p > b > a {
 .article {
   clear: both;
   padding: 20px 10px;
+  	/*
+  	.article-content{
+  		float: left;
+  		width: 70%;
+  	}
+  
+  	.article-votes{
+  		float: right;
+  		width: 30%;
+  	}
+  	*/
+}
+.article + .article {
   border-top: 1px solid #e6e6e6;
-}
-.article .article-content {
-  float: left;
-  width: 70%;
-}
-.article .article-votes {
-  float: right;
-  width: 30%;
 }
 .article:last-child {
   border-bottom: 1px solid #e6e6e6;
@@ -845,7 +856,6 @@ p > a, p > b > a {
 */
 .content-container {
   position: relative;
-  overflow: hidden;
 }
 
 /*
