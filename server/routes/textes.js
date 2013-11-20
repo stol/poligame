@@ -121,6 +121,7 @@ function StatsClass(){
 	}
 }
 
+// Rajoute des données calculées à la volée dans l'object passé en paramètre
 function alter_texte(texte){
 	
 	var total = texte.pour + texte.contre + texte.abstention;
@@ -172,6 +173,31 @@ function alter_texte(texte){
     	}
 	};
 
+	// On détermine le résultat du vote en fonction du vote des députés, s'il y en a
+	if (texte.votes_assemblee.total > 0){
+		if (texte.votes_assemblee.pour.nb > texte.votes_assemblee.contre.nb && texte.votes_assemblee.pour.nb > texte.votes_assemblee.abstention.nb){
+			texte.status = 1;
+		}
+		else if (texte.votes_assemblee.contre.nb > texte.votes_assemblee.pour.nb && texte.votes_assemblee.contre.nb > texte.votes_assemblee.abstention.nb){
+			texte.status = 2;
+		}
+		else if (texte.votes_assemblee.contre.nb > texte.votes_assemblee.pour.nb && texte.votes_assemblee.contre.nb > texte.votes_assemblee.abstention.nb){
+			texte.status = 3;
+		}
+		else{
+			texte.status = 0;
+		}
+	}
+
+	if (texte.status == 1)
+		texte.status_txt = "adopté";
+	else if (texte.status == 2)
+		texte.status_txt = "rejeté";
+	else if (texte.status == 3)
+		texte.status_txt = "égalité";
+	else
+		texte.status_txt = "inconnu";
+
 	// Pas besoin de ça
 	delete texte.pour;
 	delete texte.contre;
@@ -202,7 +228,6 @@ function fetch(req, res, params){
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || (params && params.mode) || false;
 
-	console.log("mode = ", mode);
 
 	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
 	else if (mode == "present") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
@@ -221,7 +246,6 @@ function fetch(req, res, params){
 	if (limit){
 		sql+= ' LIMIT '+limit;
 	}
-	console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;

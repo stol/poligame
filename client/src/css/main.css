@@ -601,6 +601,15 @@ p > a, p > b > a {
     text-align: left;
   }
 }
+.texte_small .texte-status.is-1 {
+  color: green;
+}
+.texte_small .texte-status.is-2 {
+  color: red;
+}
+.texte_small .texte-status.is-3 {
+  color: #666;
+}
 
 .remaining {
   margin-top: 15px;
@@ -689,6 +698,15 @@ p > a, p > b > a {
   font-size: 20px;
   color: #444;
   border-bottom: 1px solid #666;
+}
+.texte .texte-status.is-1 {
+  color: green;
+}
+.texte .texte-status.is-2 {
+  color: red;
+}
+.texte .texte-status.is-3 {
+  color: #666;
 }
 
 .fb-comments.fb_iframe_widget {

@@ -203,6 +203,18 @@ p > a, p > b > a{
 			text-align: left;
 	    }
 	}
+    .texte-status{
+    	&.is-1{
+    		color: green;
+    	}
+    	&.is-2{
+    		color: red;
+    	}
+    	&.is-3{
+    		color: #666;
+    	}
+
+    }
 }
 
 .remaining{
@@ -280,6 +292,18 @@ p > a, p > b > a{
     	font-size: 20px;
     	color: #444;
     	border-bottom: 1px solid #666;
+    }
+    .texte-status{
+    	&.is-1{
+    		color: green;
+    	}
+    	&.is-2{
+    		color: red;
+    	}
+    	&.is-3{
+    		color: #666;
+    	}
+
     }
 }
 
