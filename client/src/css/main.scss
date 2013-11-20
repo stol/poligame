@@ -16,8 +16,8 @@
 	.header-top{
 		background-color: #0a3f5a;
 		padding: 0 9.1%;
+		min-height: 60px;
 
-		overflow: hidden;
 		@media only screen and (max-width: 980px){
 			padding: 0 5px;
         }
@@ -25,10 +25,9 @@
 	}
 	.header-content{
 		display: block;
-		overflow: hidden;
-		height: 450px;
+		height: 330px;
 		background: url(../img/header.jpg) no-repeat 50% 0;
-		padding: 0 9.1%;
+		padding: 120px 9.1% 0 9.1%;
 		@media only screen and (max-width: 980px){
 			padding: 0 5px;
         }
@@ -61,13 +60,13 @@
 		position: relative;
 		h2{
 			margin: 0;
-			padding: 10px;
 			font-family: 'Lato', sans-serif;
 			font-weight: 700;
 			font-size: 80px;
 			line-height: normal;
 			@include rgba-background-inline(rgba(0,0,0,0.6));
-			margin-top: 120px;
+			padding: 10px;
+
             @media only screen and (max-width: 1100px){
 				font-size: 40px;
             }
