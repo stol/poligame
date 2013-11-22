@@ -19,6 +19,7 @@
     "angular-sanitize": "1.0.8",
     "angular-animate": "1.2.0-rc.2",
     "angular-route": "1.2.0-rc.2",
+    "inuit.css": "*",
     "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },
   "devDependencies": {

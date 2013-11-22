@@ -1,4 +1,4 @@
 /node_modules/
-/client/src/bower_components/
+/client/src/vendor/
 /client/build/
 /client/src/css/.sass-cache/
