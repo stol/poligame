@@ -17,7 +17,7 @@
 		background-color: #0a3f5a;
 		line-height: 40px;
 		padding: 10px 0 10px 30px;
-        @media only screen and (max-width: 360px){
+        @media only screen and (max-width: 400px){
 			padding: 5px 0 10px 10px;
         }
 	}
@@ -31,6 +31,7 @@
 		color: #fff;
 		display: inline-block;
 		vertical-align: middle;
+		margin-right: 15px;
 		a{
 			color: inherit;
 			&:hover{
@@ -75,7 +76,7 @@
 		display: inline-block;
 		vertical-align: middle;
 		padding-top: 10px;
-		margin-left: 25px;
+		margin-right: 25px;
 		/*
         @media only screen and (max-width: 700px){
 			display: none;
@@ -85,7 +86,7 @@
 	}
 
 	.nav{
-		margin: 0 0 0 15px;
+		margin: 0 0 0 0;
 		display: inline-block;
 		vertical-align: middle;
 		float: right;
