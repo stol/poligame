@@ -54,7 +54,9 @@ TYPE_ARTICLE = 2;
 TYPE_AMENDEMENT = 3;
 
 // application initialization
-moiElu.run();
+moiElu.run(['$rootScope', '$location', function($rootScope, $location){
+    $rootScope.location = $location;
+}]);
 
 moment.lang('fr', {
     months : "janvier_février_mars_avril_mai_juin_juillet_août_septembre_octobre_novembre_décembre".split("_"),

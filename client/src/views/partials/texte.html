@@ -30,7 +30,7 @@
 			</div-->
 
 
-			<div ng-show="!!texte.stats" class="results_more">
+			<!--div ng-show="!!texte.stats" class="results_more">
 				<h4>Vous pouvez affiner les résultats du vote par :</h4>
 				<div class="btn-group" ng-init="moreInfo='csps'">
 		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
@@ -52,7 +52,7 @@
 						<div results="ages"></div>
 		    		</div>
 		    	</div>
-			</div>
+			</div-->
 		</div>
 
 		<div ng-if="texte.mode == 'present'">
@@ -118,5 +118,5 @@
 	<p ng-if="texte.link"><b><a ng-href="{{texte.link}}" target="_blank">Lien vers le texte complet</a></b></p>
 	<h3 class="sstitre">Vos commentaires</h3>
 
-	<fb-comments class="fb-comments" data-href="http://example.com" data-width="980"></fb-comments>
+	<fb-comments class="fb-comments" data-href="{{location.absUrl()}}" data-width="980"></fb-comments>
 </div>
