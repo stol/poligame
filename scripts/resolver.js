@@ -85,7 +85,7 @@ c.queue([{
 }]);
 */
 
-db.query("SELECT * FROM textes WHERE ends_at < ? AND analysed = 0", [moment().format('YYYY-MM-DD 23:59:59')], function(err, textes, fields) {
+db.query("SELECT * FROM textes WHERE ends_at < ? AND analysed = 1", [moment().format('YYYY-MM-DD 23:59:59')], function(err, textes, fields) {
 	for(var i=0; i<textes.length; i++){
 		c.queue([{
 			uri: textes[i].link,
@@ -115,9 +115,11 @@ function get_scrutin_url(error,result, $){
 	else if ( $("body").text().match(/adopté.*l'assemblée/ig) ){
 		console.log("TEXTE ADOPTÉ TROUVÉ");
         var data = {
-             status: 1
-            ,ends_at: moment().format("YYYY-MM-DD HH:mm:ss")
+            status: 1
             ,analysed : 1
+        }
+        if (moment(texte.ends_at) > moment()){
+            data.ends_at = moment().format("YYYY-MM-DD HH:mm:ss");
         }
 		db.query("UPDATE textes SET ? WHERE id = "+texte.id, data, function(err, rows, fields) {
 			if (err) throw err;
@@ -127,8 +129,10 @@ function get_scrutin_url(error,result, $){
 		console.log("TEXTE REJETÉ TROUVÉ");
         var data = {
             status: 2
-            ,ends_at: moment().format("YYYY-MM-DD HH:mm:ss")
             ,analysed : 1
+        }
+        if (moment(texte.ends_at) > moment()){
+            data.ends_at = moment().format("YYYY-MM-DD HH:mm:ss");
         }
 		db.query("UPDATE textes SET ? WHERE id = "+texte.id, data, function(err, rows, fields) {
 			if (err) throw err;
