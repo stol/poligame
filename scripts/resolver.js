@@ -114,13 +114,23 @@ function get_scrutin_url(error,result, $){
 	}
 	else if ( $("body").text().match(/adopté.*l'assemblée/ig) ){
 		console.log("TEXTE ADOPTÉ TROUVÉ");
-		db.query("UPDATE textes SET status = 1 WHERE id = "+texte.id, function(err, rows, fields) {
+        var data = {
+             status: 1
+            ,ends_at: moment().format("YYYY-MM-DD HH:mm:ss")
+            ,analysed : 1
+        }
+		db.query("UPDATE textes SET ? WHERE id = "+texte.id, data, function(err, rows, fields) {
 			if (err) throw err;
 		});
 	}
 	else if ( $("body").text().match(/rejeté.*l'assemblée/ig) ){
 		console.log("TEXTE REJETÉ TROUVÉ");
-		db.query("UPDATE textes SET status = 2 WHERE id = "+texte.id, function(err, rows, fields) {
+        var data = {
+            status: 2
+            ,ends_at: moment().format("YYYY-MM-DD HH:mm:ss")
+            ,analysed : 1
+        }
+		db.query("UPDATE textes SET ? WHERE id = "+texte.id, data, function(err, rows, fields) {
 			if (err) throw err;
 		});
 	}
@@ -140,7 +150,7 @@ function analyse_scrutin(error,result, $){
 		 pour_assemblee       : pour
 		,contre_assemblee     : contre
 		,abstention_assemblee : abstention
-		//,analysed 			 : 1
+		,analysed 			 : 1
 	};
 
 	//console.log(data);
