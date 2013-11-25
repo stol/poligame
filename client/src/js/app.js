@@ -31,7 +31,7 @@ moiElu.config(['$routeProvider', function($routeProvider) {
 }]);
 
 moiElu.config(['$locationProvider', '$httpProvider', '$parseProvider', function($locationProvider, $httpProvider, $parseProvider) {
-    $parseProvider.unwrapPromises(true);
+    //$parseProvider.unwrapPromises(true);
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

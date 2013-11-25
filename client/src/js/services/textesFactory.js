@@ -34,10 +34,16 @@ moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
         params = params || {};
         var ret;
 
+        var deferred = $q.defer();
+
         // Un seul texte demandé ? On le resort s'il est dans le cache objet
         if (params.id && textes[params.id]){
             callback && callback(textes[params.id]);
-            return textes[params.id];
+            setTimeout(function(){
+                deferred.resolve(textes[params.id])
+            },0)
+            return deferred.promise;
+            //return textes[params.id];
         }
 
         // Plusieurs textes spécifiques demandés ?
@@ -55,7 +61,11 @@ moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
             }
             // On avait déjà tout en cache ?
             if (ret.length == params.ids.length){
-                return ret;
+                setTimeout(function(){
+                    deferred.resolve(ret)
+                },0)
+                return deferred.promise;
+                //return ret;
             }
             else{
                 params.ids = to_get;
@@ -80,7 +90,6 @@ moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
             params.ids = JSON.stringify(params.ids);
         }
 
-        var deferred = $q.defer();
         $http({
             method: 'GET',
             url: url,

@@ -89,7 +89,9 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Co
 moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
     User.onConnected(function(e){
         var ids = _.keys(User.votes[TYPE_TEXTE]);
-        $scope.textes = Textes.get({ids: ids});
+        Textes.get({ids: ids}).then(function(textes){
+            $scope.textes = textes;
+        });
     }, function(){
         $scope.$apply(function() { $location.path("/"); });
     });

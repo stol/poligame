@@ -16,23 +16,29 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     $scope.init_textes = function(mode, limit){
         mode = mode || $routeParams.mode || 'default';
-        $scope.textes = Textes.get({
+        Textes.get({
             limit: limit || null,
             mode: mode
+        }). then(function(textes){
+            $scope.textes = textes;
         });
 
         $scope.mode = mode;
 
     }
 
-    $scope.textes = Textes.get();
+    Textes.get().then(function(textes){
+        $scope.textes = textes;
+    });
 
     $scope.init_texte = function (){
         if (!$routeParams.texte_id){
             return;
         }
         
-        $scope.texte = Textes.get({id: $routeParams.texte_id});
+        Textes.get({id: $routeParams.texte_id}).then(function(texte){
+            $scope.texte = texte;
+        });
 
 
         
