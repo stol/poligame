@@ -15,7 +15,8 @@ moiElu.config(['$routeProvider', function($routeProvider) {
         controller: 'TextesController'
     });
     $routeProvider.when('/textes/:texte_id', {
-        templateUrl: '/views/pages/texte.html'
+        templateUrl: '/views/partials/texte.html',
+        controller: 'TextesController'
     });
 
     $routeProvider.when('/a-propos', {
@@ -30,8 +31,7 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-moiElu.config(['$locationProvider', '$httpProvider', '$parseProvider', function($locationProvider, $httpProvider, $parseProvider) {
-    //$parseProvider.unwrapPromises(true);
+moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
