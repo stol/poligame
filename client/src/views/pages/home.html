@@ -13,10 +13,6 @@
 	<p ng-if="(textes | filter:{mode:'present'}).length > 3"><a href="/textes?mode=present">Accéder à liste complète</a></p>
 </div>
 
-
-</div>
-
-
 <div class="section-future">
 	<h3 class="h3">Bientôt en discussion : <ng-pluralize count="(textes | filter:{mode:'future'}).length" when="{'0': 'aucun texte',
                      														'one': '1 texte',

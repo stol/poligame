@@ -30,7 +30,8 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
+moiElu.config(['$locationProvider', '$httpProvider', '$parseProvider', function($locationProvider, $httpProvider, $parseProvider) {
+    $parseProvider.unwrapPromises(true);
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
