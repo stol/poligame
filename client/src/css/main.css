@@ -386,110 +386,92 @@ table {
 }
 
 .header {
-  color: #fff;
+  color: #333;
   position: relative;
 }
 .header .header-top {
   background-color: #0a3f5a;
-  padding: 0 9.1%;
-  min-height: 60px;
+  line-height: 40px;
+  padding: 10px 0 10px 30px;
 }
-@media only screen and (max-width: 980px) {
+@media only screen and (max-width: 360px) {
   .header .header-top {
-    padding: 0 5px;
+    padding: 5px 0 10px 10px;
   }
 }
-.header .header-content {
-  display: block;
-  height: 330px;
-  background: url(../img/header.jpg) no-repeat 50% 0;
-  padding: 120px 9.1% 0 9.1%;
-}
-@media only screen and (max-width: 980px) {
-  .header .header-content {
-    padding: 0 5px;
-  }
-}
-@media only screen and (max-width: 600px) {
-  .header .header-content {
-    display: none;
-  }
-}
-.header .header-content.ng-hide {
-  height: 0;
-}
-.header .logo {
+.header .header__logo {
   font-family: 'Lato', sans-serif;
   font-size: 30px;
   text-transform: uppercase;
   font-weight: 900;
   margin: 0;
   line-height: 60px;
+  color: #fff;
+  display: inline-block;
+  vertical-align: middle;
 }
-.header .logo a {
+.header .header__logo a {
   color: inherit;
 }
-.header .logo a:hover {
+.header .header__logo a:hover {
   color: inherit;
 }
-.header .punchline {
+.header .header__content {
   clear: both;
-  position: relative;
 }
-.header .punchline h2 {
+.header .header__punchline {
   margin: 0;
   font-family: 'Lato', sans-serif;
   font-weight: 700;
   font-size: 80px;
   line-height: normal;
-  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNimAkAAKIAnNwSwMYAAAAASUVORK5CYII=');
-  background: rgba(0, 0, 0, 0.6);
   padding: 10px;
 }
 @media only screen and (max-width: 1100px) {
-  .header .punchline h2 {
+  .header .header__punchline {
     font-size: 40px;
   }
 }
-@media only screen and (max-width: 700px) {
-  .header .punchline h2 {
-    margin-top: 30px;
-  }
-}
-.header .punchline h3 {
+.header .header__punchscription {
   font-family: 'Lato', sans-serif;
   font-weight: 300;
   font-size: 21px;
   line-height: normal;
-  background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGNimAkAAKIAnNwSwMYAAAAASUVORK5CYII=');
-  background: rgba(0, 0, 0, 0.6);
   margin: 0;
   padding: 10px;
   margin-top: 20px;
 }
 @media only screen and (max-width: 700px) {
-  .header .punchline h3 {
+  .header .header__punchscription {
     font-size: 16px;
   }
 }
+.header .header__social-widget {
+  display: inline-block;
+  vertical-align: middle;
+  padding-top: 10px;
+  margin-left: 25px;
+  		/*
+          @media only screen and (max-width: 700px){
+  			display: none;
+          }
+          */
+}
 .header .nav {
-  margin: 13px 0 0 0;
+  margin: 0 0 0 15px;
+  display: inline-block;
+  vertical-align: middle;
+  float: right;
+  margin-top: 13px;
 }
-.header .fb-like.fb_edge_widget_with_comment {
-  margin: 20px 0 0 20px;
-}
-@media only screen and (max-width: 700px) {
-  .header .fb-like.fb_edge_widget_with_comment {
-    display: none;
+@media only screen and (max-width: 950px) {
+  .header .nav {
+    float: none;
+    margin-top: 0;
   }
 }
-.header .twitter-share-button {
-  margin-left: 20px;
-}
-@media only screen and (max-width: 700px) {
-  .header .twitter-share-button {
-    display: none;
-  }
+.header .nav a {
+  color: #fff;
 }
 
 a {
@@ -539,17 +521,7 @@ p > a, p > b > a {
 }
 
 .section-present, .section-past, .section-future {
-  padding: 30px 9.1% 60px 9.1%;
-}
-@media only screen and (max-width: 980px) {
-  .section-present, .section-past, .section-future {
-    padding: 30px 5px 60px 5px;
-  }
-}
-@media only screen and (max-width: 600px) {
-  .section-present, .section-past, .section-future {
-    padding: 10px 5px 15px 5px;
-  }
+  padding: 30px 10px 60px 10px;
 }
 .section-present + .section-present, .section-past + .section-present, .section-future + .section-present, .section-present + .section-past, .section-past + .section-past, .section-future + .section-past, .section-present + .section-future, .section-past + .section-future, .section-future + .section-future {
   -moz-box-shadow: inset 0px 5px 10px -10px black;

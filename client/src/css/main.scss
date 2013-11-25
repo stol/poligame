@@ -10,43 +10,27 @@
 }
 
 .header{
-	color: #fff;
+	color: #333;
 	position: relative;
 
 	.header-top{
 		background-color: #0a3f5a;
-		padding: 0 9.1%;
-		min-height: 60px;
-
-		@media only screen and (max-width: 980px){
-			padding: 0 5px;
+		line-height: 40px;
+		padding: 10px 0 10px 30px;
+        @media only screen and (max-width: 360px){
+			padding: 5px 0 10px 10px;
         }
-
 	}
-	.header-content{
-		display: block;
-		height: 330px;
-		background: url(../img/header.jpg) no-repeat 50% 0;
-		padding: 120px 9.1% 0 9.1%;
-		@media only screen and (max-width: 980px){
-			padding: 0 5px;
-        }
-        @media only screen and (max-width: 600px){
-			display: none;
-        }
-
-		//@include transition(height 0.3s linear);
-		&.ng-hide{
-			height: 0;
-		}
-	}
-	.logo{
+	.header__logo{
 		font-family: 'Lato', sans-serif;
 		font-size: 30px;
 		text-transform: uppercase;
 		font-weight: 900;
 		margin: 0;
 		line-height: 60px;
+		color: #fff;
+		display: inline-block;
+		vertical-align: middle;
 		a{
 			color: inherit;
 			&:hover{
@@ -55,56 +39,64 @@
 		}
 	}
 
-	.punchline{
+	.header__content{
 		clear: both;
-		position: relative;
-		h2{
-			margin: 0;
-			font-family: 'Lato', sans-serif;
-			font-weight: 700;
-			font-size: 80px;
-			line-height: normal;
-			@include rgba-background-inline(rgba(0,0,0,0.6));
-			padding: 10px;
-
-            @media only screen and (max-width: 1100px){
-				font-size: 40px;
-            }
-            @media only screen and (max-width: 700px){
-				margin-top: 30px;
-            }
-		}
-
-		h3{
-			font-family: 'Lato', sans-serif;
-			font-weight: 300;
-			font-size: 21px;
-			line-height: normal;
-			@include rgba-background-inline(rgba(0,0,0,0.6));
-			margin: 0;
-			padding: 10px;
-			margin-top: 20px;
-            @media only screen and (max-width: 700px){
-				font-size: 16px;
-            }
-		}
 	}
+
+	.header__punchline{
+		margin: 0;
+		font-family: 'Lato', sans-serif;
+		font-weight: 700;
+		font-size: 80px;
+		line-height: normal;
+		//@include rgba-background-inline(rgba(0,0,0,0.6));
+		padding: 10px;
+
+        @media only screen and (max-width: 1100px){
+			font-size: 40px;
+        }
+	}
+
+	.header__punchscription{
+		font-family: 'Lato', sans-serif;
+		font-weight: 300;
+		font-size: 21px;
+		line-height: normal;
+		//@include rgba-background-inline(rgba(0,0,0,0.6));
+		margin: 0;
+		padding: 10px;
+		margin-top: 20px;
+        @media only screen and (max-width: 700px){
+			font-size: 16px;
+        }
+	}
+
+	.header__social-widget{
+		display: inline-block;
+		vertical-align: middle;
+		padding-top: 10px;
+		margin-left: 25px;
+		/*
+        @media only screen and (max-width: 700px){
+			display: none;
+        }
+        */
+
+	}
+
 	.nav{
-		margin: 13px 0 0 0;
-	}
-
-	.fb-like.fb_edge_widget_with_comment{
-		margin: 20px 0 0 20px;
-        @media only screen and (max-width: 700px){
-			display: none;
+		margin: 0 0 0 15px;
+		display: inline-block;
+		vertical-align: middle;
+		float: right;
+		margin-top: 13px;
+        @media only screen and (max-width: 950px){
+			float: none;
+			margin-top: 0;
         }
-	}
-
-	.twitter-share-button{
-		margin-left: 20px;
-        @media only screen and (max-width: 700px){
-			display: none;
-        }
+		a{
+			color: #fff;
+		}
 	}
 
 }
@@ -147,14 +139,7 @@ p > a, p > b > a{
 }
 
 %section{
-	padding: 30px 9.1% 60px 9.1%;
-	@media only screen and (max-width: 980px){
-		padding: 30px 5px 60px 5px;
-    }
-	@media only screen and (max-width: 600px){
-		padding: 10px 5px 15px 5px;
-    }
-
+	padding: 30px 10px 60px 10px;
 	& + &{
 		@include box-shadow(inset 0px 5px 10px -10px #000);
 	}
