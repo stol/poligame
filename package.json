@@ -16,6 +16,8 @@
     "request": "*",
     "grunt": "*",
     "q": "*",
+    "mustache-express" : "*",
+    "twig" : "*",
     "grunt-contrib-clean": "*",
     "grunt-contrib-copy": "*",
     "grunt-contrib-concat": "*",

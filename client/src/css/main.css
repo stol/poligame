@@ -381,7 +381,7 @@ table {
   rgba-background mixin can now be passed an option $dir variable
 */
 .wrapper {
-  max-width: 1200px;
+  max-width: 990px;
   margin: 0 auto;
 }
 
@@ -492,13 +492,13 @@ p > a, p > b > a {
 }
 @media only screen and (max-width: 600px) {
   .h3 {
-    font-size: 24px;
+    font-size: 26px;
     line-height: 30px;
   }
 }
 @media only screen and (max-width: 400px) {
   .h3 {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 26px;
   }
 }
@@ -522,12 +522,17 @@ p > a, p > b > a {
 }
 
 .section-present, .section-past, .section-future {
-  padding: 30px 10px 60px 10px;
+  padding: 30px 10px 25px 10px;
 }
 .section-present + .section-present, .section-past + .section-present, .section-future + .section-present, .section-present + .section-past, .section-past + .section-past, .section-future + .section-past, .section-present + .section-future, .section-past + .section-future, .section-future + .section-future {
   -moz-box-shadow: inset 0px 5px 10px -10px black;
   -webkit-box-shadow: inset 0px 5px 10px -10px black;
   box-shadow: inset 0px 5px 10px -10px black;
+}
+@media only screen and (max-width: 500px) {
+  .section-present, .section-past, .section-future {
+    padding: 15px 10px 0 10px;
+  }
 }
 
 .section-future {
@@ -831,152 +836,36 @@ p > a, p > b > a {
   padding-top: 30px;
 }
 
-/*
-.content.ng-enter,
-.content.ng-leave {
-	@include transition(0.5s linear all);
+.read-more {
+  border-top: 1px solid #E6E6E6;
+  padding-top: 25px;
+  margin: 10px;
 }
-
-.content.ng-enter,
-.content.ng-leave.ng-leave-active {
-	position: absolute;
-	opacity: 0;
+.read-more .read-more__link {
+  text-align: center;
+  display: block;
+  border: 1px solid #dadada;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #1B7BAB;
+  padding: 10px 0;
+  max-width: 320px;
+  margin: 0 auto;
+  text-decoration: none;
+  font-weight: bold;
 }
-.content.ng-leave,
-.content.ng-enter.ng-enter-active {
-	position: relative;
-	opacity: 1;
+.read-more .read-more__link:hover {
+  background-color: #ccc;
+  color: #0A3F5A;
 }
-*/
-.content-container {
-  position: relative;
-}
-
-/*
-.content.ng-leave{
-	-webkit-animation: moveToTop 5s linear both;
-	-moz-animation: moveToTop 5s linear both;
-	animation: moveToTop 5s linear both;
-}
-
-.content.ng-enter{
-	-webkit-animation: moveFromTop 5s 5s linear both;
-	-moz-animation: moveFromTop 5s 5s linear both;
-	animation: moveFromTop 5s 5s linear both;
-}
-*/
-/*
-@-webkit-keyframes moveFromTop {
-	0% {
-		display: none;
-	}
-	50% {
-		display: block;
-		//-webkit-transform: translateY(0);
-	}
-	100% {
-		//-webkit-transform: translateY(-100%);
-	}
-}
-*/
-@-moz-keyframes moveFromTop {
-  0% {
-    -moz-transform: translateY(-100%);
-    height: 0;
-    overflow: hidden;
+@media only screen and (max-width: 500px) {
+  .read-more {
+    padding: 0;
+    margin: 0 -10px;
   }
-
-  100% {
-    -moz-transform: translateY(0);
-    height: auto;
-    overflow: visible;
+  .read-more .read-more__link {
+    border: 0;
+    border-radius: 0;
+    max-width: none;
   }
 }
-/*
-@keyframes moveFromTop {
-	0% {
-		display: none;
-	}
-	50% {
-		display: block;
-		//transform: translateY(0);
-	}
-	100% {
-		//transform: translateY(-100%);
-	}
-}
-*/
-@-webkit-keyframes moveToTop {
-  to {
-    -webkit-transform: translateY(-100%);
-  }
-}
-@-moz-keyframes moveToTop {
-  to {
-    -moz-transform: translateY(-100%);
-  }
-}
-@keyframes moveToTop {
-  to {
-    transform: translateY(-100%);
-  }
-}
-/*
-.texte_small.ng-enter{
-	@include transition(2s linear all);
-}
-
-.texte_small.ng-enter{
- 	opacity:0;
-}
-.texte_small.ng-enter.ng-enter-active {
- 	opacity:1;
-}
-
-
-
-.texte_small.ng-leave {
-	@include transition(2s linear all);	
-}
-
-.texte_small.ng-leave.ng-leave-active {
-	height:0;
-}
-.texte_small.ng-leave{
-	height:200px;
-}
-*/
-/*
-.content.ng-enter{
-	@include transition(2s linear all);
-}
-
-.content.ng-enter{
- 	opacity:0;
-}
-.content.ng-enter.ng-enter-active {
- 	opacity:1;
-}
-
-
-
-.content.ng-leave {
-	@include transition(2s linear all);	
-}
-
-.content.ng-leave.ng-leave-active {
-	opacity:0;
-}
-.content.ng-leave{
-	opacity :1;
-}
-
-
-
-
-
-
-
-
-
-*/

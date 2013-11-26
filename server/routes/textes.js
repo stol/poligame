@@ -296,7 +296,7 @@ function textes(req, res){
   	if (!req.xhr){
 		res.render('index', {
 			title: 'Moi, président'
-			,og_title: ''
+			,og_title: 'Moi, président'
 			,og_url: req.protocol + "://" + req.get('host') + req.url
 		});
 		return;

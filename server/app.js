@@ -11,7 +11,9 @@ var express = require('express')
     , mysql = require('mysql')
     , path = require('path')
     , helmet = require('helmet')
-    , request = require('request');
+    , request = require('request')
+    , Twig = require("twig")
+;
 
 
 TYPE_TEXTE = 1;
@@ -23,7 +25,11 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
-app.set('view engine', 'ejs');
+
+// This section is optional and used to configure twig.
+app.set("twig options", {
+    strict_variables: false
+});
 
 app.use(express.compress());
 app.use(express.favicon());
