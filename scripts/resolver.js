@@ -85,7 +85,7 @@ c.queue([{
 }]);
 */
 
-db.query("SELECT * FROM textes WHERE ends_at < ? AND analysed = 1", [moment().format('YYYY-MM-DD 23:59:59')], function(err, textes, fields) {
+db.query("SELECT * FROM textes WHERE ends_at < ? AND analysed = 0", [moment().format('YYYY-MM-DD 23:59:59')], function(err, textes, fields) {
 	for(var i=0; i<textes.length; i++){
 		c.queue([{
 			uri: textes[i].link,
