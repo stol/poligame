@@ -1,84 +1,83 @@
-<div class="texte" ng-init="init_texte()">
-	<div class="texte_small clearfix">
+<div class="texte_small clearfix">
 
-		<div class="texte_small-question">
-			<h4 class="h4"><span class="texte-status is-{{texte.status}}" ng-if="texte.status>0">{{texte.status_txt}} :</span> {{texte.title}}</h4>
-		</div>
+	<div class="texte_small-question">
+		<h4 class="h4"><span class="texte-status is-{{texte.status}}" ng-if="texte.status>0">{{texte.status_txt}} :</span> {{texte.title}}</h4>
+	</div>
 
-		<div ng-if="texte.mode == 'past'" class="texte_small-time remaining">
-			<span class="remaining-icon remaining-voted"></span>
-			<span class="remaining-label">Discuté le</span>
-			<span class="remaining-time">{{texte.date_end()}}</span>
-		</div>
-		<div ng-if="texte.mode == 'present'" class="texte_small-time remaining">
-			<span class="remaining-icon remaining-clock"></span>
-			<span class="remaining-label">Temps restant</span>
-			<span class="remaining-time" human-time="ends_at"></span>
-		</div>
-		<div ng-if="texte.mode == 'future'" class="texte_small-time remaining">
-			<span class="remaining-icon remaining-calendar"></span>
-			<span class="remaining-label">Ouverture dans</span>
-			<span class="remaining-time" human-time="starts_at"></span>
-		</div>
+	<div ng-if="texte.mode == 'past'" class="texte_small-time remaining">
+		<span class="remaining-icon remaining-voted"></span>
+		<span class="remaining-label">Discuté le</span>
+		<span class="remaining-time">{{texte.date_end()}}</span>
+	</div>
+	<div ng-if="texte.mode == 'present'" class="texte_small-time remaining">
+		<span class="remaining-icon remaining-clock"></span>
+		<span class="remaining-label">Temps restant</span>
+		<span class="remaining-time" human-time="ends_at"></span>
+	</div>
+	<div ng-if="texte.mode == 'future'" class="texte_small-time remaining">
+		<span class="remaining-icon remaining-calendar"></span>
+		<span class="remaining-label">Ouverture dans</span>
+		<span class="remaining-time" human-time="starts_at"></span>
+	</div>
 
-		<div ng-if="texte.mode == 'past'" class="results_bars-container">
-			<div results-bars="net" class="results_bars results_bars_1"></div>
-			<div results-bars="assemblee" class="results_bars results_bars_2"></div>
-			<!--div class="row">
-				<div results="net" class="span4"></div>
-				<div results="assemblee" class="span4"></div>
-			</div-->
+	<div ng-if="texte.mode == 'past'" class="results_bars-container">
+		<div results-bars="net" class="results_bars results_bars_1"></div>
+		<div results-bars="assemblee" class="results_bars results_bars_2"></div>
+		<!--div class="row">
+			<div results="net" class="span4"></div>
+			<div results="assemblee" class="span4"></div>
+		</div-->
 
 
-			<!--div ng-show="!!texte.stats" class="results_more">
-				<h4>Vous pouvez affiner les résultats du vote par :</h4>
-				<div class="btn-group" ng-init="moreInfo='csps'">
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
-		        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
-		    	</div>
-		    	<div ng-switch on="moreInfo">
-		    		<div class="text-center" ng-switch-when="csps">
-						<div results="csps"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="bords">
-						<div results="bords"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="genders">
-						<div results="genders"></div>
-		    		</div>
-		    		<div class="text-center" ng-switch-when="ages">
-						<div results="ages"></div>
-		    		</div>
-		    	</div>
-			</div-->
-		</div>
+		<!--div ng-show="!!texte.stats" class="results_more">
+			<h4>Vous pouvez affiner les résultats du vote par :</h4>
+			<div class="btn-group" ng-init="moreInfo='csps'">
+	        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'csps'">Catégorie socio-professionnelle</button>
+	        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'bords'">Sensibilité politique</button>
+	        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'genders'">Sexe</button>
+	        	<button type="button" class="btn" ng-model="moreInfo" btn-radio="'ages'">Age</button>
+	    	</div>
+	    	<div ng-switch on="moreInfo">
+	    		<div class="text-center" ng-switch-when="csps">
+					<div results="csps"></div>
+	    		</div>
+	    		<div class="text-center" ng-switch-when="bords">
+					<div results="bords"></div>
+	    		</div>
+	    		<div class="text-center" ng-switch-when="genders">
+					<div results="genders"></div>
+	    		</div>
+	    		<div class="text-center" ng-switch-when="ages">
+					<div results="ages"></div>
+	    		</div>
+	    	</div>
+		</div-->
+	</div>
 
-		<div ng-if="texte.mode == 'present'">
-			<div ng-switch on="texte.isVoted()" class="pull-left">
-				<div ng-switch-when="true">
-					<button class="btn" disabled>Vous avez déjà voté !</button>
-				</div>
-				<div ng-switch-default>
-					<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
-						ng-click="openPopinAndVote(1,texte)"
-					>Pour</button>
-					<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
-						ng-click="openPopinAndVote(2,texte)"
-					>Contre</button>
-					<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
-						ng-click="openPopinAndVote(0,texte)"
-					>Absention</button>
-				</div>
+	<div ng-if="texte.mode == 'present'">
+		<div ng-switch on="texte.isVoted()" class="pull-left">
+			<div ng-switch-when="true">
+				<button class="btn" disabled>Vous avez déjà voté !</button>
+			</div>
+			<div ng-switch-default>
+				<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="1"
+					ng-click="openPopinAndVote(1,texte)"
+				>Pour</button>
+				<button type="submit" ng-model="radio" class="btn btn-danger" name="vote" value="2"
+					ng-click="openPopinAndVote(2,texte)"
+				>Contre</button>
+				<button type="submit" ng-model="radio" class="btn btn-warning" name="vote" value="0"
+					ng-click="openPopinAndVote(0,texte)"
+				>Absention</button>
 			</div>
 		</div>
-
-
-
 	</div>
 
 
+
+</div>
+
+<div class="texte" ng-init="init_texte()">
 	<p ng-if="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
 	<h3 class="sstitre" ng-if="texte.description_title" ng-bind-html='texte.description_title'></h3>
 

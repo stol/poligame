@@ -32,6 +32,9 @@ exports.getFacebookInfos = function(access_token){
     return deferred.promise;
 }
 
+/**
+ * Insère ou met à jour un user
+ */
 exports.insertOrUpdate = function (user){
     var deferred = q.defer();
     

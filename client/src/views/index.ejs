@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html ng-app="moiElu">
-<head>
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# moipresident: http://ogp.me/ns/fb/moipresident#">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!--link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css"-->
@@ -11,7 +11,12 @@
     <link rel="stylesheet" href="/css/main.css">
     <!-- endbuild -->
 
-    <title>Moi, président</title>
+    <meta property="fb:app_id" content="720373954658968" /> 
+    <meta property="og:type"   content="moipresident:bill" /> 
+    <meta property="og:url"    content="<%= og_url %>" /> 
+    <meta property="og:title"  content="<%= og_title %>" /> 
+
+    <title><%= title %> - Moi, président</title>
 </head>
 <body ng-controller="AppCtrl">
     <div id="fb-root"></div>
@@ -35,7 +40,7 @@
                 </ul>
             </div>
             <div class="header__content" ng-show="showBigHeader()">
-                <h2 class="header__punchline">Et si vous êtiez député&nbsp;?</h2>
+                <h2 class="header__punchline"><!--Et si vous êtiez député&nbsp;?--></h2>
                 <h3 class="header__punchscription">Sur ce site, vous pouvez :
                     <ul>
                         <li>Vous informer en suivant l’activité de l’Assemblée Nationale</li>

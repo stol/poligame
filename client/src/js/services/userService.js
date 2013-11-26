@@ -1,4 +1,4 @@
-moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', function($window, $http, $q, $rootScope, Cookies) {
+moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$location', function($window, $http, $q, $rootScope, Cookies, $location) {
 
     var accessToken = null,
         is_logged = false,
@@ -28,7 +28,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
 
         // Initialisation
         $window.FB.init({ 
-            appId: '609395745747955', 
+            appId: '720373954658968', 
             channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
             status: false, 
             cookie: true, 
@@ -140,21 +140,20 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', funct
         }
 
 
-        if (true){
-            console.log("publishVote() => sending action");
-            $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
-                access_token: accessToken,
-                bill_project: 'http://samples.ogp.me/609805575706972'
-            }, function(response) {
-                console.log(response);
-                deferred.resolve(response);
-            });
-
-        }
-        else{
-            console.log("publishVote canceled (debug)");
-            deferred.resolve();
-        }
+        console.log("publishVote() => sending action");
+        /*
+        https://graph.facebook.com/me/moipresident:vote_against?
+        access_token=ACCESS_TOKEN&
+        method=POST&
+        bill=http%3A%2F%2Fsamples.ogp.me%2F720445391318491
+        */
+        $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
+            access_token: accessToken,
+            bill: $location.absUrl()
+        }, function(response) {
+            console.log(response);
+            deferred.resolve(response);
+        });
 
         return deferred.promise;
     }

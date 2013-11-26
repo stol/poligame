@@ -207,10 +207,6 @@ function alter_texte(texte){
 	delete texte.abstention_assemblee;
 }
 
-/*
- * GET users listing.
- */
-
 function get_stats(texte, callback){
 	var stats = new StatsClass();
 
@@ -223,8 +219,9 @@ function get_stats(texte, callback){
 	});
 }
 
-
 function fetch(req, res, params){
+	var deferred = q.defer();
+
 	var sql = 'SELECT * from textes';
 	var mode = req.query.mode || (params && params.mode) || false;
 
@@ -253,7 +250,7 @@ function fetch(req, res, params){
   		var stats_done = 0;
 
   		if (textes.length == 0){
-  			res.json([]);
+  			deferred.resolve([]);
   			return;
   		}
 
@@ -279,11 +276,11 @@ function fetch(req, res, params){
 			get_stats(textes[i], function(){
 				if (++stats_done == textes.length){
 					if(ids && ids.length == 1){
-						res.json(textes[0]);
+						deferred.resolve(textes[0]);
 						return;
 					}
 					else{
-						res.json(textes);
+						deferred.resolve(textes);
 						return;
 					}
 					
@@ -291,32 +288,48 @@ function fetch(req, res, params){
 			})
         }
 	});
+
+	return deferred.promise;
 };
 
 function textes(req, res){
   	if (!req.xhr){
-		res.render('index', { title: 'Express' });
+		res.render('index', {
+			title: 'Moi, président'
+			,og_title: ''
+			,og_url: req.protocol + "://" + req.get('host') + req.url
+		});
 		return;
 	}
 
-	return fetch(req, res);
+	fetch(req, res).then(function(textes){
+		res.json(textes);
+	});
 }
 
 
 function show(req, res){
 
 
-  	if (!req.xhr){
-		res.render('index', { title: 'Express' });
-		return;
-	}
-
-	return fetch(req, res, {ids: [req.params.texte_id]});
+	fetch(req, res, {ids: [req.params.texte_id]}).then(function(texte){
+		return req.xhr
+			? res.json(texte)
+			: res.render('index', {
+				title: 'Express'
+				,og_title: texte.title
+				,og_url: req.protocol + "://" + req.get('host') + req.url
+		});
+	});
 };
+
 
 function articles(req, res){
   	if (!req.xhr){
-		res.render('index', { title: 'Express' });
+		res.render('index', {
+			title: 'Moi, président'
+			,og_title: ''
+			,og_url: req.protocol + "://" + req.get('host') + req.url
+		});
 		return;
 	}
 
