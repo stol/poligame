@@ -35,14 +35,14 @@ module.exports = function(grunt) {
             }
         },
         useminPrepare: {
-            html: ['client/build/views/index.ejs'],
+            html: ['client/build/views/index.twig'],
             options: {
                 dest: 'client/build/',
                 basedir: 'sfpsdfpo'
             }
         },
         usemin: {
-            html: ['client/build/views/index.ejs'],
+            html: ['client/build/views/index.twig'],
             options: {
                 dirs: ['build/'],
                 basedir: 'sfpsdfpo'
