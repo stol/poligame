@@ -294,9 +294,8 @@ function fetch(req, res, params){
 
 function textes(req, res){
   	if (!req.xhr){
-		res.render('index', {
+		res.render('index.twig', {
 			title: 'Moi, président'
-			,og_title: 'Moi, président'
 			,og_url: req.protocol + "://" + req.get('host') + req.url
 		});
 		return;
@@ -314,10 +313,10 @@ function show(req, res){
 	fetch(req, res, {ids: [req.params.texte_id]}).then(function(texte){
 		return req.xhr
 			? res.json(texte)
-			: res.render('index', {
+			: res.render('index.twig', {
 				title: 'Express'
-				,og_title: texte.title
 				,og_url: req.protocol + "://" + req.get('host') + req.url
+				,texte: texte
 		});
 	});
 };
@@ -325,9 +324,8 @@ function show(req, res){
 
 function articles(req, res){
   	if (!req.xhr){
-		res.render('index', {
+		res.render('index.twig', {
 			title: 'Moi, président'
-			,og_title: ''
 			,og_url: req.protocol + "://" + req.get('host') + req.url
 		});
 		return;

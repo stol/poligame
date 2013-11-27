@@ -58,7 +58,7 @@ exports.show = function(req, res){
 
 	}
 	else{
-		res.render('index', { title: 'Express' });
+		res.render('index.twig', { title: 'Express' });
 	}
 }
 

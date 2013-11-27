@@ -121,6 +121,12 @@ moiElu.directive('fbComments', ['$window', function($window) {
 
 
 moiElu.directive('resultsBars', function(Textes) {
+    
+    function getMaxOfArray(numArray) {
+        return Math.max.apply(null, numArray);
+    }
+
+
     return function($scope, element, attrs, Textes) {
 
         var texte = $scope.texte.then && $scope.texte.$$v || $scope.texte;
@@ -170,24 +176,25 @@ moiElu.directive('resultsBars', function(Textes) {
             //var votes = texte.stats.;
             return;
         }
-
+        var max = getMaxOfArray([votes.pour.nb, votes.contre.nb, votes.abstention.nb]);
         // pour gagne
-        if (votes.total && votes.pour.nb > votes.contre.nb && votes.pour.nb > votes.abstention.nb){ 
+        if (votes.total && votes.pour.nb == max ){
             var pour_perc = 100;
             var contre_perc = Math.round(votes.contre.perc * 100 / votes.pour.perc * 10)/10;
             var abstention_perc = Math.round(votes.abstention.perc * 100 / votes.pour.perc * 10)/10;
         }
-        //contre gagne
-        else if (votes.total && votes.contre.nb > votes.pour.nb && votes.contre.nb > votes.abstention.nb){
+        // contre gagne
+        else if (votes.total && votes.contre.nb == max){
             var pour_perc = Math.round(votes.pour.perc * 100 / votes.contre.perc * 10)/10;
             var contre_perc = 100;
             var abstention_perc = Math.round(votes.abstention.perc * 100 / votes.pour.perc * 10)/10;
         }
         // Abstention gagne
-        else if (votes.total) {
+        else if (votes.total && votes.abstention.nb == max){
             var pour_perc = Math.round(votes.pour.perc * 100 / votes.abstention.perc * 10)/10;
             var contre_perc = Math.round(votes.contre.perc * 100 / votes.abstention.perc * 10)/10;
             var abstention_perc = 100;
+
         }
 
         if (votes.total == 0 ){
