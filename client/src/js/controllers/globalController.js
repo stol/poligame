@@ -20,7 +20,7 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
     };
 
     $scope.showBigHeader = function(){
-        return true;
+        //return true;
         return ($location.path().substring(1) || 'home') == 'home';
     }
 }]);

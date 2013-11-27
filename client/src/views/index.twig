@@ -25,7 +25,7 @@
     <div class="wrapper">
         <div class="header" ng-controller="NavigationCtrl">
             <div class="header-top">
-                <h1 class="header__logo"><a href="/">Moi, président</a></h1><!--
+                <h1 class="header__logo"><a href="/">UDG</a></h1><!--
              --><div class="header__social-widget">
                     <div class="fb-like" data-href="http://www.moi-president.info" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
                 </div><!--
@@ -48,29 +48,15 @@
                         <li>Faire entendre votre voix en partageant vos choix sur facebook ou twitter</li>
                     </ul>
                 </h3>
-
-
                         
-                    <!--
-                    <div class="jumbotron">
-                        <h1>Et si vous êtiez député&nbsp;?</h1>
-                        <p class="lead">
-                            Quelles lois voteriez-vous&nbsp;?<br/>
-                            Voteriez-vous dans le même sens que les députés de votre camp&nbsp;?<br/>
-                            Tous les textes vous intéresseraient-ils&nbsp;?
-                        </p>
-                        <h3>Prenez la place de vos députés et faites entendre votre voix&nbsp;!</h3>
-
-                        <p>Avec "Moi, élu...", suivez l'actualité de l'assemblée nationale, surveillez les projets et propositions de lois votées et votez en votre âme et conscience. Peut-être aurez-vous des surprises&nbsp;?</p>
-                    -->
             </div>
         </div>
         <div class="content-container">
-            <div class="content" ng-view>
+            <div class="content" ng-view ng-cloak>
                 {% if texte is defined %}
                     <h1>{{ texte.title }}</h1>
-                    {% if texte.description is defined %}
-                        <p>{{ texte.description }}</p>
+                    {% if texte.communique is defined %}
+                        <p>{{ texte.communique }}</p>
                     {% endif %}
                 {% endif %}
 

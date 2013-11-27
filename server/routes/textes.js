@@ -222,7 +222,7 @@ function get_stats(texte, callback){
 function fetch(req, res, params){
 	var deferred = q.defer();
 
-	var sql = 'SELECT * from textes';
+	var sql = 'SELECT * from bills';
 	var mode = req.query.mode || (params && params.mode) || false;
 
 
@@ -420,7 +420,7 @@ function vote(req, res){
 			else if (user_vote == 2) var choice = "contre";
 			else if (user_vote == 0) var choice = "abstention";
 
-			db.query("UPDATE textes SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.texte_id], function(err, rows, fields) {
+			db.query("UPDATE bills SET "+choice+" = "+choice+" + 1 WHERE id = ?", [req.params.texte_id], function(err, rows, fields) {
 		  		if (err) {
 		  			deferred.reject(err.message);
 		  		}

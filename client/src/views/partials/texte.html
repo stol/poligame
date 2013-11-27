@@ -78,10 +78,10 @@
 </div>
 
 <div class="texte" ng-init="init_texte()">
-	<p ng-if="!texte.description_title">&gt;&nbsp;<b>Description indisponible</b></p>
-	<h3 class="sstitre" ng-if="texte.description_title" ng-bind-html='texte.description_title'></h3>
+	<p ng-if="!texte.communique_title">&gt;&nbsp;<b>Communiqué indisponible</b></p>
+	<h3 class="sstitre" ng-if="texte.communique_title" ng-bind-html='texte.communique_title'></h3>
 
-	<p ng-if="texte.description" truncate-words data-words="120" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
+	<p ng-if="texte.communique" truncate-words data-words="120" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
 
 	<div ng-if="!articles.length">&gt;&nbsp;<b>Articles indisponibles</b></div>
 	<div ng-if="articles.length">
@@ -113,8 +113,10 @@
 	</div>
 
 	<h3 class="sstitre">Plus d'informations</h3>
-	<p ng-if="!texte.link">Lien indisponible</p>
-	<p ng-if="texte.link"><b><a ng-href="{{texte.link}}" target="_blank">Lien vers le texte complet</a></b></p>
+	<p ng-if="!texte.url_an">Dossier de l'assemblée nationale indisponible</p>
+	<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Lien vers le dossier de l'assemblée nationale</a></b></p>
+	<p ng-if="!texte.url_sn">Dossier du sénat indisponible</p>
+	<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Lien vers le dossier du sénat</a></b></p>
 	<h3 class="sstitre">Vos commentaires</h3>
 
 	<fb-comments class="fb-comments" data-href="{{location.absUrl()}}" data-width="980"></fb-comments>

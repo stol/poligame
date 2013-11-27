@@ -215,7 +215,7 @@ moiElu.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {
         restrict: 'A',
         //template: '<div>{{truncated}}{{more}}</div>',
         link: function(scope, element, attr) {
-            var text = scope.texte.description || scope.texte.$$v.description;
+            var text = scope.texte.communique || scope.texte.$$v.communique;
             var options = {
                 size    : attr.words || 10,
                 ellipsis: attr.ellipsis || '...',
