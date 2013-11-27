@@ -314,8 +314,7 @@ function show(req, res){
 		return req.xhr
 			? res.json(texte)
 			: res.render('index.twig', {
-				title: 'Express'
-				,og_url: req.protocol + "://" + req.get('host') + req.url
+				og_url: req.protocol + "://" + req.get('host') + req.url
 				,texte: texte
 		});
 	});

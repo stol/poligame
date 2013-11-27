@@ -1,7 +1,7 @@
 <div class="texte_small clearfix">
 
 	<div class="texte_small-question">
-		<h4 class="h4"><span class="texte-status is-{{texte.status}}" ng-if="texte.status>0">{{texte.status_txt}} :</span> {{texte.title}}</h4>
+		<h4 class="h4"><span class="texte-status is-{{texte.status}}" ng-if="texte.status>0 && texte.mode=='past'">{{texte.status_txt}} :</span> {{texte.title}}</h4>
 	</div>
 
 	<div ng-if="texte.mode == 'past'" class="texte_small-time remaining">
@@ -117,6 +117,8 @@
 	<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Lien vers le dossier de l'assemblée nationale</a></b></p>
 	<p ng-if="!texte.url_sn">Dossier du sénat indisponible</p>
 	<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Lien vers le dossier du sénat</a></b></p>
+	<p ng-if="!texte.url_lf">Dossier légifrance indisponible</p>
+	<p ng-if="texte.url_lf"><b><a ng-href="{{texte.url_lf}}" target="_blank">Lien vers le dossier légifrance</a></b></p>
 	<h3 class="sstitre">Vos commentaires</h3>
 
 	<fb-comments class="fb-comments" data-href="{{location.absUrl()}}" data-width="980"></fb-comments>

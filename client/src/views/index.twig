@@ -16,7 +16,7 @@
     <meta property="og:url"    content="{{ og_url }}" /> 
     <meta property="og:title"  content="{{ texte.title | default("Moi, président - Votez vos lois") }}" /> 
 
-    <title>{{ title }}</title>
+    <title>{{ texte.title | default("Moi, président - Votez vos lois") }}</title>
 </head>
 <body ng-controller="AppCtrl">
     <div id="fb-root"></div>

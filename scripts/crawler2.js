@@ -77,16 +77,15 @@ var c = new Crawler({
 	maxConnections: 2,
 	forceUTF8: true
 });
-/*
+
+
 parse_lois_en_preparation()
 .then(parse_lois_votees)
 .then(parse_liste_scrutins)
+.then(parse_agenda)
 .then(function(){
     console.log("DONE");
 })
-*/
-parse_agenda();
-
 
 /**
  * Analyse de la liste des lois en préparation
@@ -169,11 +168,11 @@ function parse_legifrance(texte){
             texte.url_communique = $("a:contains('Communiqué de presse')").attr("href") || false;
 
             // Le lien vers le dossier de l'assemblée nationale ?
-            texte.url_an = $('a:contains("Dossier législatif de l\'Assemblée nationale")').attr("href").replace(/#.*/,'') || false;
+            texte.url_an = ($('a:contains("Dossier législatif de l\'Assemblée nationale")').attr("href") || '').replace(/#.*/,'');
 
             // Le lien vers le dossier du sénat ?
-            texte.url_sn = $('a:contains("Dossier législatif du Sénat")').attr("href").replace(/#.*/,'') || false;
-            
+            texte.url_sn = ($('a:contains("Dossier législatif du Sénat")').attr("href") || '').replace(/#.*/,'');
+
             // Les dates de début et de fin du débat, pour matcher 
             // Débats parlementaires (Procédure accélérée)
             //     Assemblée nationale (1ère lecture)
@@ -279,7 +278,7 @@ function parse_lois_votees(){
                         // insertion dans la BDD !
                         delete texte.url_communique;
                         texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-                        texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 00:00:00') : false;
+                        texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
                         db.query("INSERT INTO bills SET ?", texte, function(err, result) {
                             if (err) throw err;
                             
@@ -388,111 +387,59 @@ function parse_agenda(){
     c.queue([{
         uri: "http://www.assemblee-nationale.fr/agendas/conference-blanc.asp",
         callback: function(error,result, $) {
-            // Nettoyage du HTML de porc
+            var $dossiers = $('a:contains("voir le dossier")');
 
-            var $font_tags = $("#cblanc").find(".MsoNormal + font")
-            $font_tags.each(function(i, font_tag){
-                $(font_tag).replaceWith($(font_tag).children());
+            var dossiers = {};
+
+            // On cherche tous les liens vers les dossiers, et on trouve les dates à partir de ça
+            // en naviguant dans le DOM
+            $dossiers.each(function(i, link){
+                var url = "http://www.assemblee-nationale.fr" + $(link).attr("href").replace(/#.*/, "");
+                var current_day = "";
+                console.log(url);
+                // Alors, ici : 
+                // - on remonte les parents jusqu'à --avant-- la racine => une ligne
+                // - on cherche tous les titres avant cette ligne
+                // - on laisse que ceux qui comportent un mois et on ne prend que le 1er (et sa 1ère case de tableau)
+                var date_relative = $(link).parentsUntil("#cblanc").prevAll(".MsoNormalTable").filter(function(){
+                    return $(this).text().match(/[mit]/i) // Si 'm' ou 'i' 't' sont présent, c'est qu'il y a un mois
+                }).eq(0).find("td").eq(0).text();
+                date_relative = $.trim(date_relative).replace(/\s+/g, " ");
+                date_relative = moment(date_relative, "dddd DD MMMM").year("2013");
+                dossiers[url] = dossiers[url] || [];
+                dossiers[url].push(date_relative);
             });
 
-
-            var jours = [];
-            var jour = null;
-            var textes = {};
-            $(".MsoNormal").each(function(i, ligne){
-                
-                // Nouveau jour
-                // Suspiscion de nouveau jour
-                if ($(ligne).parents(".MsoNormalTable").length){
-                    
-                    if ($(ligne).parents("td").attr("bgcolor")){
-
-                        jour && jours.push(jour);
-                        var text_content = $.trim($(ligne).text());
-                        jour = {
-                            date: moment(text_content, "dddd D MMMM").year("2013"),
-                            textes: []
-                        };
+            // On cherche la loi à partir du dossier
+            // et on détermine la date de début et de fin pour chaque dossier
+            var total = dossiers.length;
+            var done = 0;
+            $.each(dossiers, function(url_an, dates){
+                db.query("SELECT * FROM bills WHERE url_an = ?", url_an, function(err, textes, fields) {
+                    if (err) throw err;
+                    if (textes.length != 1){
+                        if (++done == total){
+                            deferred.resolve();
+                        }
+                        return;
                     }
-                    // On return, car c'était un jour, ou une heure
-                    return;
-                }
-
-                // ici, c'est pas un jour ou une heure
-                var text_content = $.trim($(ligne).text());
-
-                // ligne vide ?
-                if (!text_content){
-                    return;
-                }
-
-                text_content = text_content.replace(/^-\s*/g,"");
-
-                // Ligne n'est pas un texte ?
-                if (   text_content.indexOf("Discussion") !== 0
-                    && text_content.indexOf("Suite de la discussion") !== 0
-                    && text_content.indexOf("Explications de vote et vote") !== 0
-                ){
-                    return;
-                }
-
-                var texte_link = $(ligne).find("a").attr("href") || '';
-
-                // On nettoie l'url des trucs genre "#xxx"
-                if (texte_link.indexOf("#") > 0){
-                    texte_link = texte_link.substr(0, texte_link.indexOf("#"));
-                }
-
-                // Pas de lien pour le texte = pas de id_hash, donc on peut pas savoir s'il existe dans la liste ou pas 
-                if (!texte_link){
-                    return;
-                }
-
-                if (!textes[texte_link]){
-                    textes[texte_link] = {
-                        id_hash: Math.abs(texte_link.hashCode()),
-                        link: "http://www.assemblee-nationale.fr"+texte_link,
-                        dates : [
-                            jour.date
-                        ]
+                    var data = {
+                        starts_at: dates[0].format('YYYY-MM-DD 00:00:00'),
+                        ends_at: dates[dates.length-1].format('YYYY-MM-DD 23:59:59'),
                     }
-                }
-                else{
-                    textes[texte_link].dates.push(jour.date);
-                }
+                    console.log((done+1)+"/"+total+" "+textes[0].title+" => "+data.starts_at+" TO "+data.ends_at);
 
-                jour.textes.push({
-                    node: ligne,
-                    link: texte_link
+                    db.query("UPDATE bills SET ?  WHERE id = "+textes[0].id, data, function(err, rows, fields) {
+                        if (err) throw err;
+                        if (++done == total){
+                            deferred.resolve();
+                        }
+                    });
+
                 });
-            });
-
-            //console.log(textes);
-
-            // Boucle sur chaque texte pour déterminer les dates et lancer le crawl détaillé
-            $.each(textes, function(i, texte){
-                if (!texte.dates[0]){
-                    return;
-                }
-
-                texte.starts_at = texte.dates[0].format("YYYY-MM-DD 00:00:00");
-                texte.ends_at = texte.dates[texte.dates.length-1].format("YYYY-MM-DD 23:59:59");
-
-                c.queue([{
-                    uri: texte.link,
-                    callback: parse_detail,
-                    texte: texte
-                }]);
             });
         }
     }]);
 
     return deferred.promise;
 }
-
-
-/*
-db.query("SELECT * FROM textes WHERE id_hash = ?", texte.id_hash, function(err, rows, fields) {
-        if (rows.length == 0){
-}
-*/
