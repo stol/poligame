@@ -1,3 +1,4 @@
+var Texte = require('../models/texte.js');
 
 /*
  * GET home page.

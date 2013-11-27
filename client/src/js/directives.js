@@ -236,7 +236,7 @@ moiElu.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {
             textTruncated = nl2brFilter(textTruncated);
 
             var hidden = angular.element('<span class="hidden">'
-                +' '+nl2brFilter(words.slice(options.size).join(' ').replace(/\[NL\]/g, "\n"))
+                +' '+nl2brFilter(words.slice(options.size).join(' ').replace(/\[NL\]/g, "\n\n"))
                 +'</span>'
                 +'<span>'+options.ellipsis+'</span>');
 

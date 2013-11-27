@@ -114,7 +114,7 @@ function parse_lois_en_preparation(){
                     var texte = {};
 
                     // Le titre de la loi
-                    texte.title = $.trim($(a).text());
+                    texte.title = $.trim($(a).text()).replace(/ +\([^)]+\)/,'');
 
                     // Url légifrance de la loi
                     texte.url_lf = "http://www.legifrance.gouv.fr/"+$(a).attr("href").replace(/jsessionid=[^?]+/, "");
