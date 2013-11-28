@@ -86,8 +86,15 @@ q.all([
 .then(parse_agenda)                     // Parsing de la'agenda
 .then(function(){
     console.log("Analyse terminée");
-    exit(0);
+    process.exit(0)
 });
+
+/*
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/accord_securite_sociale_Uruguay.asp"}, 0).then(function(texte){
+    console.log("DONE : ", texte);
+});
+*/
+
 //\ END MAIN
 
 /**
@@ -110,11 +117,17 @@ function parse_lf_lois(url, mode){
                 return;
             }
 
+            var total = 0;
+            var done  = 0;
+
+            // On détermine le total
+            $year_titles.each(function(i, year_tit){
+                total += $(year_tit).next().find("li").length;
+            });
+
             // on boucle sur chaque année et on cherche les lois en préparation
             $year_titles.each(function(i, year_tit){
                 var year = $.trim($(year_tit).text())
-                var total = $(year_tit).next().find("li").length;
-                var done = 0;
                 $(year_tit).next().find("li").each(function(i, li){
                     var texte = {};
 
@@ -139,7 +152,7 @@ function parse_lf_lois(url, mode){
 
                     // On lance la cascade d'analyse des pages liées (page détail + page communiqué)
                     parse_legifrance(texte, year)
-                    .then(parse_gouvernement)
+                    //.then(parse_gouvernement)
                     .then(function(texte){
                         // vérification de l'existence du texte dans la BDD
                         db.query("SELECT * FROM bills WHERE url_an = ? OR url_sn = ? OR url_lf = ?", [texte.url_an, texte.url_sn, texte.url_lf], function(err, textes, fields) {
@@ -147,34 +160,38 @@ function parse_lf_lois(url, mode){
 
                             // Texte déjà existant dans la BDD ?
                             if (textes.length != 0){
-                                console.log("LF_LOIS" + mode + " " + year + " " + (done+1) + "/" + total + " | PRESENT : " + texte.title);
+                                //console.log("LF_LOIS" + mode + " " + year + " " + (done+1) + "/" + total + " | PRESENT : " + texte.title);
+                                process.stdout.clearLine();
+                                process.stdout.cursorTo(0);
+                                process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
+
                                 if (++done == total){
+                                    process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
                                     deferred.resolve();
                                 }
-
-                                return;
                             }
-
-                            // Texte inexistant : insertion dans la BDD
-                            texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-                            texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
-                            delete texte.url_communique;
-                            db.query("INSERT INTO bills SET ?", texte, function(err, result) {
-                                if (err) throw err;
-                                if (texte.starts_at && texte.ends_at){
-                                    console.log("LF_LOIS" + mode + " " + year + " " + (done+1) + "/" + total + " | ADDED " + texte.title + " du "+texte.starts_at+" au "+texte.ends_at);
-                                }
-                                else{
-                                    console.log("LF_LOIS" + mode + " " + year + " " + (done+1) + "/" + total + " | ADDED " + texte.title + " (dates inconnues)");
-                                }
-                                
-                                // Tout a été analysé ? On le signale
-                                if (++done == total){
-                                    deferred.resolve();
-                                }
-                            });
+                            else{
+                                // Texte inexistant : insertion dans la BDD
+                                texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
+                                texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
+                                delete texte.url_communique;
+                                db.query("INSERT INTO bills SET ?", texte, function(err, result) {
+                                    if (err) throw err;
+                                    if (texte.starts_at && texte.ends_at){
+                                        process.stdout.write("\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at+" au "+texte.ends_at);
+                                    }
+                                    else{
+                                        process.stdout.write("\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)");
+                                    }
+                                    
+                                    // Tout a été analysé ? On le signale
+                                    if (++done == total){
+                                        process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
+                                        deferred.resolve();
+                                    }
+                                });
+                            }
                         });
-
                     });
                 });
             });
@@ -230,13 +247,13 @@ function parse_legifrance(texte, year){
                 );
 
                 if (date.split(' ').length > 3){
-                    console.log("LF_DETAIL | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
+                    console.log("\nparse_legifrance | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
                     return;
                 }
                 if (!moment(date, "D MMM YYYY").isValid()){
                     date+= " "+year;
                     if (!moment(date, "D MMM YYYY").isValid()){
-                        console.log("LF_DETAIL | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
+                        console.log("\nparse_legifrance | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
                         return;
                     }
                     else{
@@ -288,7 +305,7 @@ function parse_gouvernement(texte){
  * Analyse de la liste des scrutins de l'assemblée
  */
 function parse_liste_scrutins(){
-    console.log("Analyse des scrutins sur l'assemblée nationale");
+    console.log("\nAnalyse des scrutins sur l'assemblée nationale");
     var deferred = q.defer();
 
     c.queue([{
@@ -382,6 +399,7 @@ function parse_an_lois(url, type){
                 // pas de lien ? on passe au suivant
                 if (!$(ligne).find("a").length){ 
                     if (++done == total){
+                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
                         deferred.resolve();
                     }
                     return
@@ -394,38 +412,45 @@ function parse_an_lois(url, type){
                         .replace(/ +et qui a.*/ig, "")
                     ,url_an : "http://www.assemblee-nationale.fr" + $(ligne).find("a").attr("href").replace(/#.*/, "")
                     ,type : type
-                }
+                };
 
-                db.query("SELECT * FROM bills WHERE url_an = ?", texte.url_an, function(err, textes, fields) {
-                    // texte déjà présent ? On fait rien
-                    if (textes.length != 0){
-                        console.log("AN_LOIS"+type+" "+ (done+1) + "/" + total + " | PRESENT : " + texte.url_an);
-                        if (++done == total){
-                            deferred.resolve();
+                (function(texte, i){
+                    db.query("SELECT * FROM bills WHERE url_an = ?", texte.url_an, function(err, textes, fields) {
+                        // texte déjà présent ? On fait rien
+                        if (textes.length != 0){
+                            process.stdout.clearLine();
+                            process.stdout.cursorTo(0);
+                            process.stdout.write("AN_LOIS"+type+" "+ (done+1) + "/" + total);
+                            if (++done == total){
+                                process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                                deferred.resolve();
+                            }
                         }
-                    }
+                        // Si texte pas trouvé, on l'ajoute
+                        else{
+                            parse_an_detail(texte, i).then(function(texte){
+                                texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
+                                texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
+                                db.query("INSERT INTO bills SET ?", texte, function(err, result) {
+                                    if (err) throw err;
+                                    if (texte.starts_at && texte.ends_at){
+                                        process.stdout.write("\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " => " +texte.starts_at+" au "+texte.ends_at);
+                                    }
+                                    else{
+                                        process.stdout.write("\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " (dates inconnues)");
+                                    }
 
-                    // Si texte pas trouvé, on l'ajoute
-                    else{
-                        parse_an_detail(texte).then(function(texte){
-                            texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-                            texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
-                            db.query("INSERT INTO bills SET ?", texte, function(err, result) {
-                                if (err) throw err;
-                                if (texte.starts_at && texte.ends_at){
-                                    console.log("AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " => " +texte.starts_at+" au "+texte.ends_at);
-                                }
-                                else{
-                                    console.log("AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " (dates inconnues)");
-                                }
-
-                                if (++done == total){
-                                    deferred.resolve();
-                                }
+                                    if (++done == total){
+                                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                                        deferred.resolve();
+                                    }
+                                });
                             });
-                        });
-                    }
-                });
+                        }
+                    });
+
+                })(texte, i)
+
             });
         }
     }]);
@@ -433,13 +458,12 @@ function parse_an_lois(url, type){
 }
 
 // Analyse d'une page de l'assemblée nationale
-function parse_an_detail(texte){
+function parse_an_detail(texte, i){
 
     var deferred = q.defer();
     c.queue([{
         uri: texte.url_an,
         callback: function(error,result, $) {
-
             // Boucle sur les cadres à la con
             var $coms = $("commentaire");
             $coms.each(function(i, commentaire){
@@ -455,12 +479,15 @@ function parse_an_detail(texte){
                     var txt = $.trim($ps.eq(1).html()).replace(/<br ?\/>/g, "\n");
                     texte.communique = $(txt).text();
                 }
+            });
 
-                // Les dates ?
-                var $dates = $("[align=left] :contains('Discussion en séance publique')")
-                    .parentsUntil("[align=left]")
-                    .nextAll("table")
-                    .find("td");
+            // Les dates ? On tente la 1ère version
+            var $dates = $("td :contains('Discussion en séance publique'), [align=left] :contains('Discussion en séance publique')")
+                .parentsUntil("[align=left], td")
+                .nextAll("table")
+                .find("td");
+
+            if ($dates.length){
 
                 texte.starts_at = moment(
                     $.trim($dates.first().text())
@@ -472,10 +499,23 @@ function parse_an_detail(texte){
                         .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "")
                     ,"D MMMM YYYY"
                 );
-                    
-                deferred.resolve(texte);
+            }
+            // Sinon, la version " au cours de la séance du mercredi 17 avril 2013"
+            else{
+                var str = $("td :contains('Discussion en séance publique'), [align=left] :contains('Discussion en séance publique')")
+                    .parentsUntil("[align=left], td")
+                    .nextAll("a[href*=seances]").eq(0).text();
+                str = $.trim(str.replace(/\s+/g, ' '));
+                
+                var res = str.match(/\d{1,2}\s+\S+\s+\d+/g);
 
-            });
+                if (res){
+                    texte.starts_at = moment(res[0] ,"D MMMM YYYY");
+                    texte.ends_at = moment(res[0] ,"D MMMM YYYY");
+                }
+            }
+
+            deferred.resolve(texte);
         }
     }]);
 
@@ -486,7 +526,7 @@ function parse_an_detail(texte){
  * Analyse de l'agenda de l'assemblée nationale pour tenter d'y comprendre qq chose
  */
 function parse_agenda(){
-    console.log("Analyse de l'agenda sur l'assemblée nationale");
+    console.log("\nAnalyse de l'agenda sur l'assemblée nationale");
     var deferred = q.defer();
 
     c.queue([{

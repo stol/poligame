@@ -11,9 +11,10 @@ exports.fetch = function fetch(req, res, params){
 	var mode = req.query.mode || (params && params.mode) || false;
 
 
-	if      (mode == "past")    sql+= ' WHERE ends_at < NOW()';
+	if      (mode == "past")    sql+= ' WHERE ends_at < NOW() AND ends_at <> "0000-00-00 00:00:00"';
 	else if (mode == "present") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
 	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
+	else 						sql+= ' WHERE ends_at <> "0000-00-00 00:00:00"';
 
 	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
@@ -24,7 +25,7 @@ exports.fetch = function fetch(req, res, params){
 	else if (mode == "present") sql+= ' ORDER BY ends_at ASC';
 	else if (mode == "future")  sql+= ' ORDER BY starts_at ASC';
 
-	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || false;
+	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
 	if (limit){
 		sql+= ' LIMIT '+limit;
 	}
