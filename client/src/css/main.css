@@ -692,6 +692,9 @@ p > a, p > b > a {
 
 .fb-comments.fb_iframe_widget {
   width: 100% !important;
+  max-width: 700px;
+  display: block;
+  margin: 0 auto;
 }
 .fb-comments.fb_iframe_widget span, .fb-comments.fb_iframe_widget iframe {
   width: 100% !important;
