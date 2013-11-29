@@ -4,6 +4,7 @@ var Crawler = require("crawler").Crawler
     , defines = require('../server/defines.js')
 	, moment  = require("moment")
     , mysql = require('mysql')
+    , _ = require('underscore')
     , q = require('q')
 ;
 
@@ -76,6 +77,7 @@ var c = new Crawler({
 
 
 // MAIN
+/*
 q.all([
      parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
     ,parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2)
@@ -88,12 +90,11 @@ q.all([
     console.log("Analyse terminée");
     process.exit(0)
 });
-
-/*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/accord_securite_sociale_Uruguay.asp"}, 0).then(function(texte){
+*/
+//parse_agenda();
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp"}).then(function(texte){
     console.log("DONE : ", texte);
 });
-*/
 
 //\ END MAIN
 
@@ -150,48 +151,29 @@ function parse_lf_lois(url, mode){
                     // Url légifrance de la loi
                     texte.url_lf = "http://www.legifrance.gouv.fr/"+$(li).find("a").attr("href").replace(/jsessionid=[^?]+/, "");
 
-                    // On lance la cascade d'analyse des pages liées (page détail + page communiqué)
+                    // On lance la cascade d'analyse d'actions (page détail + page communiqué + insert)
                     parse_legifrance(texte, year)
-                    //.then(parse_gouvernement)
-                    .then(function(texte){
-                        // vérification de l'existence du texte dans la BDD
-                        db.query("SELECT * FROM bills WHERE url_an = ? OR url_sn = ? OR url_lf = ?", [texte.url_an, texte.url_sn, texte.url_lf], function(err, textes, fields) {
-                            if (err) throw err;
+                    .then(parse_gouvernement)
+                    .then(insert_or_update_texte)
+                    .then(function(response){
+                        var texte = response.texte
+                        if (response.code == 1){
+                            process.stdout.clearLine();
+                            process.stdout.cursorTo(0);
+                            process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
+                        }
+                        else if (response.code == 2){
+                            process.stdout.write( texte.starts_at && texte.ends_at
+                                ? "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                                : "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
+                            );
+                        }
 
-                            // Texte déjà existant dans la BDD ?
-                            if (textes.length != 0){
-                                //console.log("LF_LOIS" + mode + " " + year + " " + (done+1) + "/" + total + " | PRESENT : " + texte.title);
-                                process.stdout.clearLine();
-                                process.stdout.cursorTo(0);
-                                process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
+                        if (++done == total){
+                            process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
+                            deferred.resolve();
+                        }
 
-                                if (++done == total){
-                                    process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
-                                    deferred.resolve();
-                                }
-                            }
-                            else{
-                                // Texte inexistant : insertion dans la BDD
-                                texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-                                texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
-                                delete texte.url_communique;
-                                db.query("INSERT INTO bills SET ?", texte, function(err, result) {
-                                    if (err) throw err;
-                                    if (texte.starts_at && texte.ends_at){
-                                        process.stdout.write("\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at+" au "+texte.ends_at);
-                                    }
-                                    else{
-                                        process.stdout.write("\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)");
-                                    }
-                                    
-                                    // Tout a été analysé ? On le signale
-                                    if (++done == total){
-                                        process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
-                                        deferred.resolve();
-                                    }
-                                });
-                            }
-                        });
                     });
                 });
             });
@@ -338,7 +320,7 @@ function parse_liste_scrutins(){
                             });
                         }
                         else{
-                            console.log("Scrutin "+(done+1)+"/"+total + ": not found in DB ("+url_an+")");
+                            console.log("Scrutin "+(done+1)+"/"+total + ": not found in DB : "+url_an);
                             if (++done == total){
                                 deferred.resolve();
                             }
@@ -366,17 +348,15 @@ function parse_scrutin(texte, scrutin_url){
             var contre = parseInt($.trim($("#contre b").text()),10);
             var abstention = total - pour - contre;
             var data = {
-                 pour_assemblee       : pour
+                id                    : texte.id 
+                ,pour_assemblee       : pour
                 ,contre_assemblee     : contre
                 ,abstention_assemblee : abstention
                 ,analysed             : 1
             };
-            db.query("UPDATE bills SET ?  WHERE id = "+texte.id, data, function(err, rows, fields) {
-                if (err) throw err;
+            insert_or_update_texte(data).then(function(){
                 deferred.resolve();
             });
-
-            
         }
     }]);
     return deferred.promise;
@@ -414,43 +394,28 @@ function parse_an_lois(url, type){
                     ,type : type
                 };
 
-                (function(texte, i){
-                    db.query("SELECT * FROM bills WHERE url_an = ?", texte.url_an, function(err, textes, fields) {
-                        // texte déjà présent ? On fait rien
-                        if (textes.length != 0){
-                            process.stdout.clearLine();
-                            process.stdout.cursorTo(0);
-                            process.stdout.write("AN_LOIS"+type+" "+ (done+1) + "/" + total);
-                            if (++done == total){
-                                process.stdout.write("\nAN_LOIS"+type+" DONE\n");
-                                deferred.resolve();
-                            }
-                        }
-                        // Si texte pas trouvé, on l'ajoute
-                        else{
-                            parse_an_detail(texte, i).then(function(texte){
-                                texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-                                texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
-                                db.query("INSERT INTO bills SET ?", texte, function(err, result) {
-                                    if (err) throw err;
-                                    if (texte.starts_at && texte.ends_at){
-                                        process.stdout.write("\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " => " +texte.starts_at+" au "+texte.ends_at);
-                                    }
-                                    else{
-                                        process.stdout.write("\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " (dates inconnues)");
-                                    }
+                parse_an_detail(texte)
+                .then(insert_or_update_texte)
+                .then(function(response){
+                    var texte = response.texte;
+                    
+                    if (response.code == 1){
+                        process.stdout.clearLine();
+                        process.stdout.cursorTo(0);
+                        process.stdout.write("AN_LOIS"+type+" "+ (done+1) + "/" + total);
+                    }
+                    else if (response.code == 2){
+                        process.stdout.write( texte.starts_at && texte.ends_at
+                            ? "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                            : "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " (dates inconnues)"
+                        );
+                    }
 
-                                    if (++done == total){
-                                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
-                                        deferred.resolve();
-                                    }
-                                });
-                            });
-                        }
-                    });
-
-                })(texte, i)
-
+                    if (++done == total){
+                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                        deferred.resolve();
+                    }
+                });
             });
         }
     }]);
@@ -458,12 +423,20 @@ function parse_an_lois(url, type){
 }
 
 // Analyse d'une page de l'assemblée nationale
-function parse_an_detail(texte, i){
-
+// DOIT passer :
+//     http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp
+function parse_an_detail(texte){
     var deferred = q.defer();
+
     c.queue([{
         uri: texte.url_an,
         callback: function(error,result, $) {
+            /*
+            // On choppe le titre si on a pas déjà un
+            if (!texte.title){
+                texte.title = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
+            }
+
             // Boucle sur les cadres à la con
             var $coms = $("commentaire");
             $coms.each(function(i, commentaire){
@@ -480,28 +453,88 @@ function parse_an_detail(texte, i){
                     texte.communique = $(txt).text();
                 }
             });
+            */
+            // On wrap les textnodes avec du dom pour pouvoir mieux manipuler
 
-            // Les dates ? On tente la 1ère version
-            var $dates = $("td :contains('Discussion en séance publique'), [align=left] :contains('Discussion en séance publique')")
-                .parentsUntil("[align=left], td")
-                .nextAll("table")
-                .find("td");
 
+
+            $("[border=1], header").remove();
+
+            $("body").find("br").replaceWith("[NL]");
+            $("body").find("tr").before("\n");
+
+            var content = $("body").text()
+                .replace(/\n+/g, "[NL]")
+                .replace(/\t+/g, "\t")
+                .replace(/ +/g, " ")
+                .replace(/\[NL\]/g, "\n")
+                .replace(/\n *\n/g, "\n")
+            ;
+
+            var lignes = content.split("\n");
+
+            for(var i=0, l=lignes.length; i<l; i++){
+                lignes[i] = $.trim(lignes[i]);
+            }
+
+            var dates = [];
+            var found = -1;
+            for(var i=0, l=lignes.length; i<l; i++){
+                var ligne = lignes[i];
+            //    console.log(ligne);
+
+                if (found == -1){
+                
+
+                    if (ligne.match(/Discussion en séance publique/)){
+                        console.log("TROUVE : "+ligne);
+                    
+                        for( var j=i-1; j>=0; j--){
+                            var res = lignes[j].match(/^(Assemblée nationale|Sénat)/ig);
+                            if (res && res[0] == "Assemblée nationale"){
+                                console.log("RATTACHE a "+lignes[j]);
+                                found = j;
+                                break;
+                            }
+                        }
+                        if (found == -1){
+                            continue;
+                        }
+                    }
+                }
+                else{
+                    if(ligne.length == 0)
+                        continue;
+                    var res = ligne.match(/^(\d+.*)?séance.*du.*(\d+.*\d{4})/gi);
+                    if (res){
+                        //console.log(res);
+                        dates.push(lignes[i]);
+                    }
+                    else{
+                        found = -1;
+                    }
+                }
+            }
+
+            console.log(dates);
+
+            return;
             if ($dates.length){
 
-                texte.starts_at = moment(
-                    $.trim($dates.first().text())
-                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "")
-                    ,"D MMMM YYYY"
-                );
-                texte.ends_at = moment(
-                    $.trim($dates.last().text())
-                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "")
-                    ,"D MMMM YYYY"
-                );
+                var hip = $.trim($dates.first().text())
+                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "");
+                texte.starts_at = moment(hip,"D MMMM YYYY");
+
+                var hop = $.trim($dates.last().text())
+                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "");
+                texte.ends_at = moment(hop,"D MMMM YYYY");
+
+                console.log("start : " + hip + " => " + texte.starts_at);
+                console.log("end : " + hop + " => " + texte.ends_at);
             }
             // Sinon, la version " au cours de la séance du mercredi 17 avril 2013"
             else{
+                console.log("PAS DE DATES.Length");
                 var str = $("td :contains('Discussion en séance publique'), [align=left] :contains('Discussion en séance publique')")
                     .parentsUntil("[align=left], td")
                     .nextAll("a[href*=seances]").eq(0).text();
@@ -559,35 +592,167 @@ function parse_agenda(){
             var total = Object.keys(dossiers).length
             var done = 0;
             $.each(dossiers, function(url_an, dates){
-                db.query("SELECT * FROM bills WHERE url_an = ?", url_an, function(err, textes, fields) {
-                    if (err) throw err;
-                    if (textes.length != 1){
-                        console.log((done+1)+"/"+total+" ERR : "+url_an+" not found in DB");
+                // On cherche le texte dans la BDD
+                select_texte({url_an: url_an}).then(
+                // Présent ? On l'update avec les dates trouvées
+                function(texte_db){
+                    var data = {
+                        starts_at: dates[0],
+                        ends_at: dates[dates.length-1],
+                    };
+                    update_texte(texte_db, data).then(function(texte){
+                        console.log("AGENDA " + (done+1)+"/"+total+" => UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
+                        if (++done == total){
+                            deferred.resolve();
+                        }
+                    })
+
+                },
+                // Absent ? On récup les infos qu'on peu trouver et le créé
+                function(){
+                    parse_an_detail({url_an: url_an})
+                    .then(insert_texte)
+                    .then(function(texte){
+                        console.log( texte.starts_at && texte.ends_at
+                            ? "AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                            : "AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " (dates inconnues)"
+                        );
 
                         // La loi n'est pas dans la BDD ? On on la réintègre
                         if (++done == total){
                             deferred.resolve();
                         }
-                    }
-                    else{
-                        var data = {
-                            starts_at: dates[0].format('YYYY-MM-DD 00:00:00'),
-                            ends_at: dates[dates.length-1].format('YYYY-MM-DD 23:59:59'),
-                        }
-
-                        db.query("UPDATE bills SET ?  WHERE id = "+textes[0].id, data, function(err, rows, fields) {
-                            if (err) throw err;
-                            console.log((done+1)+"/"+total+" "+textes[0].title+" => "+data.starts_at+" TO "+data.ends_at);
-                            if (++done == total){
-                                deferred.resolve();
-                            }
-                        });
-                    }
-
+                    })
                 });
             });
         }
     }]);
+
+    return deferred.promise;
+}
+
+
+/**
+ * Renvoie un texte s'il est trouvé dans la BDD
+ */
+function select_texte(texte){
+    var deferred = q.defer();
+
+    // J'ai pas de quoi insert/update le texte ?
+    if (!texte.id && !texte.url_an && !texte.url_sn && !texte.url_lf){
+        deferred.reject();
+        return deferred.promise;
+    }
+
+    var sql_select = "SELECT * FROM bills WHERE ";
+    var where = []
+    var clauses = [];
+    if (texte.id){
+        where.push("id = ?");
+        clauses.push(texte.id);
+    }
+    if (texte.url_an){
+        where.push("url_an = ?");
+        clauses.push(texte.url_an);
+    }
+    if (texte.url_sn){
+        where.push("url_sn = ?");
+        clauses.push(texte.url_sn);
+    }
+    if (texte.url_lf){
+        where.push("url_lf = ?");
+        clauses.push(texte.url_lf);
+    }
+
+    sql_select+= where.join(' OR ');
+
+    db.query(sql_select, clauses, function(err, textes, fields) {
+        if (textes.length == 1){
+            deferred.resolve(textes[0]);
+        }
+        else{
+            deferred.reject();
+        }
+    });
+    return deferred.promise;
+}
+
+/**
+ * Insère ou met à jour le texte. C'est selon :)
+ */
+function insert_or_update_texte(texte){
+    var deferred = q.defer();
+    
+    delete texte.url_communique;
+
+    select_texte(texte).then(
+    // Texte trouvé ?
+    function(texte_db){
+        update_texte(texte_db, texte).then(function(texte){
+            deferred.resolve({texte: texte, code: 1});
+        });
+    },
+    // Texte pas trouvé ?
+    function(){
+        insert_texte(texte).then(function(texte){
+            deferred.resolve({texte: texte, code: 2});
+        });
+    });
+
+    return deferred.promise;
+}
+
+function insert_texte(texte){
+    var deferred = q.defer();
+
+    var starts_at = texte.starts_at || false;
+    var ends_at   = texte.starts_at || false;
+    texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
+    texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
+    
+    // Requete d'insert
+    db.query("INSERT INTO bills SET ?", texte, function(err, result) {
+        if (err) throw err;
+
+        texte.id = result.insertId;
+        texte.starts_at = starts_at;
+        texte.ends_at   = ends_at;
+
+        deferred.resolve(texte);
+    });
+
+    return deferred.promise;
+}
+
+/**
+ * Update un texte, avec comparaison anciennes/nouvelles values
+ * @param texte_db ancien objet
+ * @param texte_db nouvel objet
+ */
+function update_texte(texte_db, texte){
+    var deferred = q.defer();
+
+    var starts_at = texte.starts_at || false;
+    var ends_at   = texte.starts_at || false ;
+
+    // Mise à jour de l'obj en BDD d'après le texte passé
+    _.each(texte, function(val, key){
+        if (texte_db[key] != val){
+            texte_db[key] = val;
+        }
+    });
+    texte_db.starts_at = texte_db.starts_at ? texte_db.starts_at.format('YYYY-MM-DD 00:00:00') : false;
+    texte_db.ends_at = texte_db.ends_at ? texte_db.ends_at.format('YYYY-MM-DD 23:59:59') : false;
+
+    // Requete d'update
+    db.query("UPDATE bills SET ? WHERE id = "+texte_db.id, texte_db, function(err) {
+        if (err) throw err;
+
+        texte_db.starts_at = starts_at ? starts_at : texte_db.starts_at;
+        texte_db.ends_at   = ends_at ? ends_at : texte_db.ends_at;
+
+        deferred.resolve(texte_db);
+    });
 
     return deferred.promise;
 }
