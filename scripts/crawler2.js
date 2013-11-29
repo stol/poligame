@@ -505,10 +505,12 @@ function parse_an_detail(texte){
                 else{
                     if(ligne.length == 0)
                         continue;
-                    var res = ligne.match(/^(\d+.*)?séance.*du.*(\d+.*\d{4})/gi);
+                    //var res = ligne.match(/^(\d+.*)?séance.*du.*(\d+.*\d{4})/gi);
+                    console.log(ligne);
+                    var res = ligne.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+\d+\s\S+\s\d+$/gi);
                     if (res){
-                        //console.log(res);
-                        dates.push(lignes[i]);
+                        console.log("FOUND " + res[0]);
+                        dates.push(res[0]);
                     }
                     else{
                         found = -1;
