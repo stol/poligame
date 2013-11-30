@@ -91,10 +91,12 @@ q.all([
     process.exit(0)
 });
 */
-//parse_agenda();
+parse_agenda();
+/*
 parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp"}).then(function(texte){
     console.log("DONE : ", texte);
 });
+*/
 
 //\ END MAIN
 
@@ -454,9 +456,8 @@ function parse_an_detail(texte){
                 }
             });
             */
-            // On wrap les textnodes avec du dom pour pouvoir mieux manipuler
 
-
+            // Nettoyage, pour au final avoir un tableau de textes
 
             $("[border=1], header").remove();
 
@@ -487,12 +488,12 @@ function parse_an_detail(texte){
                 
 
                     if (ligne.match(/Discussion en séance publique/)){
-                        console.log("TROUVE : "+ligne);
+                        //console.log("TROUVE : "+ligne);
                     
                         for( var j=i-1; j>=0; j--){
                             var res = lignes[j].match(/^(Assemblée nationale|Sénat)/ig);
                             if (res && res[0] == "Assemblée nationale"){
-                                console.log("RATTACHE a "+lignes[j]);
+                                //console.log("RATTACHE a "+lignes[j]);
                                 found = j;
                                 break;
                             }
@@ -505,11 +506,9 @@ function parse_an_detail(texte){
                 else{
                     if(ligne.length == 0)
                         continue;
-                    //var res = ligne.match(/^(\d+.*)?séance.*du.*(\d+.*\d{4})/gi);
-                    console.log(ligne);
                     var res = ligne.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+\d+\s\S+\s\d+$/gi);
                     if (res){
-                        console.log("FOUND " + res[0]);
+                        res[0] = res[0].replace(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+/gi, "");
                         dates.push(res[0]);
                     }
                     else{
@@ -518,9 +517,14 @@ function parse_an_detail(texte){
                 }
             }
 
-            console.log(dates);
+            //console.log("dates =", dates);
+            // on a trouvé des dates ?
+            if (dates.length){
+                texte.starts_at = moment(dates[0],"D MMMM YYYY");
+                texte.ends_at = moment(dates[dates.length-1],"D MMMM YYYY");
+            }
 
-            return;
+            /*
             if ($dates.length){
 
                 var hip = $.trim($dates.first().text())
@@ -549,7 +553,7 @@ function parse_an_detail(texte){
                     texte.ends_at = moment(res[0] ,"D MMMM YYYY");
                 }
             }
-
+            */
             deferred.resolve(texte);
         }
     }]);
@@ -598,10 +602,14 @@ function parse_agenda(){
                 select_texte({url_an: url_an}).then(
                 // Présent ? On l'update avec les dates trouvées
                 function(texte_db){
-                    var data = {
-                        starts_at: dates[0],
-                        ends_at: dates[dates.length-1],
-                    };
+                    // le texte enregistré commençait plus tard ?
+                    var data = {}
+                    if (texte_db.starts_at.unix() > dates[0].unix()){
+                        data.starts_at = dates[0];
+                    }
+                    if (texte_db.ends_at.unix() < dates[dates.length-1].unix()){
+                        data.ends_at = dates[dates.length-1];
+                    }
                     update_texte(texte_db, data).then(function(texte){
                         console.log("AGENDA " + (done+1)+"/"+total+" => UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
                         if (++done == total){
@@ -613,6 +621,17 @@ function parse_agenda(){
                 // Absent ? On récup les infos qu'on peu trouver et le créé
                 function(){
                     parse_an_detail({url_an: url_an})
+                    .then(function(texte){
+                        var deferred = q.defer();
+                        if (texte.starts_at.unix() > dates[0].unix()){
+                            texte.starts_at = dates[0];
+                        }
+                        if (texte.ends_at.unix() < dates[dates.length-1].unix()){
+                            texte.ends_at = dates[dates.length-1];
+                        }
+                        deferred.resolve(texte);
+                        return deferred.promise;
+                    })
                     .then(insert_texte)
                     .then(function(texte){
                         console.log( texte.starts_at && texte.ends_at
@@ -670,6 +689,8 @@ function select_texte(texte){
 
     db.query(sql_select, clauses, function(err, textes, fields) {
         if (textes.length == 1){
+            textes[0].starts_at = moment(textes[0].starts_at, "YYYY-MM-DD HH:mm:ss")
+            textes[0].ends_at   = moment(textes[0].ends_at,   "YYYY-MM-DD HH:mm:ss")
             deferred.resolve(textes[0]);
         }
         else{
@@ -708,7 +729,7 @@ function insert_texte(texte){
     var deferred = q.defer();
 
     var starts_at = texte.starts_at || false;
-    var ends_at   = texte.starts_at || false;
+    var ends_at   = texte.ends_at || false;
     texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
     texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
     
