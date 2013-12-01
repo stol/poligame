@@ -77,7 +77,6 @@ var c = new Crawler({
 
 
 // MAIN
-/*
 q.all([
      parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
     ,parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2)
@@ -90,8 +89,6 @@ q.all([
     console.log("Analyse terminée");
     process.exit(0)
 });
-*/
-parse_agenda();
 /*
 parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp"}).then(function(texte){
     console.log("DONE : ", texte);
