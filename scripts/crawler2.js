@@ -77,6 +77,7 @@ var c = new Crawler({
 
 
 // MAIN
+
 q.all([
      parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
     ,parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2)
@@ -89,11 +90,20 @@ q.all([
     console.log("Analyse terminée");
     process.exit(0)
 });
+
 /*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp"}).then(function(texte){
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp"}).then(function(texte){
     console.log("DONE : ", texte);
 });
 */
+/*
+parse_agenda()
+.then(function(){
+    console.log("Analyse terminée");
+    process.exit(0)
+});
+*/
+//parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION);
 
 //\ END MAIN
 
@@ -386,9 +396,14 @@ function parse_an_lois(url, type){
                 var texte = {
                     title : $.trim($(ligne).text())
                         .replace(/ - .*/, '')
-                        .replace(/, (adopté|modifié),? par [^,]+,/ig, "")
+                        .replace(/,\s+(adoptée?|modifiée?)(\s+avec\s+modifications?)?,?\s+par\s+[^,]+,/ig, "")
                         .replace(/ +Voir le dossier/ig, "")
                         .replace(/ +et qui a.*/ig, "")
+                        .replace(/ - mise en ligne.*/g, "")
+                        .replace(/de M.* (visant|tendant|relative|renforçant|instituant|portant|rendant)/g, "$1")
+                        .replace(/de M.* (instaurant|concernant|permettant|supprimant|rétablissant|interdisant)/g, "$1")
+                        .replace(/de M.* (prescrivant|modifiant|encadrant|décidant|prévoyant|fixant|garantissant|obligeant)/g, "$1")
+                        .replace(/de M.* (autorisant|en faveur|facilitant|établissant|créant|pour|sur)/g, "$1")
                     ,url_an : "http://www.assemblee-nationale.fr" + $(ligne).find("a").attr("href").replace(/#.*/, "")
                     ,type : type
                 };
@@ -424,6 +439,9 @@ function parse_an_lois(url, type){
 // Analyse d'une page de l'assemblée nationale
 // DOIT passer :
 //     http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp
+//     http://www.assemblee-nationale.fr/14/dossiers/avenir_justice_systeme_retraites.asp
+//     http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp
+//     http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp
 function parse_an_detail(texte){
     var deferred = q.defer();
 
@@ -456,7 +474,7 @@ function parse_an_detail(texte){
 
             // Nettoyage, pour au final avoir un tableau de textes
 
-            $("[border=1], header").remove();
+            $("[border=1], header, script").remove();
 
             $("body").find("br").replaceWith("[NL]");
             $("body").find("tr").before("\n");
@@ -469,17 +487,19 @@ function parse_an_detail(texte){
                 .replace(/\n *\n/g, "\n")
             ;
 
-            var lignes = content.split("\n");
-
-            for(var i=0, l=lignes.length; i<l; i++){
-                lignes[i] = $.trim(lignes[i]);
+            var lignes1 = content.split("\n");
+            var lignes = [];
+            for(var i=0, l=lignes1.length; i<l; i++){
+                lignes1[i] = $.trim(lignes1[i]);
+                if (lignes1[i].length > 0 ){
+                    lignes.push(lignes1[i]);
+                }
             }
 
             var dates = [];
             var found = -1;
             for(var i=0, l=lignes.length; i<l; i++){
                 var ligne = lignes[i];
-            //    console.log(ligne);
 
                 if (found == -1){
                 
@@ -501,8 +521,6 @@ function parse_an_detail(texte){
                     }
                 }
                 else{
-                    if(ligne.length == 0)
-                        continue;
                     var res = ligne.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+\d+\s\S+\s\d+$/gi);
                     if (res){
                         res[0] = res[0].replace(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+/gi, "");
@@ -601,12 +619,13 @@ function parse_agenda(){
                 function(texte_db){
                     // le texte enregistré commençait plus tard ?
                     var data = {}
-                    if (texte_db.starts_at.unix() > dates[0].unix()){
+                    if (!texte_db.starts_at || (texte_db.starts_at && texte_db.starts_at.unix() > dates[0].unix())){
                         data.starts_at = dates[0];
                     }
-                    if (texte_db.ends_at.unix() < dates[dates.length-1].unix()){
+                    if (!texte_db.ends_at || (texte_db.ends_at && texte_db.ends_at.unix() < dates[dates.length-1].unix())){
                         data.ends_at = dates[dates.length-1];
                     }
+
                     update_texte(texte_db, data).then(function(texte){
                         console.log("AGENDA " + (done+1)+"/"+total+" => UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
                         if (++done == total){
@@ -620,10 +639,10 @@ function parse_agenda(){
                     parse_an_detail({url_an: url_an})
                     .then(function(texte){
                         var deferred = q.defer();
-                        if (texte.starts_at.unix() > dates[0].unix()){
+                        if (!texte.starts_at || (texte.starts_at && texte.starts_at.unix() > dates[0].unix())){
                             texte.starts_at = dates[0];
                         }
-                        if (texte.ends_at.unix() < dates[dates.length-1].unix()){
+                        if (!texte.ends_at || (texte.ends_at && texte.ends_at.unix() < dates[dates.length-1].unix())){
                             texte.ends_at = dates[dates.length-1];
                         }
                         deferred.resolve(texte);
@@ -631,10 +650,7 @@ function parse_agenda(){
                     })
                     .then(insert_texte)
                     .then(function(texte){
-                        console.log( texte.starts_at && texte.ends_at
-                            ? "AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                            : "AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " (dates inconnues)"
-                        );
+                        console.log("AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
 
                         // La loi n'est pas dans la BDD ? On on la réintègre
                         if (++done == total){
@@ -686,8 +702,11 @@ function select_texte(texte){
 
     db.query(sql_select, clauses, function(err, textes, fields) {
         if (textes.length == 1){
-            textes[0].starts_at = moment(textes[0].starts_at, "YYYY-MM-DD HH:mm:ss")
-            textes[0].ends_at   = moment(textes[0].ends_at,   "YYYY-MM-DD HH:mm:ss")
+
+            textes[0].starts_at = textes[0].starts_at ? moment(textes[0].starts_at) : false;
+            textes[0].ends_at   = textes[0].ends_at   ? moment(textes[0].ends_at) : false;
+
+
             deferred.resolve(textes[0]);
         }
         else{
@@ -752,8 +771,8 @@ function insert_texte(texte){
 function update_texte(texte_db, texte){
     var deferred = q.defer();
 
-    var starts_at = texte.starts_at || false;
-    var ends_at   = texte.starts_at || false ;
+    var starts_at = texte.starts_at || texte_db.starts_at || false;
+    var ends_at   = texte.starts_at || texte_db.ends_at || false;
 
     // Mise à jour de l'obj en BDD d'après le texte passé
     _.each(texte, function(val, key){
@@ -761,6 +780,7 @@ function update_texte(texte_db, texte){
             texte_db[key] = val;
         }
     });
+
     texte_db.starts_at = texte_db.starts_at ? texte_db.starts_at.format('YYYY-MM-DD 00:00:00') : false;
     texte_db.ends_at = texte_db.ends_at ? texte_db.ends_at.format('YYYY-MM-DD 23:59:59') : false;
 
@@ -768,8 +788,8 @@ function update_texte(texte_db, texte){
     db.query("UPDATE bills SET ? WHERE id = "+texte_db.id, texte_db, function(err) {
         if (err) throw err;
 
-        texte_db.starts_at = starts_at ? starts_at : texte_db.starts_at;
-        texte_db.ends_at   = ends_at ? ends_at : texte_db.ends_at;
+        texte_db.starts_at = starts_at;
+        texte_db.ends_at   = ends_at;
 
         deferred.resolve(texte_db);
     });

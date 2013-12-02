@@ -24,11 +24,14 @@ exports.fetch = function fetch(req, res, params){
 	if      (mode == "past")    sql+= ' ORDER BY ends_at DESC';
 	else if (mode == "present") sql+= ' ORDER BY ends_at ASC';
 	else if (mode == "future")  sql+= ' ORDER BY starts_at ASC';
+	else						sql+= ' ORDER BY ends_at DESC';
 
 	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
 	if (limit){
 		sql+= ' LIMIT '+limit;
 	}
+
+	console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
