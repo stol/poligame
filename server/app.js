@@ -63,7 +63,6 @@ app.use(function(req, res, next) {
     next();
 });
 
-
 // Production
 if ('production' == app.get('env')) {
     console.log("------------\nENV => PRODUCTION\n");
@@ -71,10 +70,10 @@ if ('production' == app.get('env')) {
     app.use(require('stylus').middleware(__dirname + '../client/build'));
     app.use(express.static(path.join(__dirname, '../client/build')));
     db = mysql.createConnection({
-        host     : 'localhost',
-        user     : 'stol',
-        password : 'Je suis une chaise',
-        database : 'stol'
+        host     : process.env.DB_HOST,
+        user     : process.env.DB_USER,
+        password : process.env.DB_PASSWORD,
+        database : process.env.DB_NAME
     });
 }
 // Development 
