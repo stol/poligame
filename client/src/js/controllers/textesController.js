@@ -14,17 +14,11 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     }
 
 
-    $scope.init_textes = function(mode, limit){
-        mode = mode || $routeParams.mode || 'default';
-        Textes.get({
-            limit: limit || null,
-            mode: mode
-        }). then(function(textes){
-            $scope.textes = textes;
-        });
-
-        $scope.mode = mode;
-
+    $scope.init_order = function(){
+        mode = $routeParams.mode || 'default';
+        if (mode == 'future')       $scope.order = 'starts_at';
+        else if (mode == 'present') $scope.order = 'ends_at';
+        else                        $scope.order = '-ends_at';
     }
 
     Textes.get().then(function(textes){

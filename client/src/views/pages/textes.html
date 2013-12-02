@@ -1,4 +1,4 @@
-<div class="section-present" ng-init="order= routeParams.mode == 'future' ? 'starts_at' : '-ends_at';">
+<div class="section-present" ng-init="init_order()">
 
 	<h3 class="h3" ng-if="routeParams.mode == 'past'">Textes déjà discutés ({{(textes | filter:{mode:routeParams.mode}).length}})</h3>
 	<h3 class="h3" ng-if="routeParams.mode == 'present'">Discussions en cours ({{(textes | filter:{mode:routeParams.mode}).length}})</h3>

@@ -6,7 +6,7 @@
 
 	<p ng-if="!(textes | filter:{mode:'present'}).length">Il n'y a pas de texte actuellement en discussion.</p>
 	<div
-		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'starts_at' | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at' | limitTo:3"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
