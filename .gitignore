@@ -2,3 +2,4 @@
 /client/src/vendor/
 /client/build/
 /client/src/css/.sass-cache/
+/.tmp/
