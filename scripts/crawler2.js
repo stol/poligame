@@ -103,6 +103,16 @@ parse_agenda()
     process.exit(0)
 });
 */
+
+// http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp
+// http://www.assemblee-nationale.fr/14/dossiers/avenir_justice_systeme_retraites.asp
+// http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp
+// http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp
+// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp"}).then(function(texte){
+//     console.log("DONE : ", texte);
+//     process.exit(0);
+// });
+
 //parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION);
 
 //\ END MAIN
@@ -408,22 +418,29 @@ function parse_an_lois(url, type){
                     ,type : type
                 };
 
-                parse_an_detail(texte)
-                .then(insert_or_update_texte)
-                .then(function(response){
-                    var texte = response.texte;
-                    
-                    if (response.code == 1){
-                        process.stdout.clearLine();
-                        process.stdout.cursorTo(0);
-                        process.stdout.write("AN_LOIS"+type+" "+ (done+1) + "/" + total);
+
+                //parse_an_detail(texte)
+                //.then(insert_or_update_texte)
+                //.then(function(response){
+
+                // TODO : vérifier si c'est déjà dans la BDD
+                select_texte(texte).then(function(){
+                    process.stdout.clearLine();
+                    process.stdout.cursorTo(0);
+                    process.stdout.write("AN_LOIS" + type + " " + (done+1) + "/" + total);
+
+                    if (++done == total){
+                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                        deferred.resolve();
                     }
-                    else if (response.code == 2){
-                        process.stdout.write( texte.starts_at && texte.ends_at
-                            ? "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                            : "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDING " + texte.url_an + " (dates inconnues)"
-                        );
-                    }
+
+                }, parse_an_detail)
+                .then(insert_texte)
+                .then(function(texte){
+                    process.stdout.write( texte.starts_at && texte.ends_at
+                        ? "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                        : "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates inconnues)"
+                    );
 
                     if (++done == total){
                         process.stdout.write("\nAN_LOIS"+type+" DONE\n");
@@ -437,12 +454,14 @@ function parse_an_lois(url, type){
 }
 
 // Analyse d'une page de l'assemblée nationale
+// TODO : révupérer le status "voté" ou "adopté"
 // DOIT passer :
 //     http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp
 //     http://www.assemblee-nationale.fr/14/dossiers/avenir_justice_systeme_retraites.asp
 //     http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp
 //     http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp
 function parse_an_detail(texte){
+
     var deferred = q.defer();
 
     c.queue([{
@@ -496,6 +515,8 @@ function parse_an_detail(texte){
                 }
             }
 
+            //console.log(lignes);
+
             var dates = [];
             var found = -1;
             for(var i=0, l=lignes.length; i<l; i++){
@@ -521,10 +542,10 @@ function parse_an_detail(texte){
                     }
                 }
                 else{
-                    var res = ligne.match(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+\d+\s\S+\s\d+$/gi);
+                    var res = ligne.match(/^\d+\S+ séance du (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) \d+ \S+ \d+$/gi);
                     if (res){
-                        res[0] = res[0].replace(/(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche)\s+/gi, "");
-                        dates.push(res[0]);
+                        var dt = ligne.replace(/^\d+\S+ séance du (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) (\d+ \S+ \d+)$/gi, "$2");
+                        dates.push(dt);
                     }
                     else{
                         found = -1;
@@ -533,6 +554,8 @@ function parse_an_detail(texte){
             }
 
             //console.log("dates =", dates);
+
+
             // on a trouvé des dates ?
             if (dates.length){
                 texte.starts_at = moment(dates[0],"D MMMM YYYY");
@@ -710,7 +733,7 @@ function select_texte(texte){
             deferred.resolve(textes[0]);
         }
         else{
-            deferred.reject();
+            deferred.reject(texte);
         }
     });
     return deferred.promise;
@@ -756,7 +779,7 @@ function insert_texte(texte){
         texte.id = result.insertId;
         texte.starts_at = starts_at;
         texte.ends_at   = ends_at;
-
+        
         deferred.resolve(texte);
     });
 
