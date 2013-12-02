@@ -1,3 +1,6 @@
+// FIXME : vérifier http://www.assemblee-nationale.fr/14/dossiers/contrat_de_generation.asp
+
+
 "use strict";
 
 var Crawler = require("crawler").Crawler
@@ -170,29 +173,31 @@ function parse_lf_lois(url, mode){
                     // Url légifrance de la loi
                     texte.url_lf = "http://www.legifrance.gouv.fr/"+$(li).find("a").attr("href").replace(/jsessionid=[^?]+/, "");
 
-                    // On lance la cascade d'analyse d'actions (page détail + page communiqué + insert)
-                    parse_legifrance(texte, year)
+
+
+                    select_texte(texte).then(function(texte){
+                        process.stdout.clearLine();
+                        process.stdout.cursorTo(0);
+                        process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
+                        if (++done == total){
+                            process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
+                            deferred.resolve();
+                        }
+                    }, function(texte){
+                        return parse_legifrance(texte, year);
+                    })
                     .then(parse_gouvernement)
-                    .then(insert_or_update_texte)
-                    .then(function(response){
-                        var texte = response.texte
-                        if (response.code == 1){
-                            process.stdout.clearLine();
-                            process.stdout.cursorTo(0);
-                            process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
-                        }
-                        else if (response.code == 2){
-                            process.stdout.write( texte.starts_at && texte.ends_at
-                                ? "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                                : "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
-                            );
-                        }
+                    .then(insert_texte)
+                    .then(function(texte){
+                        process.stdout.write( texte.starts_at && texte.ends_at
+                            ? "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                            : "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
+                        );
 
                         if (++done == total){
                             process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
                             deferred.resolve();
                         }
-
                     });
                 });
             });
@@ -772,6 +777,8 @@ function insert_texte(texte){
     texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
     texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
     
+    delete texte.url_communique;
+
     // Requete d'insert
     db.query("INSERT INTO bills SET ?", texte, function(err, result) {
         if (err) throw err;
