@@ -23,14 +23,12 @@ TYPE_AMENDEMENT = 3;
 
 var app = express();
 
-// all environments
-app.set('port', process.env.PORT || 3000);
-
 // This section is optional and used to configure twig.
 app.set("twig options", {
     strict_variables: false
 });
 
+// all environments
 app.use(express.compress());
 app.use(express.favicon());
 app.use(express.logger('dev'));
@@ -65,6 +63,7 @@ app.use(function(req, res, next) {
 
 // Production
 if ('production' == app.get('env')) {
+    app.set('port', process.env.PORT || 80);
     console.log("------------\nENV => PRODUCTION\n");
     app.set('views', __dirname + '/../client/build/views');
     app.use(require('stylus').middleware(__dirname + '../client/build'));
@@ -78,6 +77,8 @@ if ('production' == app.get('env')) {
 }
 // Development 
 else {
+    app.set('port', process.env.PORT || 3000);
+
     console.log("------------\nENV => DEVELOPMENT\n");
     app.set('views', __dirname + '/../client/src/views');
     app.use(express.errorHandler());
