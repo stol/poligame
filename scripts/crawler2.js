@@ -77,46 +77,23 @@ var c = new Crawler({
 	maxConnections: 2,
 	forceUTF8: true
 });
-
-
 // MAIN
-
-q.all([
-     parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
-    ,parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2)
-    ,parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET),
-    ,parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
-])
-.then(parse_liste_scrutins)             // Parsing des scrutins
-.then(parse_agenda)                     // Parsing de la'agenda
+parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
+.then(function(){
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2);
+})
+.then(function(){
+    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET);
+})
+.then(function(){
+    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
+})
+.then(parse_agenda)             // Parsing de l'agenda
+.then(parse_liste_scrutins)     // Parsing des scrutins
 .then(function(){
     console.log("Analyse terminée");
     process.exit(0)
 });
-
-/*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp"}).then(function(texte){
-    console.log("DONE : ", texte);
-});
-*/
-/*
-parse_agenda()
-.then(function(){
-    console.log("Analyse terminée");
-    process.exit(0)
-});
-*/
-
-// http://www.assemblee-nationale.fr/14/dossiers/loi_programmation_militaire_2014-2019.asp
-// http://www.assemblee-nationale.fr/14/dossiers/avenir_justice_systeme_retraites.asp
-// http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp
-// http://www.assemblee-nationale.fr/14/dossiers/couts_de_la_filiere_nucleaire.asp
-// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/accord_transport_aerien_Canada.asp"}).then(function(texte){
-//     console.log("DONE : ", texte);
-//     process.exit(0);
-// });
-
-//parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION);
 
 //\ END MAIN
 
@@ -140,19 +117,16 @@ function parse_lf_lois(url, mode){
                 return;
             }
 
-            var total = 0;
-            var done  = 0;
+            var textes = {};
 
-            // On détermine le total
-            $year_titles.each(function(i, year_tit){
-                total += $(year_tit).next().find("li").length;
-            });
-
-            // on boucle sur chaque année et on cherche les lois en préparation
+            // On boucle sur chaque année et on cherche les lois en préparation
             $year_titles.each(function(i, year_tit){
                 var year = $.trim($(year_tit).text())
+                // On boucle sur chaque texte
                 $(year_tit).next().find("li").each(function(i, li){
                     var texte = {};
+
+                    texte.year = year;
 
                     // Le titre de la loi
                     texte.title = $.trim($(li).text()).replace(/ +\([^)]+\)/,'');
@@ -173,34 +147,38 @@ function parse_lf_lois(url, mode){
                     // Url légifrance de la loi
                     texte.url_lf = "http://www.legifrance.gouv.fr/"+$(li).find("a").attr("href").replace(/jsessionid=[^?]+/, "");
 
-
-
-                    select_texte(texte).then(function(texte){
-                        process.stdout.clearLine();
-                        process.stdout.cursorTo(0);
-                        process.stdout.write("LF_LOIS" + mode + " " + (done+1) + "/" + total);
-                        if (++done == total){
-                            process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
-                            deferred.resolve();
-                        }
-                    }, function(texte){
-                        return parse_legifrance(texte, year);
-                    })
-                    .then(parse_gouvernement)
-                    .then(insert_texte)
-                    .then(function(texte){
-                        process.stdout.write( texte.starts_at && texte.ends_at
-                            ? "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                            : "\nLF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
-                        );
-
-                        if (++done == total){
-                            process.stdout.write("\nLF_LOIS"+mode+" DONE\n");
-                            deferred.resolve();
-                        }
-                    });
+                    textes[texte.url_lf] = textes[texte.url_lf] || texte;
                 });
             });
+
+            var total = Object.keys(textes).length
+            var done  = 0;
+
+            $.each(textes, function(i, texte){
+
+                select_texte(texte).then(function(texte){
+                    console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total);
+                    if (++done == total){
+                        console.log("LF_LOIS"+mode+" DONE");
+                        deferred.resolve();
+                    }
+                }, function(texte){
+                    return parse_legifrance(texte);
+                })
+                .then(parse_gouvernement)
+                .then(insert_texte)
+                .then(function(texte){
+                    console.log( texte.starts_at && texte.ends_at
+                        ? "LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                        : "LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
+                    );
+
+                    if (++done == total){
+                        console.log("LF_LOIS"+mode+" DONE");
+                        deferred.resolve();
+                    }
+                });
+            })
         }
     }]);
     return deferred.promise;
@@ -211,14 +189,18 @@ function parse_lf_lois(url, mode){
  * ex : http://www.legifrance.gouv.fr/affichLoiPreparation.do;?idDocument=JORFDOLE000028196681&type=general
  */
 
-function parse_legifrance(texte, year){
+function parse_legifrance(texte){
     var deferred = q.defer();
+
+    var year = texte.year;
+
+    delete texte.year;
 
     // Analyse du détail de la page légifrance de la loi
     c.queue([{
         uri: texte.url_lf,
         callback: function (error,result, $){
-            //console.log("parse_legifrance "+texte.url_lf);
+
             // Le titre du communiqué
             texte.communique_title = $.trim($("a:contains('Communiqué de presse')").text()) || false;
 
@@ -226,10 +208,12 @@ function parse_legifrance(texte, year){
             texte.url_communique = $("a:contains('Communiqué de presse')").attr("href") || false;
 
             // Le lien vers le dossier de l'assemblée nationale ?
-            texte.url_an = ($('a:contains("Dossier législatif de l\'Assemblée nationale")').attr("href") || '').replace(/#.*/,'');
+            texte.url_an = ($("a").filter(function(){
+                return $(this).text().match(/dossier légis[lt]atif de l'assemblée nationale/gi)
+            }).attr("href") || '').replace(/#.*/,'');
 
             // Le lien vers le dossier du sénat ?
-            texte.url_sn = ($('a:contains("Dossier législatif du Sénat")').attr("href") || '').replace(/#.*/,'');
+            texte.url_sn = ($('a:contains("Dossier légis[lt]atif du Sénat")').attr("href") || '').replace(/#.*/,'');
 
             // Les dates de début et de fin du débat, pour matcher 
             // Débats parlementaires (Procédure accélérée)
@@ -324,34 +308,33 @@ function parse_liste_scrutins(){
             if (!total){
                 console.log("ALERTE : aucun scrutin trouvé dans la liste de scrutins");
                 deferred.resolve();
+                return;
             }
-            else{
-                $scrutins.each(function(i, scrutin){
 
-                    var scrutin_url = "http://www.assemblee-nationale.fr" + $(scrutin).find("td").eq(0).find('a').attr("href");
-                    var url_an = "http://www.assemblee-nationale.fr" + $(scrutin).find("td").eq(1).find('a').attr("href")
-                        .replace(/#.*/,'');
+            $scrutins.each(function(i, scrutin){
 
-                    // On cherche la loi existante, en BDD, pour compléter avec les infos
-                    db.query("SELECT * FROM bills WHERE url_an = ?", url_an, function(err, textes, fields) {
-                        
-                        if (textes.length == 1){
-                            parse_scrutin(textes[0], scrutin_url).then(function(){
-                                console.log("Scrutin "+(done+1)+"/"+total + ": parse OK");
-                                if (++done == total){
-                                    deferred.resolve();
-                                }
-                            });
-                        }
-                        else{
-                            console.log("Scrutin "+(done+1)+"/"+total + ": not found in DB : "+url_an);
-                            if (++done == total){
-                                deferred.resolve();
-                            }
+                var scrutin_url = "http://www.assemblee-nationale.fr" + $(scrutin).find("td").eq(0).find('a').attr("href");
+                var url_an = "http://www.assemblee-nationale.fr" + $(scrutin).find("td").eq(1).find('a').attr("href")
+                    .replace(/#.*/,'');
+
+                select_texte({url_an: url_an}).then(function(texte){
+                    var temp_url = scrutin_url;
+                    parse_scrutin(texte, scrutin_url).then(function(texte){
+                        console.log("SCRUTIN "+(done+1)+"/"+total + " | "
+                            + "pour: "+texte.pour_assemblee + ", contre: " + texte.contre_assemblee + " abstention: " + texte.abstention_assemblee
+                            + " ON " + temp_url
+                        );
+                        if (++done == total){
+                            deferred.resolve();
                         }
                     });
-                });
-            }
+                },function(){
+                    console.log("Scrutin "+(done+1)+"/"+total + ": not found in DB : "+url_an);
+                    if (++done == total){
+                        deferred.resolve();
+                    }
+                })
+            });
         }
     }]);
 
@@ -372,14 +355,13 @@ function parse_scrutin(texte, scrutin_url){
             var contre = parseInt($.trim($("#contre b").text()),10);
             var abstention = total - pour - contre;
             var data = {
-                id                    : texte.id 
-                ,pour_assemblee       : pour
-                ,contre_assemblee     : contre
-                ,abstention_assemblee : abstention
-                ,analysed             : 1
+                pour_assemblee       : pour,
+                contre_assemblee     : contre,
+                abstention_assemblee : abstention,
+                analysed             : 1
             };
-            insert_or_update_texte(data).then(function(){
-                deferred.resolve();
+            update_texte(texte, data).then(function(texte){
+                deferred.resolve(texte);
             });
         }
     }]);
@@ -397,17 +379,15 @@ function parse_an_lois(url, type){
         callback: function(error,result, $) {
             var $lignes = $("tr td:nth-child(2)");
 
-            var total = $lignes.length;
-            var done = 0;
+            var textes = {};
+
             $lignes.each(function(i, ligne){
-                // pas de lien ? on passe au suivant
+
+
                 if (!$(ligne).find("a").length){ 
-                    if (++done == total){
-                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
-                        deferred.resolve();
-                    }
-                    return
+                    return;
                 }
+
                 var texte = {
                     title : $.trim($(ligne).text())
                         .replace(/ - .*/, '')
@@ -423,36 +403,36 @@ function parse_an_lois(url, type){
                     ,type : type
                 };
 
+                textes[texte.url_an] = textes[texte.url_an] || texte;
+            });
 
-                //parse_an_detail(texte)
-                //.then(insert_or_update_texte)
-                //.then(function(response){
-
-                // TODO : vérifier si c'est déjà dans la BDD
+            var total = Object.keys(textes).length
+            var done = 0;
+            $.each(textes, function(i, texte){
                 select_texte(texte).then(function(){
-                    process.stdout.clearLine();
-                    process.stdout.cursorTo(0);
-                    process.stdout.write("AN_LOIS" + type + " " + (done+1) + "/" + total);
+                    console.log("AN_LOIS" + type + " " + (done+1) + "/" + total);
 
                     if (++done == total){
-                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                        console.log("AN_LOIS"+type+" DONE");
                         deferred.resolve();
                     }
 
                 }, parse_an_detail)
                 .then(insert_texte)
                 .then(function(texte){
-                    process.stdout.write( texte.starts_at && texte.ends_at
-                        ? "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                        : "\nAN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates inconnues)"
+                    console.log( texte.starts_at && texte.ends_at
+                        ? "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
+                        : "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates inconnues)"
                     );
 
                     if (++done == total){
-                        process.stdout.write("\nAN_LOIS"+type+" DONE\n");
+                        console.log("AN_LOIS"+type+" DONE");
                         deferred.resolve();
                     }
                 });
+
             });
+
         }
     }]);
     return deferred.promise;
@@ -655,7 +635,7 @@ function parse_agenda(){
                     }
 
                     update_texte(texte_db, data).then(function(texte){
-                        console.log("AGENDA " + (done+1)+"/"+total+" => UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
+                        console.log("AGENDA " + (done+1)+"/"+total+" | UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
                         if (++done == total){
                             deferred.resolve();
                         }
@@ -678,7 +658,7 @@ function parse_agenda(){
                     })
                     .then(insert_texte)
                     .then(function(texte){
-                        console.log("AGENDA " + (done+1)+"/"+total + " => ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
+                        console.log("AGENDA " + (done+1)+"/"+total + " | ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
 
                         // La loi n'est pas dans la BDD ? On on la réintègre
                         if (++done == total){
@@ -729,7 +709,7 @@ function select_texte(texte){
     sql_select+= where.join(' OR ');
 
     db.query(sql_select, clauses, function(err, textes, fields) {
-        if (textes.length == 1){
+        if (textes.length > 0){
 
             textes[0].starts_at = textes[0].starts_at ? moment(textes[0].starts_at) : false;
             textes[0].ends_at   = textes[0].ends_at   ? moment(textes[0].ends_at) : false;
