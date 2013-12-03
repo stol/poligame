@@ -18,7 +18,7 @@ exports.fetch = function fetch(req, res, params){
 
 	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
-		sql+= ' WHERE id IN('+ids.join(',')+')';
+		sql+= ' AND id IN('+ids.join(',')+')';
 	}
 
 	if      (mode == "past")    sql+= ' ORDER BY ends_at DESC';
