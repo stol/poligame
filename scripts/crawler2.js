@@ -11,6 +11,9 @@ var Crawler = require("crawler").Crawler
     , q = require('q')
 ;
 
+console.log(moment().format("YYYY-MM-DD"));
+process.exit(0);
+
 if (process.env.NODE_ENV && "production" == process.env.NODE_ENV){
 	var db = mysql.createConnection({
         host     : process.env.DB_HOST,
@@ -77,7 +80,9 @@ var c = new Crawler({
 	maxConnections: 2,
 	forceUTF8: true
 });
+
 // MAIN
+/*
 parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
 .then(function(){
     return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2);
@@ -94,6 +99,10 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
     console.log("Analyse terminée");
     process.exit(0)
 });
+*/
+//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET);
+//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION);
+parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
 
 //\ END MAIN
 
@@ -145,7 +154,7 @@ function parse_lf_lois(url, mode){
                     }
 
                     // Url légifrance de la loi
-                    texte.url_lf = "http://www.legifrance.gouv.fr/"+$(li).find("a").attr("href").replace(/jsessionid=[^?]+/, "");
+                    texte.url_lf = clean_lf_url("http://www.legifrance.gouv.fr/"+$(li).find("a").attr("href"));
 
                     textes[texte.url_lf] = textes[texte.url_lf] || texte;
                 });
@@ -196,6 +205,8 @@ function parse_legifrance(texte){
 
     delete texte.year;
 
+    texte.seances = [];
+    
     // Analyse du détail de la page légifrance de la loi
     c.queue([{
         uri: texte.url_lf,
@@ -253,6 +264,8 @@ function parse_legifrance(texte){
                 else{
                     var m = moment(date, "D MMM YYYY");
                 }
+                
+                texte.seances.push(m);
 
                 texte.starts_at = texte.starts_at || m;
                 texte.ends_at   = m;
@@ -547,6 +560,12 @@ function parse_an_detail(texte){
                 texte.ends_at = moment(dates[dates.length-1],"D MMMM YYYY");
             }
 
+            texte.seances = [];
+
+            for( var i=0; i<dates.length; i++){
+                texte.seances.push(moment(dates[i],"D MMMM YYYY"));
+            }
+
             /*
             if ($dates.length){
 
@@ -751,23 +770,38 @@ function insert_or_update_texte(texte){
 
 function insert_texte(texte){
     var deferred = q.defer();
-
+    
+    var seances = texte.seances || [];
     var starts_at = texte.starts_at || false;
     var ends_at   = texte.ends_at || false;
     texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
     texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
     
+    
+    delete texte.seances;
     delete texte.url_communique;
 
     // Requete d'insert
+
     db.query("INSERT INTO bills SET ?", texte, function(err, result) {
+
         if (err) throw err;
 
         texte.id = result.insertId;
         texte.starts_at = starts_at;
         texte.ends_at   = ends_at;
         
+        if (seances && seances.length){
+            var data = [];
+            for( var i=0; i<seances.length; i++){
+                data.push([texte.id, seances[i].format("YYYY-MM-DD 00:00:00")]);
+            }
+            db.query("INSERT IGNORE INTO seances (bill_id, date) VALUES ?", [data]);
+        }
+        texte.seances = seances;
+
         deferred.resolve(texte);
+
     });
 
     return deferred.promise;
@@ -793,6 +827,8 @@ function update_texte(texte_db, texte){
 
     texte_db.starts_at = texte_db.starts_at ? texte_db.starts_at.format('YYYY-MM-DD 00:00:00') : false;
     texte_db.ends_at = texte_db.ends_at ? texte_db.ends_at.format('YYYY-MM-DD 23:59:59') : false;
+    var seances = texte_db.seances || [];
+    delete texte_db.seances;
 
     // Requete d'update
     db.query("UPDATE bills SET ? WHERE id = "+texte_db.id, texte_db, function(err) {
@@ -801,8 +837,29 @@ function update_texte(texte_db, texte){
         texte_db.starts_at = starts_at;
         texte_db.ends_at   = ends_at;
 
+
+        if (seances && seances.length){
+            var data = [];
+            for( var i=0; i<seances.length; i++){
+                data.push([texte.id, seances[i].format("YYYY-MM-DD 00:00:00")]);
+            }
+            db.query("INSERT IGNORE INTO seances (bill_id, date) VALUES ?", [data]);
+        }
+
+        texte.seances = seances;
+
         deferred.resolve(texte_db);
+
     });
 
     return deferred.promise;
 }
+
+
+///////////////////////// UTILS /////////////////////
+function clean_lf_url(url){
+    url = url.replace(/jsessionid=[^?]+/, "")
+    return url;
+}
+
+

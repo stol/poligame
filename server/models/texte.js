@@ -7,9 +7,39 @@ var moment = require('moment')
 exports.fetch = function fetch(req, res, params){
 	var deferred = q.defer();
 
-	var sql = 'SELECT * from bills';
 	var mode = req.query.mode || (params && params.mode) || false;
 
+	/*
+	var sql = '';
+
+	if (mod == "past"){
+		sql = "SELECT bill_id, MAX(date) AS mdate"
+			+ " FROM seances"
+			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
+			+ " WHERE date < '"+moment().format("YYYY-MM-DD")
+			+ " GROUP BY bill_id";
+	}
+	else if (mod == "present"){
+		sql = "SELECT bill_id, MAX(date) AS mdate"
+			+ " FROM seances"
+			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
+			+ " WHERE date BETWEEN '' AND ''"
+			+ " GROUP BY bill_id";
+	}
+	else if (mod == "future"){
+		sql = "SELECT bill_id, MAX(date) AS mdate"
+			+ " FROM seances"
+			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
+			+ " WHERE date > '"+moment().add("days", 1).format("YYYY-MM-DD")
+			+ " GROUP BY bill_id";
+	}
+	else{
+
+		sql = 
+	}
+	*/
+
+	var sql = 'SELECT * from bills';
 
 	if      (mode == "past")    sql+= ' WHERE ends_at < NOW() AND ends_at <> "0000-00-00 00:00:00"';
 	else if (mode == "present") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
