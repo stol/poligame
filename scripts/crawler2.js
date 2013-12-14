@@ -11,9 +11,6 @@ var Crawler = require("crawler").Crawler
     , q = require('q')
 ;
 
-console.log(moment().format("YYYY-MM-DD"));
-process.exit(0);
-
 if (process.env.NODE_ENV && "production" == process.env.NODE_ENV){
 	var db = mysql.createConnection({
         host     : process.env.DB_HOST,
@@ -235,41 +232,44 @@ function parse_legifrance(texte){
             // puis nettoyage pour n'avoir que la date
 
             $(".titre0:contains('Débats parlementaires')")
-            .next().find(".titre1:contains('Assemblée nationale')")
-            .next().find("> li").find(".titre2").each(function(i, titre){
+            .next().find(".titre1:contains('Assemblée nationale')").each(function(lecture_offset, lecture){
+                texte.seances[lecture_offset] = [];
+                $(lecture).next().find("> li").find(".titre2").each(function(i, titre){
+                    // Nettoyage et parsage de la date
+                    var date = $.trim(
+                        $(titre).text()
+                        .replace(/Compte[- ]*rendu.* du /, '')
+                        .replace("1er", "1")
+                        .replace(/ *: */, '')
+                        .replace(/\s+/g, ' ')
+                    );
 
-                // Nettoyage et parsage de la date
-                var date = $.trim(
-                    $(titre).text()
-                    .replace(/Compte[- ]*rendu.* du /, '')
-                    .replace("1er", "1")
-                    .replace(/ *: */, '')
-                    .replace(/\s+/g, ' ')
-                );
-
-                if (date.split(' ').length > 3){
-                    console.log("\nparse_legifrance | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
-                    return;
-                }
-                if (!moment(date, "D MMM YYYY").isValid()){
-                    date+= " "+year;
-                    if (!moment(date, "D MMM YYYY").isValid()){
+                    if (date.split(' ').length > 3){
                         console.log("\nparse_legifrance | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
                         return;
+                    }
+                    if (!moment(date, "D MMM YYYY").isValid()){
+                        date+= " "+year;
+                        if (!moment(date, "D MMM YYYY").isValid()){
+                            console.log("\nparse_legifrance | ERR : '"+date+"' INVALIDE (d'après '"+$(titre).text()+"') on URL "+texte.url_lf);
+                            return;
+                        }
+                        else{
+                            var m = moment(date, "D MMM YYYY");
+                        }
                     }
                     else{
                         var m = moment(date, "D MMM YYYY");
                     }
-                }
-                else{
-                    var m = moment(date, "D MMM YYYY");
-                }
-                
-                texte.seances.push(m);
+                    
+                    texte.seances[lecture_offset].push(m);
 
-                texte.starts_at = texte.starts_at || m;
-                texte.ends_at   = m;
-            });
+                    texte.starts_at = texte.starts_at || m;
+                    texte.ends_at   = m;
+                });
+
+            })
+            
 
             deferred.resolve(texte);
         }
@@ -793,10 +793,13 @@ function insert_texte(texte){
         
         if (seances && seances.length){
             var data = [];
+
             for( var i=0; i<seances.length; i++){
-                data.push([texte.id, seances[i].format("YYYY-MM-DD 00:00:00")]);
+                for( var j=0; j<seances[i].length; j++){
+                    data.push([texte.id, i+1, seances[i][j].format("YYYY-MM-DD 00:00:00")]);
+                }
             }
-            db.query("INSERT IGNORE INTO seances (bill_id, date) VALUES ?", [data]);
+            db.query("INSERT IGNORE INTO seances (bill_id, lecture, date) VALUES ?", [data]);
         }
         texte.seances = seances;
 

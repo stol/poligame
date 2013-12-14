@@ -26,3 +26,11 @@ CREATE TABLE `bills` (
   KEY `id_hash` (`id_hash`),
   KEY `id` (`id`,`type`)
 ) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE `seances` (
+  `bill_id` int(11) DEFAULT NULL,
+  `lecture` int(11) unsigned DEFAULT NULL,
+  `date` timestamp NULL DEFAULT NULL,
+  UNIQUE KEY `seance` (`bill_id`,`lecture`,`date`),
+  KEY `lecture` (`bill_id`,`lecture`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
