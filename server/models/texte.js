@@ -9,24 +9,23 @@ exports.fetch = function fetch(req, res, params){
 
 	var mode = req.query.mode || (params && params.mode) || false;
 
-	/*
 	var sql = '';
-
-	if (mod == "past"){
+	/*
+	if (mode == "past"){
 		sql = "SELECT bill_id, MAX(date) AS mdate"
 			+ " FROM seances"
 			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
 			+ " WHERE date < '"+moment().format("YYYY-MM-DD")
 			+ " GROUP BY bill_id";
 	}
-	else if (mod == "present"){
+	else if (mode == "present"){
 		sql = "SELECT bill_id, MAX(date) AS mdate"
 			+ " FROM seances"
 			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
 			+ " WHERE date BETWEEN '' AND ''"
 			+ " GROUP BY bill_id";
 	}
-	else if (mod == "future"){
+	else if (mode == "future"){
 		sql = "SELECT bill_id, MAX(date) AS mdate"
 			+ " FROM seances"
 			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
@@ -34,10 +33,27 @@ exports.fetch = function fetch(req, res, params){
 			+ " GROUP BY bill_id";
 	}
 	else{
-
-		sql = 
 	}
 	*/
+	sql = "SELECT seances.bill_id, max(seances.lecture) as maxLecture, min(seances.date) AS minDate, max(seances.date) AS maxDate, bills.*"
+		+ " FROM seances"
+		+ " LEFT JOIN bills ON seances.bill_id = bills.id"
+
+	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
+	if (ids){
+		sql+= ' WHERE seances.bill_id IN('+ids.join(',')+')';
+	}
+
+	sql += " GROUP BY bill_id";
+		+  " ORDER BY maxDate DESC";
+
+	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
+	if (limit){
+		sql+= ' LIMIT '+limit;
+	}
+
+
+	/*
 
 	var sql = 'SELECT * from bills';
 
@@ -60,7 +76,7 @@ exports.fetch = function fetch(req, res, params){
 	if (limit){
 		sql+= ' LIMIT '+limit;
 	}
-
+	*/
 	console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
