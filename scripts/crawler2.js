@@ -80,12 +80,12 @@ var c = new Crawler({
 
 // MAIN
 /*
-parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
+parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
 .then(function(){
-    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do", 2);
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET);
 })
 .then(function(){
-    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET);
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
 })
 .then(function(){
     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
@@ -97,9 +97,14 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do", 1)
     process.exit(0)
 });
 */
-//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET);
-//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION);
-parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
+
+//return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
+
+//
+//http://www.assemblee-nationale.fr/14/documents/index-proposition.asp
+
+
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/plfss_2014.asp"});
 
 //\ END MAIN
 
@@ -407,7 +412,7 @@ function parse_an_lois(url, type){
                         .replace(/,\s+(adoptée?|modifiée?)(\s+avec\s+modifications?)?,?\s+par\s+[^,]+,/ig, "")
                         .replace(/ +Voir le dossier/ig, "")
                         .replace(/ +et qui a.*/ig, "")
-                        .replace(/ - mise en ligne.*/g, "")
+                        .replace(/ - mise? en ligne.*/g, "")
                         .replace(/de M.* (visant|tendant|relative|renforçant|instituant|portant|rendant)/g, "$1")
                         .replace(/de M.* (instaurant|concernant|permettant|supprimant|rétablissant|interdisant)/g, "$1")
                         .replace(/de M.* (prescrivant|modifiant|encadrant|décidant|prévoyant|fixant|garantissant|obligeant)/g, "$1")
@@ -513,7 +518,16 @@ function parse_an_detail(texte){
                 }
             }
 
-            //console.log(lignes);
+            console.log(lignes);
+
+            var lignes2 = lignes.slice(0);
+            lignes = [];
+            for(var i=0, l=lignes2.length; i<l; i++){
+                var ligne = lignes2[i];
+                if (ligne.match(/(^\d\S+ .* \d+$)|(^Discussion en séance publique$)/)
+                    lignes.push(ligne);
+            }
+
 
             var dates = [];
             var found = -1;
@@ -743,31 +757,6 @@ function select_texte(texte){
     return deferred.promise;
 }
 
-/**
- * Insère ou met à jour le texte. C'est selon :)
- */
-function insert_or_update_texte(texte){
-    var deferred = q.defer();
-    
-    delete texte.url_communique;
-
-    select_texte(texte).then(
-    // Texte trouvé ?
-    function(texte_db){
-        update_texte(texte_db, texte).then(function(texte){
-            deferred.resolve({texte: texte, code: 1});
-        });
-    },
-    // Texte pas trouvé ?
-    function(){
-        insert_texte(texte).then(function(texte){
-            deferred.resolve({texte: texte, code: 2});
-        });
-    });
-
-    return deferred.promise;
-}
-
 function insert_texte(texte){
     var deferred = q.defer();
     
@@ -780,8 +769,6 @@ function insert_texte(texte){
     
     delete texte.seances;
     delete texte.url_communique;
-
-    // Requete d'insert
 
     db.query("INSERT INTO bills SET ?", texte, function(err, result) {
 
@@ -799,7 +786,7 @@ function insert_texte(texte){
                     data.push([texte.id, i+1, seances[i][j].format("YYYY-MM-DD 00:00:00")]);
                 }
             }
-            db.query("INSERT IGNORE INTO seances (bill_id, lecture, date) VALUES ?", [data]);
+            data.length && db.query("INSERT IGNORE INTO seances (bill_id, lecture, date) VALUES ?", [data]);
         }
         texte.seances = seances;
 
