@@ -1,4 +1,8 @@
-// FIXME : vérifier http://www.assemblee-nationale.fr/14/dossiers/contrat_de_generation.asp
+// FIXME : vérifier
+// - http://www.assemblee-nationale.fr/14/dossiers/contrat_de_generation.asp
+// - http://www.assemblee-nationale.fr/14/dossiers/actualisation_dispositions_Nouvelle-Caledonie.asp
+// - http://www.assemblee-nationale.fr/14/dossiers/non-cumul_executif_local_depute_senateur.asp
+// - http://www.assemblee-nationale.fr/14/dossiers/transparence_vie_publique_pjl.asp
 
 
 "use strict";
@@ -98,13 +102,10 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
 });
 */
 
-//return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
-
-//
-//http://www.assemblee-nationale.fr/14/documents/index-proposition.asp
+return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
 
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/plfss_2014.asp"});
+//parse_an_detail({url_an: " http://www.assemblee-nationale.fr/14/dossiers/loi_finances_1217.asp"});
 
 //\ END MAIN
 
@@ -495,9 +496,7 @@ function parse_an_detail(texte){
             */
 
             // Nettoyage, pour au final avoir un tableau de textes
-
             $("[border=1], header, script").remove();
-
             $("body").find("br").replaceWith("[NL]");
             $("body").find("tr").before("\n");
 
@@ -509,6 +508,7 @@ function parse_an_detail(texte){
                 .replace(/\n *\n/g, "\n")
             ;
 
+            // On trim et on vire les lignes vides
             var lignes1 = content.split("\n");
             var lignes = [];
             for(var i=0, l=lignes1.length; i<l; i++){
@@ -518,17 +518,49 @@ function parse_an_detail(texte){
                 }
             }
 
-            console.log(lignes);
 
-            var lignes2 = lignes.slice(0);
-            lignes = [];
-            for(var i=0, l=lignes2.length; i<l; i++){
-                var ligne = lignes2[i];
-                if (ligne.match(/(^\d\S+ .* \d+$)|(^Discussion en séance publique$)/)
-                    lignes.push(ligne);
+            //console.log(lignes);
+
+            // On ne garde que les lignes contenant les infos qui nous intéressent
+            var lignes2 = [];
+            for(var i=0, l=lignes.length; i<l; i++){
+                var ligne = lignes[i];
+                if (ligne.match(/^(Assemblée nationale|Sénat) - .* (lecture|définitive)$/gi)){
+                    lignes2.push(ligne);
+                }
+                else if (ligne.match(/^(\d\S+)?( *séance)? .* \d+$/)){ // ex '1ère séance du mercredi 2 octobre 2013'
+                    lignes2.push(ligne);
+                }
             }
 
+            //console.log(lignes2);
 
+            // On reconstruit les séances (1ère, 2eme, définitive, etc)
+            var texte.seances = [];
+            var assemblee_found = false;
+            for(var i=0, l=lignes2.length; i<l; i++){
+                var ligne = lignes2[i];
+
+                if (ligne.match(/^Assemblée nationale - .* (lecture|définitive)$/gi)){
+                    assemblee_found = true;
+                    texte.seances.push([]);
+                    continue;
+                }
+                else if (ligne.match(/^Sénat - .* (lecture|définitive)$/gi)){
+                    assemblee_found = false;
+                    continue;
+                }
+
+                if (!assemblee_found){
+                    continue;
+                }
+
+                var dt = ligne.replace(/^(\d\S+)?( *séance)? du (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) (\d+ \S+ \d+)$/gi, "$4");
+                texte.seances[texte.seances.length-1].push(moment(dt,"D MMMM YYYY"));
+            }
+
+            //console.log(discussions);
+            // Du bordel OLD à garder pour l'instant
             var dates = [];
             var found = -1;
             for(var i=0, l=lignes.length; i<l; i++){
@@ -567,49 +599,12 @@ function parse_an_detail(texte){
 
             //console.log("dates =", dates);
 
-
             // on a trouvé des dates ?
             if (dates.length){
                 texte.starts_at = moment(dates[0],"D MMMM YYYY");
                 texte.ends_at = moment(dates[dates.length-1],"D MMMM YYYY");
             }
 
-            texte.seances = [];
-
-            for( var i=0; i<dates.length; i++){
-                texte.seances.push(moment(dates[i],"D MMMM YYYY"));
-            }
-
-            /*
-            if ($dates.length){
-
-                var hip = $.trim($dates.first().text())
-                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "");
-                texte.starts_at = moment(hip,"D MMMM YYYY");
-
-                var hop = $.trim($dates.last().text())
-                        .replace(/^\S+\s+\S+\s+\S+\s+\S+\s+/g, "");
-                texte.ends_at = moment(hop,"D MMMM YYYY");
-
-                console.log("start : " + hip + " => " + texte.starts_at);
-                console.log("end : " + hop + " => " + texte.ends_at);
-            }
-            // Sinon, la version " au cours de la séance du mercredi 17 avril 2013"
-            else{
-                console.log("PAS DE DATES.Length");
-                var str = $("td :contains('Discussion en séance publique'), [align=left] :contains('Discussion en séance publique')")
-                    .parentsUntil("[align=left], td")
-                    .nextAll("a[href*=seances]").eq(0).text();
-                str = $.trim(str.replace(/\s+/g, ' '));
-                
-                var res = str.match(/\d{1,2}\s+\S+\s+\d+/g);
-
-                if (res){
-                    texte.starts_at = moment(res[0] ,"D MMMM YYYY");
-                    texte.ends_at = moment(res[0] ,"D MMMM YYYY");
-                }
-            }
-            */
             deferred.resolve(texte);
         }
     }]);
