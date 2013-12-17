@@ -83,16 +83,19 @@ var c = new Crawler({
 });
 
 // MAIN
-/*
+
 parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
+.then(function(){
+    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
+})
 .then(function(){
     return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET);
 })
 .then(function(){
-    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
+    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET)
 })
 .then(function(){
-    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
 })
 .then(parse_agenda)             // Parsing de l'agenda
 .then(parse_liste_scrutins)     // Parsing des scrutins
@@ -100,9 +103,8 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
     console.log("Analyse terminée");
     process.exit(0)
 });
-*/
 
-return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
+//return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
 
 //parse_an_detail({url_an: " http://www.assemblee-nationale.fr/14/dossiers/loi_finances_1217.asp"});
@@ -536,7 +538,7 @@ function parse_an_detail(texte){
             //console.log(lignes2);
 
             // On reconstruit les séances (1ère, 2eme, définitive, etc)
-            var texte.seances = [];
+            texte.seances = [];
             var assemblee_found = false;
             for(var i=0, l=lignes2.length; i<l; i++){
                 var ligne = lignes2[i];
