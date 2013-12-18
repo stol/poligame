@@ -107,10 +107,12 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
 
 //return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
-//parse_agenda();
+parse_agenda();
+/*
 parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/simplification_securisation_vie_entreprises.asp"}).then(function(t){
-    console.log(t);
+    console.log(t.seances);
 });
+*/
 
 //\ END MAIN
 
@@ -185,10 +187,7 @@ function parse_lf_lois(url, mode){
                 .then(parse_gouvernement)
                 .then(insert_texte)
                 .then(function(texte){
-                    console.log( texte.starts_at && texte.ends_at
-                        ? "LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " du "+texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                        : "LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates inconnues)"
-                    );
+                    console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates TODO)");
 
                     if (++done == total){
                         console.log("LF_LOIS"+mode+" DONE");
@@ -274,9 +273,6 @@ function parse_legifrance(texte){
                     }
                     
                     texte.seances[lecture_offset].push(m);
-
-                    texte.starts_at = texte.starts_at || m;
-                    texte.ends_at   = m;
                 });
 
             })
@@ -444,10 +440,7 @@ function parse_an_lois(url, type){
                 }, parse_an_detail)
                 .then(insert_texte)
                 .then(function(texte){
-                    console.log( texte.starts_at && texte.ends_at
-                        ? "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " => " +texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY')
-                        : "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates inconnues)"
-                    );
+                    console.log( "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates TODO)");
 
                     if (++done == total){
                         console.log("AN_LOIS"+type+" DONE");
@@ -654,22 +647,20 @@ function parse_agenda(){
             var total = Object.keys(dossiers).length
             var done = 0;
             $.each(dossiers, function(url_an, dates){
+
                 // On cherche le texte dans la BDD
                 select_texte({url_an: url_an}).then(
                 // Présent ? On l'update avec les dates trouvées
                 function(texte_db){
-
-                    // le texte enregistré commençait plus tard ?
-                    var data = {}
-                    if (!texte_db.starts_at || (texte_db.starts_at && texte_db.starts_at.unix() > dates[0].unix())){
-                        data.starts_at = dates[0];
+                    // Sinon, on l'ajoute à la dernière séance
+                    for (var i=0; i<dates.length; i++){
+                        var max_seance = texte_db.seances.length ? texte_db.seances.length-1 : 0;
+                        texte_db.seances[max_seance] = texte_db.seances[max_seance] || [];
+                        texte_db.seances[max_seance].push(dates[i]);
                     }
-                    if (!texte_db.ends_at || (texte_db.ends_at && texte_db.ends_at.unix() < dates[dates.length-1].unix())){
-                        data.ends_at = dates[dates.length-1];
-                    }
-
-                    update_texte(texte_db, data).then(function(texte){
-                        console.log("AGENDA " + (done+1)+"/"+total+" | UPDATED "+texte.url_an + " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
+                    console.log("UPDATING "+(done+1)+ " WITH ", texte_db);
+                    update_texte(texte_db, {seances: texte_db.seances}).then(function(texte){
+                        console.log("AGENDA " + (done+1)+"/"+total+" | UPDATED "+texte.url_an);
                         if (++done == total){
                             deferred.resolve();
                         }
@@ -681,18 +672,19 @@ function parse_agenda(){
                     parse_an_detail({url_an: url_an})
                     .then(function(texte){
                         var deferred = q.defer();
-                        if (!texte.starts_at || (texte.starts_at && texte.starts_at.unix() > dates[0].unix())){
-                            texte.starts_at = dates[0];
+
+                        for (var i=0; i<dates.length; i++){
+                            var max_seance = texte.seances.length ? texte.seances.length-1 : 0;
+                            texte.seances[max_seance] = texte.seances[max_seance] || [];
+                            texte.seances[max_seance].push(dates[i]);
                         }
-                        if (!texte.ends_at || (texte.ends_at && texte.ends_at.unix() < dates[dates.length-1].unix())){
-                            texte.ends_at = dates[dates.length-1];
-                        }
+
                         deferred.resolve(texte);
                         return deferred.promise;
                     })
                     .then(insert_texte)
                     .then(function(texte){
-                        console.log("AGENDA " + (done+1)+"/"+total + " | ADDED " + url_an +  " du " + texte.starts_at.format('DD/MM/YYYY')+" au "+texte.ends_at.format('DD/MM/YYYY'));
+                        console.log("AGENDA " + (done+1)+"/"+total + " | ADDED " + url_an );
 
                         // La loi n'est pas dans la BDD ? On on la réintègre
                         if (++done == total){
@@ -720,8 +712,8 @@ function select_texte(texte){
         return deferred.promise;
     }
 
-    var sql_select = "SELECT max(seances.lecture) as maxLecture, min(seances.date) AS minDate, max(seances.date) AS maxDate, bills.*"
-                   + " FROM bills"
+
+    var sql_select = "SELECT * FROM bills"
                    + " LEFT JOIN seances ON bills.id = seances.bill_id"
                    + " WHERE ";
     var where = []
@@ -743,32 +735,30 @@ function select_texte(texte){
         clauses.push(texte.url_lf);
     }
 
-    sql_select+= where.join(' OR ') + " GROUP BY bills.id HAVING bills.id > 0";
+    sql_select+= where.join(' OR ');
 
-    db.query(sql_select, clauses, function(err, textes, fields) {
-        if (textes.length > 0){
-
-            textes[0].starts_at = textes[0].starts_at ? moment(textes[0].starts_at) : false;
-            textes[0].ends_at   = textes[0].ends_at   ? moment(textes[0].ends_at) : false;
-
-            textes[0].seances = [];
-
-            if (textes[0].maxLecture){
-                for( var i=0; i<textes[0].maxLecture; i++){
-                    textes[0].seances[i] = [];
-                }
-                textes[0].seances[textes[0].maxLecture-1] = [moment(textes[0].minDate), moment(textes[0].maxDate)];
-            }
-
-            delete textes[0].maxLecture;
-            delete textes[0].minDate;
-            delete textes[0].maxDate;
-
-            deferred.resolve(textes[0]);
-        }
-        else{
+    db.query(sql_select, clauses, function(err, seances, fields) {
+        if (seances.length == 0){
             deferred.reject(texte);
+            return;
         }
+
+        texte = seances[0];
+        texte.seances = [];
+
+        for( var i=0; i<seances.length; i++){
+            if (seances[i].lecture){
+                texte.seances[seances[i].lecture-1] = texte.seances[seances[i].lecture-1] || []
+                texte.seances[seances[i].lecture-1].push(moment(seances[i].date));
+            }
+        }
+
+        delete texte.bill_id;
+        delete texte.lecture;
+        delete texte.date;
+
+        deferred.resolve(texte);
+
     });
     return deferred.promise;
 }
@@ -777,11 +767,6 @@ function insert_texte(texte){
     var deferred = q.defer();
     
     var seances = texte.seances || [];
-    var starts_at = texte.starts_at || false;
-    var ends_at   = texte.ends_at || false;
-    texte.starts_at = texte.starts_at ? texte.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-    texte.ends_at = texte.ends_at ? texte.ends_at.format('YYYY-MM-DD 23:59:59') : false;
-    
     
     delete texte.seances;
     delete texte.url_communique;
@@ -791,8 +776,6 @@ function insert_texte(texte){
         if (err) throw err;
 
         texte.id = result.insertId;
-        texte.starts_at = starts_at;
-        texte.ends_at   = ends_at;
         
         if (seances && seances.length){
             var data = [];
@@ -822,9 +805,6 @@ function update_texte(texte_db, texte){
 
     var deferred = q.defer();
 
-    var starts_at = texte.starts_at || texte_db.starts_at || false;
-    var ends_at   = texte.starts_at || texte_db.ends_at || false;
-
     // Mise à jour de l'obj en BDD d'après le texte passé
     _.each(texte, function(val, key){
         if (texte_db[key] != val){
@@ -832,18 +812,12 @@ function update_texte(texte_db, texte){
         }
     });
 
-    texte_db.starts_at = texte_db.starts_at ? texte_db.starts_at.format('YYYY-MM-DD 00:00:00') : false;
-    texte_db.ends_at = texte_db.ends_at ? texte_db.ends_at.format('YYYY-MM-DD 23:59:59') : false;
     var seances = texte_db.seances || [];
     delete texte_db.seances;
 
     // Requete d'update
     db.query("UPDATE bills SET ? WHERE id = "+texte_db.id, texte_db, function(err) {
         if (err) throw err;
-
-        texte_db.starts_at = starts_at;
-        texte_db.ends_at   = ends_at;
-
 
         if (seances && seances.length){
             var data = [];
