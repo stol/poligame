@@ -83,7 +83,7 @@ var c = new Crawler({
 });
 
 // MAIN
-
+/*
 parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
 .then(function(){
     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
@@ -103,11 +103,14 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
     console.log("Analyse terminée");
     process.exit(0)
 });
+*/
 
 //return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
-
-//parse_an_detail({url_an: " http://www.assemblee-nationale.fr/14/dossiers/loi_finances_1217.asp"});
+//parse_agenda();
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/simplification_securisation_vie_entreprises.asp"}).then(function(t){
+    console.log(t);
+});
 
 //\ END MAIN
 
@@ -473,12 +476,11 @@ function parse_an_detail(texte){
     c.queue([{
         uri: texte.url_an,
         callback: function(error,result, $) {
-            /*
             // On choppe le titre si on a pas déjà un
             if (!texte.title){
                 texte.title = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
             }
-
+            /*
             // Boucle sur les cadres à la con
             var $coms = $("commentaire");
             $coms.each(function(i, commentaire){
@@ -558,10 +560,11 @@ function parse_an_detail(texte){
                 }
 
                 var dt = ligne.replace(/^(\d\S+)?( *séance)? du (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) (\d+ \S+ \d+)$/gi, "$4");
-                texte.seances[texte.seances.length-1].push(moment(dt,"D MMMM YYYY"));
+                dt = moment(dt,"D MMMM YYYY");
+                texte.seances[texte.seances.length-1].push(dt);
             }
 
-            //console.log(discussions);
+            /*
             // Du bordel OLD à garder pour l'instant
             var dates = [];
             var found = -1;
@@ -598,7 +601,6 @@ function parse_an_detail(texte){
                     }
                 }
             }
-
             //console.log("dates =", dates);
 
             // on a trouvé des dates ?
@@ -606,6 +608,7 @@ function parse_an_detail(texte){
                 texte.starts_at = moment(dates[0],"D MMMM YYYY");
                 texte.ends_at = moment(dates[dates.length-1],"D MMMM YYYY");
             }
+            */
 
             deferred.resolve(texte);
         }
@@ -655,6 +658,7 @@ function parse_agenda(){
                 select_texte({url_an: url_an}).then(
                 // Présent ? On l'update avec les dates trouvées
                 function(texte_db){
+
                     // le texte enregistré commençait plus tard ?
                     var data = {}
                     if (!texte_db.starts_at || (texte_db.starts_at && texte_db.starts_at.unix() > dates[0].unix())){
@@ -716,7 +720,10 @@ function select_texte(texte){
         return deferred.promise;
     }
 
-    var sql_select = "SELECT * FROM bills WHERE ";
+    var sql_select = "SELECT max(seances.lecture) as maxLecture, min(seances.date) AS minDate, max(seances.date) AS maxDate, bills.*"
+                   + " FROM bills"
+                   + " LEFT JOIN seances ON bills.id = seances.bill_id"
+                   + " WHERE ";
     var where = []
     var clauses = [];
     if (texte.id){
@@ -736,7 +743,7 @@ function select_texte(texte){
         clauses.push(texte.url_lf);
     }
 
-    sql_select+= where.join(' OR ');
+    sql_select+= where.join(' OR ') + " GROUP BY bills.id HAVING bills.id > 0";
 
     db.query(sql_select, clauses, function(err, textes, fields) {
         if (textes.length > 0){
@@ -744,6 +751,18 @@ function select_texte(texte){
             textes[0].starts_at = textes[0].starts_at ? moment(textes[0].starts_at) : false;
             textes[0].ends_at   = textes[0].ends_at   ? moment(textes[0].ends_at) : false;
 
+            textes[0].seances = [];
+
+            if (textes[0].maxLecture){
+                for( var i=0; i<textes[0].maxLecture; i++){
+                    textes[0].seances[i] = [];
+                }
+                textes[0].seances[textes[0].maxLecture-1] = [moment(textes[0].minDate), moment(textes[0].maxDate)];
+            }
+
+            delete textes[0].maxLecture;
+            delete textes[0].minDate;
+            delete textes[0].maxDate;
 
             deferred.resolve(textes[0]);
         }
@@ -800,6 +819,7 @@ function insert_texte(texte){
  * @param texte_db nouvel objet
  */
 function update_texte(texte_db, texte){
+
     var deferred = q.defer();
 
     var starts_at = texte.starts_at || texte_db.starts_at || false;
@@ -827,10 +847,13 @@ function update_texte(texte_db, texte){
 
         if (seances && seances.length){
             var data = [];
+
             for( var i=0; i<seances.length; i++){
-                data.push([texte.id, seances[i].format("YYYY-MM-DD 00:00:00")]);
+                for (var j=0; j<seances[i].length; j++){
+                    data.push([texte_db.id, i+1, seances[i][j].format("YYYY-MM-DD 00:00:00")]);
+                }
             }
-            db.query("INSERT IGNORE INTO seances (bill_id, date) VALUES ?", [data]);
+            db.query("INSERT IGNORE INTO seances (bill_id, lecture, date) VALUES ?", [data]);
         }
 
         texte.seances = seances;

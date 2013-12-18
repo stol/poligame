@@ -93,8 +93,8 @@ exports.fetch = function fetch(req, res, params){
 			textes[i].mode = mode;
 
 			var present   = moment(),
-				starts_at = moment(textes[i].starts_at),
-				ends_at   = moment(textes[i].ends_at);
+				starts_at = moment(textes[i].minDate),
+				ends_at   = moment(textes[i].maxDate);
 
 			if (ends_at < present){
 				textes[i].mode = "past";
