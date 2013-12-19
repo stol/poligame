@@ -684,7 +684,7 @@ function parse_agenda(){
                         texte_db.seances[max_seance] = texte_db.seances[max_seance] || [];
                         texte_db.seances[max_seance].push(dates[i]);
                     }
-                    console.log("AGENDA : UPDATING "+(done+1)+ " WITH ", texte_db);
+
                     update_texte(texte_db, {seances: texte_db.seances}).then(function(texte){
                         console.log("AGENDA " + (done+1)+"/"+total+" | UPDATED "+texte.url_an);
                         if (++done == total){
