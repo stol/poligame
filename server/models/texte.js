@@ -35,7 +35,7 @@ exports.fetch = function fetch(req, res, params){
 	else{
 	}
 	*/
-	sql = "SELECT seances.bill_id, max(seances.lecture) as maxLecture, min(seances.date) AS minDate, max(seances.date) AS maxDate, bills.*"
+	sql = "SELECT max(seances.lecture) as lecture, min(seances.date) AS starts_at, max(seances.date) AS ends_at, bills.*"
 		+ " FROM seances"
 		+ " LEFT JOIN bills ON seances.bill_id = bills.id"
 
@@ -93,8 +93,8 @@ exports.fetch = function fetch(req, res, params){
 			textes[i].mode = mode;
 
 			var present   = moment(),
-				starts_at = moment(textes[i].minDate),
-				ends_at   = moment(textes[i].maxDate);
+				starts_at = moment(textes[i].starts_at),
+				ends_at   = moment(textes[i].ends_at);
 
 			if (ends_at < present){
 				textes[i].mode = "past";

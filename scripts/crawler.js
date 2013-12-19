@@ -1,9 +1,13 @@
 // FIXME : vérifier
+// DOUBLES LOIS : 
 // - http://www.assemblee-nationale.fr/14/dossiers/contrat_de_generation.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/actualisation_dispositions_Nouvelle-Caledonie.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/non-cumul_executif_local_depute_senateur.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/transparence_vie_publique_pjl.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/reduction_activite_moniteurs_ski.asp
+
+
+// http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp
 
 
 "use strict";
@@ -649,7 +653,10 @@ function parse_agenda(){
                     return $(this).text().match(/[mit]/i) // Si 'm' ou 'i' 't' sont présent, c'est qu'il y a un mois
                 }).eq(0).find("td").eq(0).text();
                 date_relative = $.trim(date_relative).replace(/\s+/g, " ");
-                date_relative = moment(date_relative, "dddd DD MMMM").year(moment().year());
+                date_relative = moment(date_relative, "dddd DD MMMM");
+                if (moment().month()+1 == 12 && date_relative.month() == 0){
+                    date_relative.year(moment().year()+1);
+                }
                 dossiers[url] = dossiers[url] || [];
                 dossiers[url].push(date_relative);
             });
