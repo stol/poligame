@@ -37,25 +37,17 @@ exports.fetch = function fetch(req, res, params){
 	*/
 
 
-C'EST LA BONNE REQUETE
-/*
-SELECT bill_id, MAX(lecture) as lecture, MAX(starts_at), max(ends_at) FROM (
-	SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture
-) AS seances
-LEFT JOIN bills ON seances.bill_id = bills.id GROUP BY id LIMIT 100
-*/
-
-	sql = "SELECT bills.*, max(seances.lecture) as lecture, min(seances.date) AS starts_at, max(seances.date) AS ends_at"
-		+ " FROM seances"
-		+ " LEFT JOIN bills ON seances.bill_id = bills.id"
+	sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
+		+ ' FROM (SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture) AS seances'
+		+ ' LEFT JOIN bills ON seances.bill_id = bills.id';
 
 	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
 		sql+= ' WHERE seances.bill_id IN('+ids.join(',')+')';
 	}
 
-	sql += " GROUP BY bill_id";
-		+  " ORDER BY maxDate DESC";
+	sql += " GROUP BY id"
+		+  " ORDER BY ends_at DESC";
 
 	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
 	if (limit){
@@ -102,14 +94,14 @@ LEFT JOIN bills ON seances.bill_id = bills.id GROUP BY id LIMIT 100
         for( var i=0; i<textes.length; i++){
 			textes[i].mode = mode;
 
-			var present   = moment(),
-				starts_at = moment(textes[i].starts_at),
-				ends_at   = moment(textes[i].ends_at);
+			var present   = moment().unix();
+			textes[i].starts_at = moment(textes[i].starts_at).hours(0).minutes(0).seconds(0).unix(),
+			textes[i].ends_at   = moment(textes[i].ends_at).hours(23).minutes(59).seconds(59).unix();
 
-			if (ends_at < present){
+			if (textes[i].ends_at < present){
 				textes[i].mode = "past";
 			}
-			else if (starts_at < present && ends_at > present){
+			else if (textes[i].starts_at < present && textes[i].ends_at > present){
 				textes[i].mode = "present";
 			}
 			else{

@@ -89,21 +89,21 @@ var c = new Crawler({
 
 // MAIN
 
-//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
-// .then(function(){
-//     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
-// })
-//.then(function(){
+parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
+.then(function(){
+    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
+})
+.then(function(){
     return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET)
-//})
+})
 .then(function(){
     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET)
 })
-// .then(function(){
-//     return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
-// })
-//.then(parse_agenda)             // Parsing de l'agenda
-//.then(parse_liste_scrutins)     // Parsing des scrutins
+.then(function(){
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
+})
+.then(parse_agenda)             // Parsing de l'agenda
+.then(parse_liste_scrutins)     // Parsing des scrutins
 .then(function(){
     console.log("Analyse terminée");
     process.exit(0)

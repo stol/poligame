@@ -81,7 +81,7 @@ moiElu.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, date
         // used to update the UI
         function updateTime() {
             var texte = $scope.texte.$$v || $scope.texte;
-            var hop = moment(texte[attrs.humanTime]).fromNow();
+            var hop = moment.unix(texte[attrs.humanTime]).fromNow();
             var txt = dateFilter(new Date(), "YYYY");
             element.text(hop);
         }
