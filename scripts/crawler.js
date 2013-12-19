@@ -3,6 +3,7 @@
 // - http://www.assemblee-nationale.fr/14/dossiers/actualisation_dispositions_Nouvelle-Caledonie.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/non-cumul_executif_local_depute_senateur.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/transparence_vie_publique_pjl.asp
+// - http://www.assemblee-nationale.fr/14/dossiers/reduction_activite_moniteurs_ski.asp
 
 
 "use strict";
@@ -83,7 +84,7 @@ var c = new Crawler({
 });
 
 // MAIN
-/*
+
 parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
 .then(function(){
     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
@@ -103,16 +104,14 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
     console.log("Analyse terminée");
     process.exit(0)
 });
-*/
+
 
 //return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
-parse_agenda();
-/*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/simplification_securisation_vie_entreprises.asp"}).then(function(t){
-    console.log(t.seances);
-});
-*/
+//parse_agenda();
+// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/reduction_activite_moniteurs_ski.asp"}).then(function(t){
+//     console.log("DONE", t.seances);
+// });
 
 //\ END MAIN
 
@@ -494,6 +493,8 @@ function parse_an_detail(texte){
 
             // Nettoyage, pour au final avoir un tableau de textes
             $("[border=1], header, script").remove();
+
+
             $("body").find("br").replaceWith("[NL]");
             $("body").find("tr").before("\n");
 
@@ -534,6 +535,7 @@ function parse_an_detail(texte){
 
             // On reconstruit les séances (1ère, 2eme, définitive, etc)
             texte.seances = [];
+            var seances = [];
             var assemblee_found = false;
             for(var i=0, l=lignes2.length; i<l; i++){
                 var ligne = lignes2[i];
@@ -553,9 +555,19 @@ function parse_an_detail(texte){
                 }
 
                 var dt = ligne.replace(/^(\d\S+)?( *séance)? du (lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche) (\d+ \S+ \d+)$/gi, "$4");
-                dt = moment(dt,"D MMMM YYYY");
-                texte.seances[texte.seances.length-1].push(dt);
+
+                // On dédoublonne les dates (cas problèmatique lorsque plusieurs lois sur une même page)
+                if ( $.inArray(dt, seances) == -1){
+                    seances.push(dt);
+                    dt = moment(dt,"D MMMM YYYY");
+                    texte.seances[texte.seances.length-1].push(dt);
+                }
             }
+
+            // On vire les discussion vides
+            texte.seances = texte.seances.filter(function(elem){
+                return elem.length > 0;
+            });
 
             /*
             // Du bordel OLD à garder pour l'instant
@@ -821,6 +833,9 @@ function update_texte(texte_db, texte){
 
         if (seances && seances.length){
             var data = [];
+
+//            console.log(texte_db);
+//            console.log(seances);
 
             for( var i=0; i<seances.length; i++){
                 for (var j=0; j<seances[i].length; j++){
