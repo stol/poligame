@@ -35,7 +35,17 @@ exports.fetch = function fetch(req, res, params){
 	else{
 	}
 	*/
-	sql = "SELECT max(seances.lecture) as lecture, min(seances.date) AS starts_at, max(seances.date) AS ends_at, bills.*"
+
+
+C'EST LA BONNE REQUETE
+/*
+SELECT bill_id, MAX(lecture) as lecture, MAX(starts_at), max(ends_at) FROM (
+	SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture
+) AS seances
+LEFT JOIN bills ON seances.bill_id = bills.id GROUP BY id LIMIT 100
+*/
+
+	sql = "SELECT bills.*, max(seances.lecture) as lecture, min(seances.date) AS starts_at, max(seances.date) AS ends_at"
 		+ " FROM seances"
 		+ " LEFT JOIN bills ON seances.bill_id = bills.id"
 

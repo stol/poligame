@@ -89,33 +89,42 @@ var c = new Crawler({
 
 // MAIN
 
-parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
-.then(function(){
-    return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
-})
-.then(function(){
-    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET);
-})
+//parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=prop", defines.TYPE_PROPOSITION)
+// .then(function(){
+//     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-proposition.asp", defines.TYPE_PROPOSITION)
+// })
+//.then(function(){
+    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature=14&typeLoi=proj", defines.TYPE_PROJET)
+//})
 .then(function(){
     return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROJET)
 })
-.then(function(){
-    return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
-})
-.then(parse_agenda)             // Parsing de l'agenda
-.then(parse_liste_scrutins)     // Parsing des scrutins
+// .then(function(){
+//     return parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPubliee.do?legislature=14", defines.TYPE_LOI);
+// })
+//.then(parse_agenda)             // Parsing de l'agenda
+//.then(parse_liste_scrutins)     // Parsing des scrutins
 .then(function(){
     console.log("Analyse terminée");
     process.exit(0)
 });
 
 
+
 //return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
 
 //parse_agenda();
-// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/reduction_activite_moniteurs_ski.asp"}).then(function(t){
+// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp"}).then(function(t){
 //     console.log("DONE", t.seances);
 // });
+/*
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp"})
+.then(insert_texte)
+.then(parse_agenda)
+.then(function(t){
+     console.log("DONE");
+});
+*/
 
 //\ END MAIN
 
@@ -400,6 +409,7 @@ function parse_an_lois(url, type){
     c.queue([{
         uri: url,
         callback: function(error,result, $) {
+
             var $lignes = $("tr td:nth-child(2)");
 
             var textes = {};
@@ -432,27 +442,23 @@ function parse_an_lois(url, type){
             var total = Object.keys(textes).length
             var done = 0;
             $.each(textes, function(i, texte){
-                select_texte(texte).then(function(){
-                    console.log("AN_LOIS" + type + " " + (done+1) + "/" + total);
-
-                    if (++done == total){
-                        console.log("AN_LOIS"+type+" DONE");
-                        deferred.resolve();
-                    }
-
-                }, parse_an_detail)
-                .then(insert_texte)
+                
+                select_texte(texte).then(function(texte){
+                    return parse_an_detail(texte).then(function(texte_new){
+                        return update_texte(texte, texte_new);
+                    });
+                }, function(){
+                    return parse_an_detail(texte).then(insert_texte);
+                })
                 .then(function(texte){
-                    console.log( "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | ADDED " + texte.url_an + " (dates TODO)");
+                    console.log( "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | CHECKED " + texte.url_an + " (dates TODO)");
 
                     if (++done == total){
                         console.log("AN_LOIS"+type+" DONE");
                         deferred.resolve();
                     }
                 });
-
             });
-
         }
     }]);
     return deferred.promise;
@@ -472,6 +478,7 @@ function parse_an_detail(texte){
     c.queue([{
         uri: texte.url_an,
         callback: function(error,result, $) {
+
             // On choppe le titre si on a pas déjà un
             if (!texte.title){
                 texte.title = $.trim($("p font").eq(0).text()).replace(/\s+/g, " ");
@@ -677,7 +684,7 @@ function parse_agenda(){
                         texte_db.seances[max_seance] = texte_db.seances[max_seance] || [];
                         texte_db.seances[max_seance].push(dates[i]);
                     }
-                    console.log("UPDATING "+(done+1)+ " WITH ", texte_db);
+                    console.log("AGENDA : UPDATING "+(done+1)+ " WITH ", texte_db);
                     update_texte(texte_db, {seances: texte_db.seances}).then(function(texte){
                         console.log("AGENDA " + (done+1)+"/"+total+" | UPDATED "+texte.url_an);
                         if (++done == total){
@@ -798,7 +805,7 @@ function insert_texte(texte){
         
         if (seances && seances.length){
             var data = [];
-
+            //console.log("seances for "+texte.url_an, seances);
             for( var i=0; i<seances.length; i++){
                 for( var j=0; j<seances[i].length; j++){
                     data.push([texte.id, i+1, seances[i][j].format("YYYY-MM-DD 00:00:00")]);
