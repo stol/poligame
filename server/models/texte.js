@@ -2,6 +2,7 @@ var moment = require('moment')
 	, _ = require('underscore')
 	, q = require('q')
     , User = require('../models/user.js')
+	, defines = require('../defines.js')
 ;
 
 exports.fetch = function fetch(req, res, params){
@@ -184,25 +185,27 @@ function alter_texte(texte){
 	// On détermine le résultat du vote en fonction du vote des députés, s'il y en a
 	if (texte.votes_assemblee.total > 0){
 		if (texte.votes_assemblee.pour.nb > texte.votes_assemblee.contre.nb && texte.votes_assemblee.pour.nb > texte.votes_assemblee.abstention.nb){
-			texte.status = 1;
+			texte.status = defines.STATUS_ADOPTE;
 		}
 		else if (texte.votes_assemblee.contre.nb > texte.votes_assemblee.pour.nb && texte.votes_assemblee.contre.nb > texte.votes_assemblee.abstention.nb){
-			texte.status = 2;
+			texte.status = defines.STATUS_REJETE;
 		}
+		/*
 		else if (texte.votes_assemblee.contre.nb > texte.votes_assemblee.pour.nb && texte.votes_assemblee.contre.nb > texte.votes_assemblee.abstention.nb){
 			texte.status = 3;
 		}
+		*/
 		else{
-			texte.status = 0;
+			texte.status = defines.STATUS_PENDING;
 		}
 	}
 
-	if (texte.status == 1)
-		texte.status_txt = "adopté";
-	else if (texte.status == 2)
+	if (texte.status == defines.STATUS_PENDING)
+		texte.status_txt = "En cours";
+	else if (texte.status == defines.STATUS_REJETE)
 		texte.status_txt = "rejeté";
-	else if (texte.status == 3)
-		texte.status_txt = "égalité";
+	else if (texte.status == defines.STATUS_ADOPTE)
+		texte.status_txt = "adopté";
 	else
 		texte.status_txt = "inconnu";
 

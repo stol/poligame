@@ -109,20 +109,10 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
     process.exit(0)
 });
 
-
-
-//return parse_an_lois("http://www.assemblee-nationale.fr/14/documents/index-projets.asp", defines.TYPE_PROPOSITION)
-
-//parse_agenda();
-// parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp"}).then(function(t){
-//     console.log("DONE", t.seances);
-// });
 /*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp"})
-.then(insert_texte)
-.then(parse_agenda)
-.then(function(t){
-     console.log("DONE");
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_finances_2014.asp"})
+.then(function(texte){
+     console.log("DONE : ", texte);
 });
 */
 
@@ -504,13 +494,26 @@ function parse_an_detail(texte){
                 .replace(/\n *\n/g, "\n")
             ;
 
+            // Gestion du status
+            texte.status = texte.status || defines.STATUS_PENDING;
+
             // On trim et on vire les lignes vides
-            var lignes1 = content.split("\n");
+            var lignes_all = content.split("\n");
             var lignes = [];
-            for(var i=0, l=lignes1.length; i<l; i++){
-                lignes1[i] = $.trim(lignes1[i]);
-                if (lignes1[i].length > 0 ){
-                    lignes.push(lignes1[i]);
+            for(var i=0, l=lignes_all.length; i<l; i++){
+                lignes_all[i] = $.trim(lignes_all[i]);
+                if (lignes_all[i].length > 0 ){
+                    lignes.push(lignes_all[i]);
+                }
+
+                if ( lignes_all[i].match(/adoptée?(sans modifications? )?( en \S+ lecture (définitive )?)? par l'Assemblée nationale/gi)){
+                    texte.status = defines.STATUS_ADOPTE;
+                }
+                else if (lignes_all[i].match(/adoptée, dans les conditions prévues à l'article 45, alinéa 3, de la Constitution par l'Assemblée nationale/gi)){
+                    texte.status = defines.STATUS_ADOPTE;
+                }
+                else if (lignes_all[i].match(/rejetée en \S+ lecture par l'Assemblée nationale/gi)){
+                    texte.status = defines.STATUS_REJETE    ;
                 }
             }
 

@@ -376,10 +376,6 @@ table {
   border-spacing: 0;
 }
 
-/*
-  Mixins are slightly modified from Benjamin Doherty's first implementations: http://gist.github.com/377912
-  rgba-background mixin can now be passed an option $dir variable
-*/
 .wrapper {
   max-width: 990px;
   margin: 0 auto;
@@ -583,13 +579,13 @@ p > a, p > b > a {
   text-transform: uppercase;
 }
 .texte_small .texte-status.is-1 {
-  color: green;
+  color: #666;
 }
 .texte_small .texte-status.is-2 {
-  color: red;
+  color: green;
 }
 .texte_small .texte-status.is-3 {
-  color: #666;
+  color: red;
 }
 
 .remaining {

@@ -1,6 +1,5 @@
-@import "compass/css3";
+@import "compass/css3/box-shadow";
 @import "./_normalize";
-@import "rgbapng";
 
 
 
@@ -196,13 +195,13 @@ p > a, p > b > a{
     .texte-status{
     	text-transform: uppercase;
     	&.is-1{
-    		color: green;
+    		color: #666;
     	}
     	&.is-2{
-    		color: red;
+    		color: green;
     	}
     	&.is-3{
-    		color: #666;
+    		color: red;
     	}
 
     }
