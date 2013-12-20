@@ -5,6 +5,7 @@
 // - http://www.assemblee-nationale.fr/14/dossiers/non-cumul_executif_local_depute_senateur.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/transparence_vie_publique_pjl.asp
 // - http://www.assemblee-nationale.fr/14/dossiers/reduction_activite_moniteurs_ski.asp
+// - http://www.assemblee-nationale.fr/14/dossiers/art11_Constitution_pl.asp
 
 
 // http://www.assemblee-nationale.fr/14/dossiers/acces_logement_urbanisme_renove.asp
@@ -110,9 +111,11 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
 });
 
 /*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/loi_finances_2014.asp"})
+parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/vie_publique_transparence.asp"})
+.then(insert_or_update_texte)
 .then(function(texte){
-     console.log("DONE : ", texte);
+    console.log("DONE : ", texte);
+    process.exit(0)
 });
 */
 
@@ -406,7 +409,7 @@ function parse_an_lois(url, type){
                 var texte = {
                     title : $.trim($(ligne).text())
                         .replace(/ - .*/, '')
-                        .replace(/,\s+(adoptée?|modifiée?)(\s+avec\s+modifications?)?,?\s+par\s+[^,]+,/ig, "")
+                        .replace(/,\s+(adoptée?|modifiée?)(\s+(avec|sans)\s+modifications?)?,?\s+par\s+[^,]+,/ig, "")
                         .replace(/ +Voir le dossier/ig, "")
                         .replace(/ +et qui a.*/ig, "")
                         .replace(/ - mise? en ligne.*/g, "")
@@ -506,10 +509,11 @@ function parse_an_detail(texte){
                     lignes.push(lignes_all[i]);
                 }
 
-                if ( lignes_all[i].match(/adoptée?(sans modifications? )?( en \S+ lecture (définitive )?)? par l'Assemblée nationale/gi)){
+                // adoptée sans modification en 1ère lecture par l'Assemblée nationale
+                if ( lignes_all[i].match(/adoptée?( (sans|avec) modifications?)?( en( \S+)? lecture( définitive)?)? par l'Assemblée nationale/gi)){
                     texte.status = defines.STATUS_ADOPTE;
                 }
-                else if (lignes_all[i].match(/adoptée, dans les conditions prévues à l'article 45, alinéa 3, de la Constitution par l'Assemblée nationale/gi)){
+                else if (lignes_all[i].match(/adoptée?, dans les conditions prévues à l'article 45, alinéa 3, de la Constitution par l'Assemblée nationale/gi)){
                     texte.status = defines.STATUS_ADOPTE;
                 }
                 else if (lignes_all[i].match(/rejetée en \S+ lecture par l'Assemblée nationale/gi)){
@@ -518,7 +522,7 @@ function parse_an_detail(texte){
             }
 
 
-            //console.log(lignes);
+            console.log(lignes_all);
 
             // On ne garde que les lignes contenant les infos qui nous intéressent
             var lignes2 = [];
