@@ -187,17 +187,9 @@ function parse_lf_lois(url, mode){
 
             $.each(textes, function(i, texte){
 
-                select_texte(texte).then(function(texte){
-                    console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total);
-                    if (++done == total){
-                        console.log("LF_LOIS"+mode+" DONE");
-                        deferred.resolve();
-                    }
-                }, function(texte){
-                    return parse_legifrance(texte);
-                })
+                parse_legifrance(texte)
                 .then(parse_gouvernement)
-                .then(insert_texte)
+                .then(insert_or_update_texte)
                 .then(function(texte){
                     console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates TODO)");
 
@@ -442,14 +434,9 @@ function parse_an_lois(url, type){
             var total = Object.keys(textes).length
             var done = 0;
             $.each(textes, function(i, texte){
-                
-                select_texte(texte).then(function(texte){
-                    return parse_an_detail(texte).then(function(texte_new){
-                        return update_texte(texte, texte_new);
-                    });
-                }, function(){
-                    return parse_an_detail(texte).then(insert_texte);
-                })
+
+                parse_an_detail(texte)
+                .then(insert_or_update_texte)
                 .then(function(texte){
                     console.log( "AN_LOIS"+type+" "+ (done+1) + "/" + total + " | CHECKED " + texte.url_an + " (dates TODO)");
 
@@ -822,6 +809,12 @@ function insert_texte(texte){
     return deferred.promise;
 }
 
+function insert_or_update_texte(texte){
+    return select_texte(texte).then(function(texte_db){
+        return update_texte(texte_db, texte);
+    }, insert_texte);
+}
+
 /**
  * Update un texte, avec comparaison anciennes/nouvelles values
  * @param texte_db ancien objet
@@ -840,6 +833,7 @@ function update_texte(texte_db, texte){
 
     var seances = texte_db.seances || [];
     delete texte_db.seances;
+    delete texte_db.url_communique;
 
     // Requete d'update
     db.query("UPDATE bills SET ? WHERE id = "+texte_db.id, texte_db, function(err) {
