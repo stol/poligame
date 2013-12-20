@@ -522,7 +522,7 @@ function parse_an_detail(texte){
             }
 
 
-            console.log(lignes_all);
+            //console.log(lignes_all);
 
             // On ne garde que les lignes contenant les infos qui nous intéressent
             var lignes2 = [];
