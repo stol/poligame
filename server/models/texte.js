@@ -10,41 +10,25 @@ exports.fetch = function fetch(req, res, params){
 
 	var mode = req.query.mode || (params && params.mode) || false;
 
-	var sql = '';
-	/*
-	if (mode == "past"){
-		sql = "SELECT bill_id, MAX(date) AS mdate"
-			+ " FROM seances"
-			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
-			+ " WHERE date < '"+moment().format("YYYY-MM-DD")
-			+ " GROUP BY bill_id";
-	}
-	else if (mode == "present"){
-		sql = "SELECT bill_id, MAX(date) AS mdate"
-			+ " FROM seances"
-			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
-			+ " WHERE date BETWEEN '' AND ''"
-			+ " GROUP BY bill_id";
-	}
-	else if (mode == "future"){
-		sql = "SELECT bill_id, MAX(date) AS mdate"
-			+ " FROM seances"
-			+ " LEFT JOIN bills ON seances.bill_id = bills.id"
-			+ " WHERE date > '"+moment().add("days", 1).format("YYYY-MM-DD")
-			+ " GROUP BY bill_id";
-	}
-	else{
-	}
-	*/
-
-
-	sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
+	var sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
 		+ ' FROM (SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture) AS seances'
 		+ ' LEFT JOIN bills ON seances.bill_id = bills.id';
 
+	sql+= ' WHERE 1';
+
+	if (mode == "past"){
+		sql += " AND ends_at < '"+moment().format("YYYY-MM-DD")
+	}
+	else if (mode == "present"){
+		sql += " AND starts_at < '"+moment().format("YYYY-MM-DD")+"' AND ends_at > '"+moment().format("YYYY-MM-DD")+"'";
+	}
+	else if (mode == "future"){
+		sql += " AND starts_at > '"+moment().format("YYYY-MM-DD")+"'";
+	}
+
 	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
-		sql+= ' WHERE seances.bill_id IN('+ids.join(',')+')';
+		sql+= ' AND seances.bill_id IN('+ids.join(',')+')';
 	}
 
 	sql += " GROUP BY id"
@@ -55,32 +39,7 @@ exports.fetch = function fetch(req, res, params){
 		sql+= ' LIMIT '+limit;
 	}
 
-
-	/*
-
-	var sql = 'SELECT * from bills';
-
-	if      (mode == "past")    sql+= ' WHERE ends_at < NOW() AND ends_at <> "0000-00-00 00:00:00"';
-	else if (mode == "present") sql+= ' WHERE starts_at < NOW() AND ends_at > NOW()';
-	else if (mode == "future")  sql+= ' WHERE starts_at > NOW()';
-	else 						sql+= ' WHERE ends_at <> "0000-00-00 00:00:00"';
-
-	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
-	if (ids){
-		sql+= ' AND id IN('+ids.join(',')+')';
-	}
-
-	if      (mode == "past")    sql+= ' ORDER BY ends_at DESC';
-	else if (mode == "present") sql+= ' ORDER BY ends_at ASC';
-	else if (mode == "future")  sql+= ' ORDER BY starts_at ASC';
-	else						sql+= ' ORDER BY ends_at DESC';
-
-	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
-	if (limit){
-		sql+= ' LIMIT '+limit;
-	}
-	*/
-	console.log(sql);
+	//console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
