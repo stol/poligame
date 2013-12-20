@@ -152,6 +152,12 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         });
     }
 
+    $scope.NbParPage = 10;
+
+    $scope.showMoreItems = function(){
+        $scope.NbParPage+=10;
+    };
+
     function doToggle(){
 
 

@@ -34,11 +34,11 @@
 
 	<p ng-if="!(textes | filter:{mode:'past'}).length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
-		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:5"
+		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:NbParPage"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><a class="read-more__link" href="/textes?mode=past">Voir la liste complète</a></p>
-    <p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><a class="read-more__link" href="/textes?mode=past">Voir plus</a></p>
+	<!--p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><a class="read-more__link" href="/textes?mode=past">Voir la liste complète</a></p-->
+    <p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><span class="read-more__link" ng-click="showMoreItems()">Afficher les textes plus anciens</a></p>
 </div>
 

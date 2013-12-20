@@ -841,6 +841,7 @@ p > a, p > b > a {
   margin: 10px;
 }
 .read-more .read-more__link {
+  cursor: pointer;
   text-align: center;
   display: block;
   border: 1px solid #dadada;
