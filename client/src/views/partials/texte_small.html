@@ -5,7 +5,7 @@
 <div ng-if="texte.mode == 'past'" class="texte_small-time remaining">
 	<span class="remaining-icon remaining-voted"></span>
 	<span class="remaining-label">Discuté le</span>
-	<span class="remaining-time">{{texte.date_end()}}</span>
+	<span class="remaining-time" human-time="ends_at"></span>
 </div>
 <div ng-if="texte.mode == 'present'" class="texte_small-time remaining">
 	<span class="remaining-icon remaining-clock"></span>

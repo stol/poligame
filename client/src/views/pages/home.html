@@ -6,11 +6,11 @@
 
 	<p ng-if="!(textes | filter:{mode:'present'}).length">Il n'y a pas de texte actuellement en discussion.</p>
 	<div
-		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at' | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at'"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p class="read-more" ng-if="(textes | filter:{mode:'present'}).length > 3"><a class="read-more__link" href="/textes?mode=present">Voir la liste complète</a></p>
+
 </div>
 
 <div class="section-future">
@@ -21,12 +21,10 @@
 	<p ng-if="!(textes | filter:{mode:'future'}).length">Il n'y a pas de textes prévus.</p>
 
 	<div 
-		ng-repeat="texte in textes | filter:{mode:'future'} | orderBy:'starts_at' | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'future'} | orderBy:'starts_at'"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
-	<p class="read-more" ng-if="(textes | filter:{mode:'future'}).length > 3"><a class="read-more__link" href="/textes?mode=future">Voir la liste complète</a></p>
-
 </div>
 
 <div class="section-past">
@@ -36,7 +34,7 @@
 
 	<p ng-if="!(textes | filter:{mode:'past'}).length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
-		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:3"
+		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:5"
 		ng-include="'/views/partials/texte_small.html'"
 		class="texte_small clearfix"
 	></div>
