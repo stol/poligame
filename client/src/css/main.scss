@@ -1,6 +1,20 @@
+// Imports
 @import "compass/css3/box-shadow";
-@import "./_normalize";
+@import "vars";
+@import "../vendor/inuit.css/inuit";
 
+// Fonts
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700);
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700,900);
+
+// utils
+@mixin module($name) {
+  .#{$name} {
+    @at-root {
+      @content;
+    }
+  }
+}
 
 
 .wrapper{
@@ -8,11 +22,11 @@
 	margin: 0 auto;
 }
 
-.header{
+@include module('header') {
 	color: #333;
 	position: relative;
 
-	.header-top{
+	#{&}__top{
 		background-color: #0a3f5a;
 		line-height: 40px;
 		padding: 10px 0 10px 30px;
@@ -20,7 +34,8 @@
 			padding: 5px 0 10px 10px;
         }
 	}
-	.header__logo{
+
+	#{&}__logo{
 		font-family: 'Lato', sans-serif;
 		font-size: 30px;
 		text-transform: uppercase;
@@ -39,11 +54,12 @@
 		}
 	}
 
-	.header__content{
+	#{&}__content{
 		clear: both;
 	}
 
-	.header__punchline{
+
+	#{&}__punchline{
 		margin: 0;
 		font-family: 'Lato', sans-serif;
 		font-weight: 700;
@@ -57,7 +73,7 @@
         }
 	}
 
-	.header__punchscription{
+	#{&}__punchscription{
 		font-family: 'Lato', sans-serif;
 		font-weight: 300;
 		font-size: 21px;
@@ -71,7 +87,7 @@
         }
 	}
 
-	.header__social-widget{
+	#{&}__social-widget{
 		display: inline-block;
 		vertical-align: middle;
 		padding-top: 10px;
@@ -101,6 +117,7 @@
 
 }
 
+
 a{
 	color: inherit;
 	text-decoration: inherit;
@@ -108,91 +125,100 @@ a{
 p > a, p > b > a{
 	color: #1b7bab;
 }
-
-.h3{
-	font-family: 'Roboto Condensed', sans-serif;
-	font-size: 38px;
-	color: #828282;
-	font-weight: 300;
-	@media only screen and (max-width: 600px){
-		font-size: 26px;
-		line-height: 30px;
-    }
-	@media only screen and (max-width: 400px){
-		font-size: 24px;
-		line-height: 26px;
-    }
-}
-
-.h4{
-	font-family: 'Lato', sans-serif;
-	font-weight: 700;
-	font-size: 24px;
-	color: #0a3f5a;
-	line-height: normal;
-	@media only screen and (max-width: 600px){
-		font-size: 18px;
-    }
-	@media only screen and (max-width: 400px){
-		font-size: 16px;
-    }
-}
-
-%section{
-	padding: 30px 10px 25px 10px;
+@include module('section') {
+	padding: 10px 0 10px 0;
 	& + &{
 		@include box-shadow(inset 0px 5px 10px -10px #000);
 	}
 
-	@media only screen and (max-width: 500px){
-		padding: 15px 10px 0 10px;
+	@include media-query(lap){
+		padding: 20px 0 20px 0;
+	}
+	@include media-query(desk){
+		padding: 30px 0 30px 0;
+	}
+
+	#{&}--future{
+		background-color: #f5f5f5;
+	}
+	#{&}--past{
+		background-color: #ebebeb;
+	}
+
+	#{&}__title{
+		@extend %title-section;
+	}
+
+	#{&}__message{
+		padding-left: 10px;
+		padding-right: 10px;
 	}
 }
-.section-present, .section-past, .section-future{
-	@extend %section;
+
+
+
+%title-section{
+	font-family: 'Roboto Condensed', sans-serif;
+	font-weight: 400;
+
+	color: #333333; // #828282;
+	font-size: 24px;
+	line-height: 26px;
+	padding-left: 10px;
+	padding-right: 10px;
+
+	@include media-query(lap){
+		font-size: 26px;
+		line-height: 30px;
+	}
+	@include media-query(desk){
+		font-size: 38px;
+		font-weight: 300;
+	}
 }
 
-.section-future{
-	background-color: #f5f5f5;
+%title-texte{
+	color: #0a3f5a;
+	font-family: 'Lato', sans-serif;
+	font-weight: 400;
+	font-size: 16px;
+	line-height: normal;
+
+	@include media-query(lap){
+		font-size: 18px;
+	}
+	@include media-query(desk){
+		font-size: 24px;
+	}
+
 }
 
-.section-past{
-	background-color: #ebebeb;
-}
-.texte_small{
-	padding-top: 30px;
-	padding-bottom: 35px;
-	
+@include module('texte-header') {
 	& + &{
 		border-top: 1px solid #e6e6e6;
 	}
 
-	@media only screen and (max-width: 600px){
-		padding-top: 10px;
-		padding-bottom: 10px;
-    }
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
 
-	.texte_small-question{
-		float: left;
-		width: 80%;
-		@media only screen and (max-width: 400px){
-			width: auto;
-			float: none;
-	    }
+	@include media-query(lap){
+		padding-top: 20px;
+		padding-bottom: 20px;
 	}
-	.texte_small-time{
-		float: right;
-		width: 12%;
+	@include media-query(desk){
+		padding-top: 30px;
+		padding-bottom: 35px;
+	}
+
+	#{&}__title{
+		@extend %title-texte;
+	}
+	#{&}__time{
 		text-align: center;
-		min-width: 50px;
-
-		@media only screen and (max-width: 400px){
-			width: auto;
-			float: none;
-			text-align: left;
-	    }
 	}
-    .texte-status{
+    #{&}__status{
     	text-transform: uppercase;
     	&.is-1{
     		color: #666;
@@ -203,10 +229,14 @@ p > a, p > b > a{
     	&.is-3{
     		color: red;
     	}
-
     }
 }
 
+
+.remaining-label{
+	color: #828282;
+}
+/*
 .remaining{
 	margin-top: 15px;
 
@@ -270,6 +300,7 @@ p > a, p > b > a{
 	    }
 	}
 }
+*/
 
 .texte{
 	padding: 30px 10px 60px 10px;
@@ -334,12 +365,6 @@ p > a, p > b > a{
 }
 
 .results_bars-container{
-	width: 80%;
-	overflow: hidden;
-	@media only screen and (max-width: 400px){
-		width: auto;
-		overflow: hidden;
-	}
 }
 .results_bars{
 	min-width: 230px;
