@@ -25,11 +25,11 @@
             <div class="header__top">
                 <h1 class="header__logo"><a href="/">Moi, président</a></h1><!--
              --><div class="header__social-widget">
-                    <div class="fb-like" data-href="http://www.moi-president.info" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
+                    <div id="fb-header-like" class="fb-like" data-href="http://www.moi-president.info" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
+                    <span id="fb-header-like2"></span>
                 </div><!--
              --><div class="header__social-widget">
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr" data-size="medium">Tweeter</a>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                    <a id="tw-header-like" href="https://twitter.com/share" class="twitter-share-button" data-lang="fr" data-size="medium">Suivre</a>
                 </div><!--
              --><ul class="nav nav-pills">
                     <li ng-class="navClass('home')"><a href="/">Home</a></li>
@@ -89,12 +89,14 @@
     
     <script src="/vendor/moment/moment.js"></script>
     <script src="/vendor/underscore/underscore-min.js"></script>
+    <script src="/vendor/enquire/dist/enquire.js"></script>
 
     <script src="/js/app.js"></script>
     <script src="/js/controllers/globalController.js"></script>
     <script src="/js/controllers/textesController.js"></script>
     <script src="/js/directives.js"></script>
     <script src="/js/filters.js"></script>
+    <script src="/js/services/socialService.js"></script>
     <script src="/js/services/userService.js"></script>
     <script src="/js/services/textesFactory.js"></script>
     <!-- endbuild -->

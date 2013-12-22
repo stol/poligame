@@ -1,4 +1,4 @@
-moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$location', function($window, $http, $q, $rootScope, Cookies, $location) {
+moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$location', 'Social', function($window, $http, $q, $rootScope, Cookies, $location, Social) {
 
     var accessToken = null,
         is_logged = false,
@@ -14,26 +14,9 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
         votes: {}
     };
 
+    Social.register("facebook", function(){
 
-    // Chargement de la lib facebook
-    (function(d, s, id){
-        var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) {return;}
-        js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/fr_FR/all.js";
-        fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-    
-    // Executé au chargement de la lib facebook
-    $window.fbAsyncInit = function(){
         var statusAlreadyChecked = false;
-
-        // Initialisation
-        $window.FB.init({ 
-            appId: '720373954658968', 
-            channelUrl : '//' + window.location.hostname + '/channel_fb.html', // Channel file for x-domain comms
-            status: false, 
-            cookie: true, 
-            xfbml: true
-        });
 
         $rootScope.$broadcast('fbLoaded');
 
@@ -88,7 +71,8 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
 
         // On marque la lib comme chargée
         fb_is_loaded = true;
-    }
+    });
+
 
     // Déclenche la procédure de login de l'utilisateur. Renvoie une promesse utilisable ainsi :
     // User.login().then(

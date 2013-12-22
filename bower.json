@@ -20,6 +20,7 @@
     "angular-animate": "1.2.2",
     "angular-route": "1.2.2",
     "inuit.css": "*",
+    "enquire": "2.1.0",
     "g.raphael": "https://github.com/DmitryBaranovskiy/g.raphael/archive/master.zip"
   },
   "devDependencies": {
