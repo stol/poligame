@@ -48,7 +48,7 @@ moiElu.service('Social', ['$window', function($window) {
                 }
                     
                 for(var i=0; i<actions["twitter"].length; i++){
-                    actions["twitter"][i](twttr);
+                    actions["twitter"][i] && actions["twitter"][i](twttr);
                 }
 
             });

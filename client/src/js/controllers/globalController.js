@@ -114,26 +114,12 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
         });
     });
 
+    //enquire.register("screen and (max-width:481px)", function() {
     Social.register("facebook", function(FB){
         IS_TOUCH || FB.XFBML.parse(document.getElementById("fb-header-like").parentNode);
     });
 
-    Social.register("twitter", function(twttr){
-        if (IS_TOUCH){
-            return;
-        }
-        twttr.widgets.createFollowButton(
-            "stolalex",
-            document.getElementById("tw-header-like"),
-            function (el) { }, // loaded callback
-            { // Options
-                lang: "fr",
-                showScreenName: "true", // ATTN, il faut un string
-                showCount: false
-            }
-        );
-    });
-
+    !IS_TOUCH && Social.init("twitter");
 
 
     /*
