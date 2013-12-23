@@ -114,13 +114,21 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
         });
     });
 
-    //enquire.register("screen and (max-width:481px)", function() {
-    Social.register("facebook", function(FB){
-        IS_TOUCH || FB.XFBML.parse(document.getElementById("fb-header-like").parentNode);
+
+       
+    $window.enquire.register("screen and (min-width:1024px)", {
+        is_loaded: false,
+        match: function (){
+            if (this.is_loaded){
+                return;
+            }
+            Social.init("twitter");
+            Social.register("facebook", function(FB){
+                FB.XFBML.parse(document.getElementById("fb-header-like").parentNode);
+            });
+            this.is_loaded = true;
+        }
     });
-
-    !IS_TOUCH && Social.init("twitter");
-
 
     /*
     social.facebookReady(function(){

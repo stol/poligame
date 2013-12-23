@@ -6,6 +6,8 @@ moiElu.service('Social', ['$window', function($window) {
     var actions = {};
     var inits = {};
 
+    var ready_libs = {};
+
     // Charge les librairies des différents réseaux sociaux
     // usage :
     // social.load() => loads all the libs
@@ -30,6 +32,8 @@ moiElu.service('Social', ['$window', function($window) {
                 for(var i=0; i<actions["facebook"].length; i++){
                     actions["facebook"][i]($window.FB);
                 }
+
+                ready_libs["facebook"] = $window.FB;
             };
         }
 
@@ -50,6 +54,8 @@ moiElu.service('Social', ['$window', function($window) {
                 for(var i=0; i<actions["twitter"].length; i++){
                     actions["twitter"][i] && actions["twitter"][i](twttr);
                 }
+
+                ready_libs["facebook"] = twttr;
 
             });
 
@@ -76,6 +82,7 @@ moiElu.service('Social', ['$window', function($window) {
                 for(var i=0; i<actions["google"].length; i++){
                     actions["google"][i]($window.gapi);
                 }
+                ready_libs["facebook"] = $window.gapi;
             }
 
         }
@@ -83,8 +90,13 @@ moiElu.service('Social', ['$window', function($window) {
     }
 
     function register(lib, action){
-        actions[lib] = actions[lib] || [];
-        actions[lib].push(action);
+        if (ready_libs[lib]){
+            action(ready_libs[lib]);
+        }
+        else{
+            actions[lib] = actions[lib] || [];
+            actions[lib].push(action);
+        }
     }
 
     function init(lib, init){

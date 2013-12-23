@@ -1,11 +1,21 @@
 // Imports
 @import "compass/css3/box-shadow";
+@import "compass/css3/transition";
 @import "vars";
 @import "../vendor/inuit.css/inuit";
 
 // Fonts
 @import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700);
 @import url(http://fonts.googleapis.com/css?family=Lato:300,400,700,900);
+
+p{
+	margin: 0;
+}
+
+ul, li{
+	margin: 0;
+	padding: 0;
+}
 
 // utils
 @mixin module($name) {
@@ -29,10 +39,7 @@
 	#{&}__top{
 		background-color: #0a3f5a;
 		line-height: 40px;
-		padding: 10px 0 10px 30px;
-        @media only screen and (max-width: 400px){
-			padding: 5px 0 10px 10px;
-        }
+		padding: 0 10px;
 	}
 
 	#{&}__logo{
@@ -92,31 +99,60 @@
 		vertical-align: middle;
 		padding-top: 10px;
 		margin-right: 25px;
-		/*
-        @media only screen and (max-width: 700px){
+		@include media-query(portable){
 			display: none;
-        }
-        */
+		}
+	}
+}
 
+@include module('main-nav') {
+
+	#{&}__checkbox{
+		display: none;
+	}
+	#{&}__icon{
+		display: none;
 	}
 
-	.nav{
-		margin: 0 0 0 0;
-		display: inline-block;
-		vertical-align: middle;
-		float: right;
-		margin-top: 13px;
-        @media only screen and (max-width: 950px){
-			float: none;
-			margin-top: 0;
-        }
-		a{
+	@include media-query(portable){
+		position: fixed;
+		width: 180px;
+		height: 100%;
+		background-color: #dadada;
+		z-index: 1;
+		left: -180px;
+		@include transition(left 300ms ease-in-out);
+		#{&}__checkbox:checked ~ .header &{
+			left: 0;
+		} 
+		#{&}__icon{
+			display: inline-block;
+			font-size: 30px;
 			color: #fff;
+			vertical-align: middle;
 		}
 	}
 
-}
 
+	#{&}__item{
+		border-bottom: 1px solid #666;
+	}
+
+	#{&}__link{
+		display: block;
+		padding: 10px;
+	}
+
+
+
+	// #{&}__checkbox:checked{
+	// 	~ .header .main-nav{
+	// 		left: 0;
+	// 	}
+
+	// } 
+	
+}
 
 a{
 	color: inherit;
@@ -516,4 +552,10 @@ p > a, p > b > a{
 	}
 
 
+}
+.footer{
+	background: #0A3F5A;
+	color: #fff;
+	padding: 10px;
+	line-height: 30px;
 }

@@ -19,11 +19,14 @@
 <body ng-controller="AppCtrl">
     <div id="fb-root"></div>
 
-
     <div class="wrapper">
+
+        <input type="checkbox" class="main-nav__checkbox" id="main-nav__checkbox" />
+
         <div class="header" ng-controller="NavigationCtrl">
             <div class="header__top">
-                <h1 class="header__logo"><a href="/">Moi, président</a></h1><!--
+                <label class="main-nav__icon" for="main-nav__checkbox">☰</label><!--
+             --><!--h1 class="header__logo"><a href="/">Moi, président</a></h1--><!--
              --><div class="header__social-widget">
                     <div id="fb-header-like" class="fb-like" data-href="http://www.moi-president.info" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
                     <span id="fb-header-like2"></span>
@@ -31,14 +34,14 @@
              --><div class="header__social-widget">
                     <a href="https://twitter.com/share" class="twitter-share-button" data-lang="fr" data-size="medium">Suivre</a>
                 </div><!--
-             --><ul class="nav nav-pills">
-                    <li ng-class="navClass('home')"><a href="/">Home</a></li>
-                    <li ng-class="navClass('a-propos')"><a href="/a-propos">À propos</a></li>
-                    <li ng-class="navClass('user')" ng-show="user.isLogged()"><a href="/user/{{user.id}}">Vos votes</a></li>
+             --><ul class="main-nav">
+                    <li class="main-nav__item" ng-class="navClass('home')"><a class="main-nav__link" href="/">Home</a></li>
+                    <li class="main-nav__item" ng-class="navClass('a-propos')"><a class="main-nav__link" href="/a-propos">À propos</a></li>
+                    <li class="main-nav__item" ng-class="navClass('user')" ng-show="user.isLogged()"><a class="main-nav__link" href="/user/{{user.id}}">Vos votes</a></li>
                 </ul>
             </div>
             <div class="header__content" ng-show="showBigHeader()">
-                <h2 class="header__punchline">Votez les lois comme vos députés&nbsp;!</h2>
+                <!--h2 class="header__punchline">Votez les lois comme vos députés&nbsp;!</h2-->
                 <!--
                 <h3 class="header__punchscription">Sur ce site, vous pouvez :
                     <ul>
@@ -51,8 +54,8 @@
                         
             </div>
         </div>
-        <div class="content-container">
-            <div class="content" ng-view ng-cloak>
+        <div class="content">
+            <div ng-view ng-cloak>
                 {% if texte is defined %}
                     <h1>{{ texte.title }}</h1>
                     {% if texte.communique is defined %}
@@ -63,7 +66,7 @@
             </div>
         </div>
         <div class="footer">
-            <p>&copy; Moi, président 2013</p>
+            <p>&copy; Moi, président 2014</p>
         </div>
     </div>
 
