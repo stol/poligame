@@ -129,6 +129,13 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
             this.is_loaded = true;
         }
     });
+    $(document).on("click", function(){
+        if ($("#main-nav__checkbox").is(":checked")){
+            $("#main-nav__checkbox").attr('checked', false);
+        }
+    }).on("click", "#main-nav__checkbox, .main-nav__icon", function(e){
+        e.stopPropagation();
+    });
 
     // On cache/affiche le header selon le scroll
     // TODO : utiliser les animations angular plutôt que du code custom

@@ -14,7 +14,7 @@ p{
 	margin: 0;
 }
 
-h1, h2, h3, label, ul, li{
+h1, h2, h3, h4, label, ul, li{
 	margin: 0;
 	padding: 0;
 }
@@ -132,10 +132,10 @@ h1, h2, h3, label, ul, li{
 		font-weight: bold;
 		color: #333;
 		
-		@include transition(left 300ms ease-in-out);
+		//@include transition(left 150ms ease-in-out);
 
 		.header__top{
-			@include transition(top 300ms ease-in-out);
+			//@include transition(top 150ms ease-in-out);
 		}
 		.header__top.is-fixed,
 		.header__top.anim-end,
@@ -153,6 +153,13 @@ h1, h2, h3, label, ul, li{
 		}
 		#{&}__checkbox:checked ~ .header .header__top .main-nav{
 			left: 0;
+		}
+		#{&}__checkbox:checked ~ .content{
+			position: fixed;
+			height: 100%;
+		}
+		#{&}__checkbox:checked ~ .footer{
+			display: none;
 		}
 
 		#{&}__icon{
@@ -291,10 +298,9 @@ p > a, p > b > a{
 
 	#{&}__title{
 		@extend %title-texte;
+		display: inline;
 	}
-	#{&}__time{
-		text-align: center;
-	}
+
     #{&}__status{
     	text-transform: uppercase;
     	&.is-1{
@@ -307,12 +313,20 @@ p > a, p > b > a{
     		color: red;
     	}
     }
+    .remaining{
+		color: #828282;
+		display: inline;
+		&:after{
+			content: ' : ';
+		}
+	}
+	.remaining-time:first-letter{
+		text-transform: uppercase;
+	}
+
 }
 
 
-.remaining-label{
-	color: #828282;
-}
 /*
 .remaining{
 	margin-top: 15px;

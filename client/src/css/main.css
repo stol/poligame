@@ -3461,7 +3461,7 @@ p {
   margin: 0;
 }
 
-h1, h2, h3, label, ul, li {
+h1, h2, h3, h4, label, ul, li {
   margin: 0;
   padding: 0;
 }
@@ -3561,16 +3561,6 @@ h1, h2, h3, label, ul, li {
     font-family: 'Lato', sans-serif;
     font-weight: bold;
     color: #333;
-    -moz-transition: left 300ms ease-in-out;
-    -o-transition: left 300ms ease-in-out;
-    -webkit-transition: left 300ms ease-in-out;
-    transition: left 300ms ease-in-out;
-  }
-  .header__top {
-    -moz-transition: top 300ms ease-in-out;
-    -o-transition: top 300ms ease-in-out;
-    -webkit-transition: top 300ms ease-in-out;
-    transition: top 300ms ease-in-out;
   }
   .header__top.is-fixed,
   .header__top.anim-end,
@@ -3587,6 +3577,13 @@ h1, h2, h3, label, ul, li {
   }
   .main-nav__checkbox:checked ~ .header .header__top .main-nav {
     left: 0;
+  }
+  .main-nav__checkbox:checked ~ .content {
+    position: fixed;
+    height: 100%;
+  }
+  .main-nav__checkbox:checked ~ .footer {
+    display: none;
   }
   .main-nav__icon {
     display: block;
@@ -3719,8 +3716,8 @@ p > a, p > b > a {
     padding-bottom: 35px;
   }
 }
-.texte-header__time {
-  text-align: center;
+.texte-header__title {
+  display: inline;
 }
 .texte-header__status {
   text-transform: uppercase;
@@ -3734,9 +3731,15 @@ p > a, p > b > a {
 .texte-header__status.is-3 {
   color: red;
 }
-
-.remaining-label {
+.remaining {
   color: #828282;
+  display: inline;
+}
+.remaining:after {
+  content: ' : ';
+}
+.remaining-time:first-letter {
+  text-transform: uppercase;
 }
 
 /*
