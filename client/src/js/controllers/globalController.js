@@ -115,7 +115,7 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
     });
 
 
-       
+    // Perf: chargement des boutons de partage en fonction du device
     $window.enquire.register("screen and (min-width:1024px)", {
         is_loaded: false,
         match: function (){
@@ -130,20 +130,19 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
         }
     });
 
-
+    // On cache/affiche le header selon le scroll
+    // TODO : utiliser les animations angular plutôt que du code custom
     $window.enquire.register("screen and (max-width:1023px)", {
         match : function() {
             var lastScrollTop = $(window).scrollTop();
             $(window).on("scroll.menu", function(){
                 if ($(window).scrollTop() < lastScrollTop && !$(".header__top").is(".is-fixed")){
-                    console.log("showing header");
                     $(".header__top").toggleClass("anim-start").removeClass("anim-end");
                     setTimeout(function(){
                         $(".header__top").addClass("is-fixed").removeClass("anim-start");
                     },0)
                 }
                 else if ($(window).scrollTop() > lastScrollTop && $(".header__top").is(".is-fixed")) {
-                    console.log("hiding header");
                     $(".header__top").toggleClass("is-fixed anim-end");
                 }
                 
