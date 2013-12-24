@@ -130,6 +130,32 @@ moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$wind
         }
     });
 
+
+    $window.enquire.register("screen and (max-width:1023px)", {
+        match : function() {
+            var lastScrollTop = $(window).scrollTop();
+            $(window).on("scroll.menu", function(){
+                if ($(window).scrollTop() < lastScrollTop && !$(".header__top").is(".is-fixed")){
+                    console.log("showing header");
+                    $(".header__top").toggleClass("anim-start").removeClass("anim-end");
+                    setTimeout(function(){
+                        $(".header__top").addClass("is-fixed").removeClass("anim-start");
+                    },0)
+                }
+                else if ($(window).scrollTop() > lastScrollTop && $(".header__top").is(".is-fixed")) {
+                    console.log("hiding header");
+                    $(".header__top").toggleClass("is-fixed anim-end");
+                }
+                
+                lastScrollTop = $(window).scrollTop();
+            });
+        },
+        unmatch : function() {
+            $(window).off("scroll.menu");
+        }
+    });
+
+
     /*
     social.facebookReady(function(){
         // Le bouton j'aime du header
