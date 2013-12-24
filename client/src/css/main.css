@@ -3574,14 +3574,16 @@ h1, h2, h3, h4, label, ul, li {
   position: relative;
 }
 
-.main-nav {
-  display: none;
-}
 .main-nav__checkbox {
   display: none;
 }
 .main-nav__icon {
   display: none;
+}
+@media only screen and (min-width: 1024px) {
+  .main-nav {
+    display: none;
+  }
 }
 @media only screen and (max-width: 1023px) {
   .main-nav {
@@ -3749,11 +3751,6 @@ p > a, p > b > a {
   }
   .texte-header:hover {
     background-color: #dadada;
-  }
-}
-@media only screen and (min-width: 1024px) {
-  .texte-header:hover .texte-header__title {
-    text-decoration: underline;
   }
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
@@ -3936,7 +3933,22 @@ p > a, p > b > a {
 
 .results_bars {
   min-width: 230px;
+  /*
   width: 48%;
+  */
+  	/*
+  	@media only screen and (max-width: 600px){
+  		padding: 0 5px;
+  		&.results_bars_1{
+  			float: none;
+  			width: 100%;
+  		}
+  		&.results_bars_2{
+  			float: none;
+  			width: 100%;
+  		}
+      }
+      */
 }
 .results_bars.results_bars_1 {
   float: left;
@@ -3944,19 +3956,6 @@ p > a, p > b > a {
 }
 .results_bars.results_bars_2 {
   float: right;
-}
-@media only screen and (max-width: 600px) {
-  .results_bars {
-    padding: 0 5px;
-  }
-  .results_bars.results_bars_1 {
-    float: none;
-    width: 100%;
-  }
-  .results_bars.results_bars_2 {
-    float: none;
-    width: 100%;
-  }
 }
 .results_bars .results_bars-title {
   color: #828282;

@@ -17,8 +17,16 @@
 	<h4 class="texte-header__title">{{texte.title}}</h4><span class="texte-header__status is-{{texte.status}}" ng-if="texte.status>0 && texte.mode=='past'"> : {{texte.status_txt}}</span>
 
 	<div ng-if="texte.mode == 'past'" class="results_bars-container">
-		<div results-bars="net" class="results_bars results_bars_1"></div>
-		<div results-bars="assemblee" class="results_bars results_bars_2"></div>
+		<div class="grid">
+			<div class="grid__item desk-one-half">
+				<div results-bars="net" class="results_bars results_bars_1"></div>
+			</div><!--
+		 --><div class="grid__item desk-one-half">
+				<div results-bars="assemblee" class="results_bars results_bars_2"></div>
+			</div>
+		</div>
+		
+		
 	</div>
 	<div ng-if="texte.mode == 'present'">
 		<div ng-switch on="texte.isVoted()" class="pull-left">

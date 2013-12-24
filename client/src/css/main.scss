@@ -143,7 +143,9 @@ h1, h2, h3, h4, label, ul, li{
 	#{&}__icon{
 		display: none;
 	}
-	display: none;
+	@include media-query(desk){
+		display: none;
+	}
 	@include media-query(portable){
 		position: fixed;
 		width: 180px;
@@ -320,12 +322,6 @@ p > a, p > b > a{
 		cursor: pointer;
 		&:hover{
 			background-color: #dadada;
-		}
-	}
-
-	@include media-query(desk){
-		&:hover #{&}__title{
-			text-decoration: underline;
 		}
 	}
 
@@ -517,7 +513,9 @@ p > a, p > b > a{
 }
 .results_bars{
 	min-width: 230px;
+	/*
 	width: 48%;
+	*/
 
 	&.results_bars_1{
 		float: left;
@@ -527,6 +525,7 @@ p > a, p > b > a{
 		float: right;
 	}
 
+	/*
 	@media only screen and (max-width: 600px){
 		padding: 0 5px;
 		&.results_bars_1{
@@ -538,6 +537,7 @@ p > a, p > b > a{
 			width: 100%;
 		}
     }
+    */
 
 
 
