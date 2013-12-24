@@ -27,7 +27,7 @@
 <div class="texte" ng-init="init_texte()">
 	<div class="texte__body">
 
-		<p ng-if="!texte.communique_title">&gt;&nbsp;<b>Communiqué indisponible</b></p>
+		<h3 class="sstitre" ng-if="!texte.communique_title">Communiqué indisponible</p>
 		<h3 class="sstitre" ng-if="texte.communique_title" ng-bind-html='texte.communique_title'></h3>
 
 		<p ng-if="texte.communique" truncate-words data-words="120" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>
@@ -62,12 +62,11 @@
 		</div-->
 
 		<h3 class="sstitre">Plus d'informations</h3>
-		<p ng-if="!texte.url_an">Dossier de l'assemblée nationale indisponible</p>
-		<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Lien vers le dossier de l'assemblée nationale</a></b></p>
-		<p ng-if="!texte.url_sn">Dossier du sénat indisponible</p>
-		<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Lien vers le dossier du sénat</a></b></p>
-		<p ng-if="!texte.url_lf">Dossier légifrance indisponible</p>
-		<p ng-if="texte.url_lf"><b><a ng-href="{{texte.url_lf}}" target="_blank">Lien vers le dossier légifrance</a></b></p>
+		<p ng-if="!texte.url_sn && !texte.url_an && !texte.url_lf">Ancun lien disponible</p>
+		<p ng-if="texte.url_lf"><b><a ng-href="{{texte.url_lf}}" target="_blank">Dossier légifrance</a></b></p>
+		<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Dossier de l'assemblée nationale</a></b></p>
+		<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Dossier du sénat</a></b></p>
+
 		<h3 class="sstitre">Vos commentaires</h3>
 	</div>
 

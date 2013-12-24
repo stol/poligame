@@ -10,7 +10,6 @@
     "jquery": "2.0.3",
     "raphael": "2.1.2",
     "moment": "2.4.0",
-    "underscore": "1.5.2",
     "angular": "1.2.2",
     "angular-bootstrap": "0.7.0",
     "angular-cookies": "1.2.2",

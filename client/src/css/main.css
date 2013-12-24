@@ -3477,6 +3477,12 @@ h1, h2, h3, h4, label, ul, li {
   height: 40px;
   line-height: 40px;
 }
+@media only screen and (min-width: 1024px) {
+  .header {
+    height: 60px;
+    line-height: 60px;
+  }
+}
 .header__top {
   background-color: #0a3f5a;
   position: relative;
@@ -3488,7 +3494,26 @@ h1, h2, h3, h4, label, ul, li {
   font-weight: 900;
   line-height: inherit;
   color: #fff;
+  vertical-align: middle;
   text-align: center;
+}
+.header__logo:after {
+  content: ' ';
+  display: inline-block;
+  background: url(../img/logo-80x80.png) no-repeat 0 0;
+  background-size: contain;
+  width: 40px;
+  height: 33px;
+  vertical-align: middle;
+  margin-left: 10px;
+  margin-top: -10px;
+}
+@media only screen and (max-width: 1023px) {
+  .header__logo:after {
+    width: 30px;
+    height: 22px;
+    margin-top: -5px;
+  }
 }
 .header__logo a {
   color: inherit;
@@ -3496,6 +3521,13 @@ h1, h2, h3, h4, label, ul, li {
 .header__logo a:hover {
   text-decoration: none;
   color: inherit;
+}
+@media only screen and (min-width: 1024px) {
+  .header__logo {
+    text-align: left;
+    display: inline-block;
+    margin-left: 10px;
+  }
 }
 .header__content {
   clear: both;
@@ -3530,8 +3562,7 @@ h1, h2, h3, h4, label, ul, li {
 .header__social-widget {
   display: inline-block;
   vertical-align: middle;
-  padding-top: 10px;
-  margin-right: 25px;
+  margin-left: 25px;
 }
 @media only screen and (max-width: 1023px) {
   .header__social-widget {
@@ -3543,6 +3574,9 @@ h1, h2, h3, h4, label, ul, li {
   position: relative;
 }
 
+.main-nav {
+  display: none;
+}
 .main-nav__checkbox {
   display: none;
 }
@@ -3709,15 +3743,17 @@ p > a, p > b > a {
 .texte-header:hover {
   text-decoration: none;
 }
-.texte-header:hover .texte-header__title {
-  text-decoration: underline;
-}
 @media only screen and (max-width: 1023px) {
   .texte-header {
     cursor: pointer;
   }
   .texte-header:hover {
     background-color: #dadada;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .texte-header:hover .texte-header__title {
+    text-decoration: underline;
   }
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
@@ -3755,6 +3791,18 @@ p > a, p > b > a {
 .remaining {
   color: #828282;
   display: inline;
+  font-family: 'Lato',sans-serif;
+  font-size: 16px;
+}
+@media only screen and (min-width: 481px) and (max-width: 1023px) {
+  .remaining {
+    font-size: 18px;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .remaining {
+    font-size: 24px;
+  }
 }
 .remaining:after {
   content: ' : ';

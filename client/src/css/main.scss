@@ -39,6 +39,10 @@ h1, h2, h3, h4, label, ul, li{
 	position: relative;
 	height: 40px;
 	line-height: 40px;
+	@include media-query(desk){
+		height: 60px;
+		line-height: 60px;
+	}
 	#{&}__top{
 		background-color: #0a3f5a;
 		position: relative;
@@ -51,14 +55,35 @@ h1, h2, h3, h4, label, ul, li{
 		font-weight: 900;
 		line-height: inherit;
 		color: #fff;
-		//vertical-align: middle;
+		vertical-align: middle;
 		text-align: center;
+		&:after{
+			content: ' ';
+			display: inline-block;
+			background: url(../img/logo-80x80.png) no-repeat 0 0;
+			background-size: contain;
+			width: 40px;
+			height: 33px;
+			vertical-align: middle;
+			margin-left: 10px;
+			margin-top: -10px;
+			@include media-query(portable){
+				width: 30px;
+				height: 22px;
+				margin-top: -5px;
+			}
+		}
 		a{
 			color: inherit;
 			&:hover{
 				text-decoration: none;
 				color: inherit;
 			}
+		}
+		@include media-query(desk){
+			text-align: left;
+			display: inline-block;
+			margin-left: 10px;
 		}
 	}
 
@@ -98,8 +123,7 @@ h1, h2, h3, h4, label, ul, li{
 	#{&}__social-widget{
 		display: inline-block;
 		vertical-align: middle;
-		padding-top: 10px;
-		margin-right: 25px;
+		margin-left: 25px;
 		@include media-query(portable){
 			display: none;
 		}
@@ -119,7 +143,7 @@ h1, h2, h3, h4, label, ul, li{
 	#{&}__icon{
 		display: none;
 	}
-
+	display: none;
 	@include media-query(portable){
 		position: fixed;
 		width: 180px;
@@ -291,14 +315,17 @@ p > a, p > b > a{
 	&:hover{
 		text-decoration: none;
 	}
-	&:hover #{&}__title{
-		text-decoration: underline;
-	}
 
 	@include media-query(portable){
 		cursor: pointer;
 		&:hover{
 			background-color: #dadada;
+		}
+	}
+
+	@include media-query(desk){
+		&:hover #{&}__title{
+			text-decoration: underline;
 		}
 	}
 
@@ -334,6 +361,16 @@ p > a, p > b > a{
     .remaining{
 		color: #828282;
 		display: inline;
+		font-family: 'Lato',sans-serif;
+		font-size: 16px;
+
+		@include media-query(lap){
+			font-size: 18px;
+		}
+		@include media-query(desk){
+			font-size: 24px;
+		}
+
 		&:after{
 			content: ' : ';
 		}
