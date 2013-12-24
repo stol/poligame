@@ -14,7 +14,7 @@
 		<span class="remaining-time" human-time="starts_at"></span>
 	</div>
 
-	<h4 class="texte-header__title"><a ng-href="/textes/{{texte.id}}">{{texte.title}}</a><span class="texte-header__status is-{{texte.status}}" ng-if="texte.status>0 && texte.mode=='past'"> : {{texte.status_txt}}</span></h4>
+	<h4 class="texte-header__title">{{texte.title}}</h4><span class="texte-header__status is-{{texte.status}}" ng-if="texte.status>0 && texte.mode=='past'"> : {{texte.status_txt}}</span>
 
 	<div ng-if="texte.mode == 'past'" class="results_bars-container">
 		<div results-bars="net" class="results_bars results_bars_1"></div>

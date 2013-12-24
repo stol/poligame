@@ -3700,9 +3700,25 @@ p > a, p > b > a {
   padding-right: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
+  display: block;
+  cursor: pointer;
 }
 .texte-header + .texte-header {
   border-top: 1px solid #e6e6e6;
+}
+.texte-header:hover {
+  text-decoration: none;
+}
+.texte-header:hover .texte-header__title {
+  text-decoration: underline;
+}
+@media only screen and (max-width: 1023px) {
+  .texte-header {
+    cursor: pointer;
+  }
+  .texte-header:hover {
+    background-color: #dadada;
+  }
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
   .texte-header {
@@ -3730,6 +3746,11 @@ p > a, p > b > a {
 }
 .texte-header__status.is-3 {
   color: red;
+}
+@media only screen and (max-width: 1023px) {
+  .texte-header__status {
+    display: inline;
+  }
 }
 .remaining {
   color: #828282;

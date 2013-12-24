@@ -23,6 +23,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
     Textes.get().then(function(textes){
         $scope.textes = textes;
+
     });
 
     $scope.init_texte = function (){

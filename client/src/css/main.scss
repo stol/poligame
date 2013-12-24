@@ -286,6 +286,21 @@ p > a, p > b > a{
 	padding-right: 10px;
 	padding-top: 10px;
 	padding-bottom: 10px;
+	display: block;
+	cursor: pointer;
+	&:hover{
+		text-decoration: none;
+	}
+	&:hover #{&}__title{
+		text-decoration: underline;
+	}
+
+	@include media-query(portable){
+		cursor: pointer;
+		&:hover{
+			background-color: #dadada;
+		}
+	}
 
 	@include media-query(lap){
 		padding-top: 20px;
@@ -312,6 +327,9 @@ p > a, p > b > a{
     	&.is-3{
     		color: red;
     	}
+		@include media-query(portable){
+			display: inline;
+		}
     }
     .remaining{
 		color: #828282;
