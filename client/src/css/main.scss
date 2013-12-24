@@ -513,33 +513,6 @@ p > a, p > b > a{
 }
 .results_bars{
 	min-width: 230px;
-	/*
-	width: 48%;
-	*/
-
-	&.results_bars_1{
-		float: left;
-		clear: both;
-	}
-	&.results_bars_2{
-		float: right;
-	}
-
-	/*
-	@media only screen and (max-width: 600px){
-		padding: 0 5px;
-		&.results_bars_1{
-			float: none;
-			width: 100%;
-		}
-		&.results_bars_2{
-			float: none;
-			width: 100%;
-		}
-    }
-    */
-
-
 
 	.results_bars-title{
 		color: #828282;
@@ -547,6 +520,7 @@ p > a, p > b > a{
 		font-weight: 300;
 		font-size: 26px;
 		margin: 30px 0;
+		text-align: center;
 		@media only screen and (max-width: 600px){
 			font-size: 16px;
 			margin: 10px 0;

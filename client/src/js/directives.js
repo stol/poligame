@@ -200,7 +200,9 @@ moiElu.directive('resultsBars', function(Textes) {
         if (votes.total == 0 ){
             r_label+= ' indisponibles'
         }
-        $(element[0]).append('<div class="results_bars-title">'+r_label+'</div>');
+        if (votes.total > 0 ){
+            $(element[0]).append('<div class="results_bars-title">'+r_label+'</div>');
+        }
 
         votes.total > 0 && $(element[0]).append(
             '<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>',
