@@ -40,21 +40,18 @@
                     <li class="main-nav__item" ng-class="navClass('user')" ng-show="user.isLogged()"><a class="main-nav__link" href="/user/{{user.id}}">Vos votes</a></li>
                 </ul>
             </div>
-            <div class="header__content" ng-show="showBigHeader()">
-                <!--h2 class="header__punchline">Votez les lois comme vos députés&nbsp;!</h2-->
-                <!--
-                <h3 class="header__punchscription">Sur ce site, vous pouvez :
-                    <ul>
-                        <li>Vous informer en suivant l’activité de l’Assemblée Nationale</li>
-                        <li>Voter les textes de loi, en votre âme et conscience</li>
-                        <li>Faire entendre votre voix en partageant vos choix sur facebook ou twitter</li>
-                    </ul>
-                </h3>
-                -->
-                        
-            </div>
         </div>
         <div class="content">
+            <div class="content__intro" ng-show="showBigHeader()">
+                <!--h2 class="content__intro-slogan">Et si vous êtiez député ?</h2-->
+                <h3 class="content__intro-text">Sur ce site, votez les lois en même temps que vos députés, puis comparez les résutats&nbsp;!</h3>
+                <!--ul>
+                    <li>Suivez l’activité de l’Assemblée Nationale</li>
+                    <li></li>
+                    <li>Partagez vos choix sur face</li>
+                </ul-->                        
+                <img src="/img/header.jpg"/>
+            </div>
             <div ng-view ng-cloak>
                 {% if texte is defined %}
                     <h1>{{ texte.title }}</h1>

@@ -1,6 +1,4 @@
 # Require any additional compass plugins here.
-require 'rgbapng'
-
 disable_warnings = true
 
 # Set this to the root of your project when deployed:

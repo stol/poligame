@@ -19,10 +19,6 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
         return page === currentRoute ? 'active' : '';
     };
 
-    $scope.showBigHeader = function(){
-        //return true;
-        return ($location.path().substring(1) || 'home') == 'home';
-    }
 }]);
 
 
@@ -98,11 +94,16 @@ moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', f
 }]);
 
 
-moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window', function($scope, User, $routeParams, Social, $window) {
+moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window','$location', function($scope, User, $routeParams, Social, $window, $location) {
     $scope.user = User;
     $scope.routeParams = $routeParams;
 
     var IS_TOUCH = !!('ontouchstart' in $window) || !!('onmsgesturechange' in $window);
+
+    $scope.showBigHeader = function(){
+        return ($location.path().substring(1) || 'home') == 'home';
+    }
+
 
     Social.init("facebook", function(FB){
         FB.init({ 
