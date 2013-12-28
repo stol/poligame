@@ -64,6 +64,11 @@
                         <p>{{ texte.communique }}</p>
                     {% endif %}
                 {% endif %}
+                {% if textes is defined %}
+                    {% for texte in textes %}
+                    <p><a href="/textes/{{texte.id}}">{{ texte.title }}</a></p>
+                    {% endfor %}
+                {% endif %}
 
             </div>
         </div>
