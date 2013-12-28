@@ -59,21 +59,42 @@ h1, h2, h3, h4, label, ul, li{
 		color: #fff;
 		vertical-align: middle;
 		text-align: center;
-		&:after{
-			content: ' ';
-			display: inline-block;
-			background: url(../img/logo-80x80.png) no-repeat 0 0;
-			background-size: contain;
-			width: 40px;
-			height: 33px;
-			vertical-align: middle;
-			margin-left: 10px;
-			margin-top: -10px;
-			@include media-query(portable){
-				width: 30px;
-				height: 22px;
-				margin-top: -5px;
+		@include media-query(portable){
+			&:after{
+				content: ' ';
+				display: inline-block;
+				background: url(../img/logo-80x80.png) no-repeat 0 0;
+				background-size: contain;
+				width: 40px;
+				height: 33px;
+				vertical-align: middle;
+				margin-left: 10px;
+				margin-top: -10px;
+				@include media-query(portable){
+					width: 30px;
+					height: 22px;
+					margin-top: -5px;
+				}
 			}
+		}
+		@include media-query(desk){
+			&:before{
+				content: ' ';
+				display: inline-block;
+				background: url(../img/logo-80x80.png) no-repeat 0 0;
+				background-size: contain;
+				width: 40px;
+				height: 33px;
+				vertical-align: middle;
+				margin-right: 10px;
+				margin-top: -10px;
+				@include media-query(portable){
+					width: 30px;
+					height: 22px;
+					margin-top: -5px;
+				}
+			}
+			
 		}
 		a{
 			color: inherit;
@@ -100,7 +121,6 @@ h1, h2, h3, h4, label, ul, li{
 		font-weight: 700;
 		font-size: 80px;
 		line-height: normal;
-		//@include rgba-background-inline(rgba(0,0,0,0.6));
 		padding: 10px;
 
         @media only screen and (max-width: 1100px){
@@ -113,7 +133,6 @@ h1, h2, h3, h4, label, ul, li{
 		font-weight: 300;
 		font-size: 21px;
 		line-height: normal;
-		//@include rgba-background-inline(rgba(0,0,0,0.6));
 		margin: 0;
 		padding: 10px;
 		margin-top: 20px;

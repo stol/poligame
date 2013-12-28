@@ -4,7 +4,7 @@
                      														'one': '1 texte',
                      														'other': '{} textes'}"></ng-pluralize></h3>
 
-	<p class="section__message" ng-if="!(textes | filter:{mode:'present'}).length">De nouveaux textes seront bientôt discutés. En attendant, faites comme vos députés&nbsp;: profitez du temps libre ou au contraire, renseignez-vous un maximum pour tout connaître des futures lois discutées :-)</p>
+	<p class="section__message" ng-if="!(textes | filter:{mode:'present'}).length">De nouveaux textes seront bientôt discutés. En attendant, faites comme vos députés&nbsp;: profitez du temps libre ou au contraire, renseignez-vous un maximum pour tout connaître des prochains textes discutés :-)</p>
 	<a
 		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at'"
 		ng-include="'/views/partials/texte_small.html'"

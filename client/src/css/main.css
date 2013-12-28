@@ -3498,19 +3498,41 @@ h1, h2, h3, h4, label, ul, li {
   vertical-align: middle;
   text-align: center;
 }
-.header__logo:after {
-  content: ' ';
-  display: inline-block;
-  background: url(../img/logo-80x80.png) no-repeat 0 0;
-  background-size: contain;
-  width: 40px;
-  height: 33px;
-  vertical-align: middle;
-  margin-left: 10px;
-  margin-top: -10px;
-}
 @media only screen and (max-width: 1023px) {
   .header__logo:after {
+    content: ' ';
+    display: inline-block;
+    background: url(../img/logo-80x80.png) no-repeat 0 0;
+    background-size: contain;
+    width: 40px;
+    height: 33px;
+    vertical-align: middle;
+    margin-left: 10px;
+    margin-top: -10px;
+  }
+}
+@media only screen and (max-width: 1023px) and (max-width: 1023px) {
+  .header__logo:after {
+    width: 30px;
+    height: 22px;
+    margin-top: -5px;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .header__logo:before {
+    content: ' ';
+    display: inline-block;
+    background: url(../img/logo-80x80.png) no-repeat 0 0;
+    background-size: contain;
+    width: 40px;
+    height: 33px;
+    vertical-align: middle;
+    margin-right: 10px;
+    margin-top: -10px;
+  }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1023px) {
+  .header__logo:before {
     width: 30px;
     height: 22px;
     margin-top: -5px;
