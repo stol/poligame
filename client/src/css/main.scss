@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 // Imports
 @import "compass/css3/images";
 @import "compass/css3/box-shadow";
@@ -130,10 +132,36 @@ h1, h2, h3, h4, label, ul, li{
 	}
 }
 
-.content{
+@include module('content') {
 	position: relative;
 
+	#{&}__intro{
+	  position: relative;
+	}
+
+	#{&}__intro-slogan{
+	  margin: 0;
+	  font-family: 'Lato', sans-serif;
+	  font-weight: 700;
+	  font-size: 80px;
+	  line-height: normal;
+	  padding: 10px;
+	  font-size: 24px;
+	  text-align: center;
+	  color: #0A3F5A;
+	}
+
+	#{&}__intro-text{
+	  font-size: 20px;
+	  text-align: center;
+	  padding: 10px;
+	  background-color: #2A5F7A;
+	  color: #fff;
+	}
+
 }
+
+
 
 @include module('main-nav') {
 
@@ -341,6 +369,8 @@ p > a, p > b > a{
 
     #{&}__status{
     	text-transform: uppercase;
+		font-weight: 700;
+
     	&.is-1{
     		color: #666;
     	}
