@@ -76,8 +76,22 @@ if ('production' == app.get('env')) {
         database : process.env.DB_NAME
     });
 }
+// Dev with prod assets
+else if ('fakeprod' == app.get('env')) {
+    console.log("------------\nENV => DEVELOPMENT\n");
+    app.set('views', __dirname + '/../client/build/views');
+    app.use(express.errorHandler());
+    app.use(require('stylus').middleware(__dirname + '../client/build'));
+    app.use(express.static(path.join(__dirname, '../client/build')));
+    db = mysql.createConnection({
+        host     : 'localhost',
+        user     : 'root',
+        password : '',
+        database : 'poligame'
+    });
+}
 // Development 
-else {
+else{
     console.log("------------\nENV => DEVELOPMENT\n");
     app.set('views', __dirname + '/../client/src/views');
     app.use(express.errorHandler());
