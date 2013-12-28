@@ -3463,6 +3463,7 @@ p {
 h1, h2, h3, h4, label, ul, li {
   margin: 0;
   padding: 0;
+  font-weight: normal;
 }
 
 .wrapper {
@@ -3704,8 +3705,26 @@ p > a, p > b > a {
   color: #1b7bab;
 }
 
+.section__message, .section__title, .texte-header, .texte .texte__body {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+@media only screen and (min-width: 481px) and (max-width: 1023px) {
+  .section__message, .section__title, .texte-header, .texte .texte__body {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+@media only screen and (min-width: 1024px) {
+  .section__message, .section__title, .texte-header, .texte .texte__body {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 .section {
-  padding: 10px 0 10px 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .section + .section {
   -moz-box-shadow: inset 0px 5px 10px -10px black;
@@ -3714,12 +3733,14 @@ p > a, p > b > a {
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
   .section {
-    padding: 20px 0 20px 0;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
 }
 @media only screen and (min-width: 1024px) {
   .section {
-    padding: 30px 0 30px 0;
+    padding-top: 30px;
+    padding-bottom: 30px;
   }
 }
 .section--future {
@@ -3729,8 +3750,14 @@ p > a, p > b > a {
   background-color: #ebebeb;
 }
 .section__message {
-  padding-left: 10px;
-  padding-right: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+@media only screen and (min-width: 481px) {
+  .section__message {
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
 }
 
 .section__title {
@@ -3739,8 +3766,6 @@ p > a, p > b > a {
   color: #333333;
   font-size: 24px;
   line-height: 26px;
-  padding-left: 10px;
-  padding-right: 10px;
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
   .section__title {
@@ -3755,31 +3780,15 @@ p > a, p > b > a {
   }
 }
 
-.texte-header__title {
-  color: #0a3f5a;
-  font-family: 'Lato', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: normal;
-}
-@media only screen and (min-width: 481px) and (max-width: 1023px) {
-  .texte-header__title {
-    font-size: 18px;
-  }
-}
-@media only screen and (min-width: 1024px) {
-  .texte-header__title {
-    font-size: 24px;
-  }
-}
-
 .texte-header {
-  padding-left: 10px;
-  padding-right: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
   display: block;
   cursor: pointer;
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: normal;
 }
 .texte-header + .texte-header {
   border-top: 1px solid #e6e6e6;
@@ -3799,20 +3808,25 @@ p > a, p > b > a {
   .texte-header {
     padding-top: 20px;
     padding-bottom: 20px;
+    font-size: 18px;
   }
 }
 @media only screen and (min-width: 1024px) {
   .texte-header {
     padding-top: 30px;
     padding-bottom: 35px;
+    font-size: 24px;
   }
 }
 .texte-header__title {
+  color: #0a3f5a;
   display: inline;
+  font-size: inherit;
 }
 .texte-header__status {
   text-transform: uppercase;
   font-weight: 700;
+  font-size: inherit;
 }
 .texte-header__status.is-1 {
   color: #666;
@@ -3916,9 +3930,6 @@ p > a, p > b > a {
 	}
 }
 */
-.texte .texte__body {
-  padding: 0 10px;
-}
 .texte .sstitre {
   font-family: 'Lato', sans-serif;
   font-size: 16px;

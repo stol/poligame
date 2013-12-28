@@ -16,6 +16,7 @@ p{
 h1, h2, h3, h4, label, ul, li{
 	margin: 0;
 	padding: 0;
+	font-weight: normal;
 }
 
 // utils
@@ -279,17 +280,32 @@ a{
 p > a, p > b > a{
 	color: #1b7bab;
 }
+%insidepadding{
+	padding-left: 10px;
+	padding-right: 10px;
+	@include media-query(lap){
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	@include media-query(desk){
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+}
 @include module('section') {
-	padding: 10px 0 10px 0;
 	& + &{
 		@include box-shadow(inset 0px 5px 10px -10px #000);
 	}
 
+	padding-top: 10px;
+	padding-bottom: 10px;
 	@include media-query(lap){
-		padding: 20px 0 20px 0;
+		padding-top: 20px;
+		padding-bottom: 20px;
 	}
 	@include media-query(desk){
-		padding: 30px 0 30px 0;
+		padding-top: 30px;
+		padding-bottom: 30px;
 	}
 
 	#{&}--future{
@@ -304,8 +320,13 @@ p > a, p > b > a{
 	}
 
 	#{&}__message{
-		padding-left: 10px;
-		padding-right: 10px;
+		@extend %insidepadding;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		@include media-query(lap-and-up){
+			padding-top: 15px;
+			padding-bottom: 15px;
+		}
 	}
 }
 
@@ -318,8 +339,7 @@ p > a, p > b > a{
 	color: #333333; // #828282;
 	font-size: 24px;
 	line-height: 26px;
-	padding-left: 10px;
-	padding-right: 10px;
+	@extend %insidepadding;
 
 	@include media-query(lap){
 		font-size: 26px;
@@ -331,33 +351,21 @@ p > a, p > b > a{
 	}
 }
 
-%title-texte{
-	color: #0a3f5a;
+@include module('texte-header') {
+	& + &{
+		border-top: 1px solid #e6e6e6;
+	}
+	@extend %insidepadding;
+
+	padding-top: 10px;
+	padding-bottom: 10px;
+	display: block;
+	cursor: pointer;
 	font-family: 'Lato', sans-serif;
 	font-weight: 400;
 	font-size: 16px;
 	line-height: normal;
 
-	@include media-query(lap){
-		font-size: 18px;
-	}
-	@include media-query(desk){
-		font-size: 24px;
-	}
-
-}
-
-@include module('texte-header') {
-	& + &{
-		border-top: 1px solid #e6e6e6;
-	}
-
-	padding-left: 10px;
-	padding-right: 10px;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	display: block;
-	cursor: pointer;
 	&:hover{
 		text-decoration: none;
 	}
@@ -372,20 +380,24 @@ p > a, p > b > a{
 	@include media-query(lap){
 		padding-top: 20px;
 		padding-bottom: 20px;
+		font-size: 18px;
 	}
 	@include media-query(desk){
 		padding-top: 30px;
 		padding-bottom: 35px;
+		font-size: 24px;
 	}
 
 	#{&}__title{
-		@extend %title-texte;
+		color: #0a3f5a;
 		display: inline;
+		font-size: inherit;
 	}
 
     #{&}__status{
     	text-transform: uppercase;
 		font-weight: 700;
+		font-size: inherit;
 
     	&.is-1{
     		color: #666;
@@ -493,7 +505,7 @@ p > a, p > b > a{
 .texte{
 
 	.texte__body{
-		padding: 0 10px;
+		@extend %insidepadding;
 	}
 
     .sstitre{
