@@ -29,7 +29,7 @@
 		
 	</div>
 	<div ng-if="texte.mode == 'present'">
-		<div ng-switch on="texte.isVoted()" class="pull-left">
+		<div ng-switch on="texte.isVoted()">
 			<div ng-switch-when="true">
 				<button class="btn" disabled>Vous avez déjà voté !</button>
 			</div>

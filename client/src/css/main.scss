@@ -368,12 +368,15 @@ p > a, p > b > a{
 
 	&:hover{
 		text-decoration: none;
+		cursor: default;
 	}
 
 	@include media-query(portable){
-		cursor: pointer;
-		&:hover{
-			background-color: #dadada;
+		.section &{
+			cursor: pointer;
+			&:hover{
+				background-color: #dadada;
+			}
 		}
 	}
 
