@@ -17,11 +17,12 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         // Vider le précédent
         clean: {
-            build: ['client/build']
+            reset: ['client/build'],
+            clean: ['client/build/css', 'client/build/js', 'client/build/vendor']
         },
         // Copie des fichiers de devs vers le build
         copy: {
-            build: {
+            reset: {
                 files: [{
                     expand: true,
                     dot: true,
@@ -50,8 +51,9 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['clean', 'copy',
+    grunt.registerTask('default', ['clean:reset', 'copy',
                                    'useminPrepare',
                                    'concat', 'uglify', 'cssmin',
-                                   'usemin']);
+                                   'usemin',
+                                   'clean:clean']);
 };
