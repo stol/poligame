@@ -12,7 +12,7 @@ var moment = require('moment')
 function textes(req, res){
   	if (!req.xhr){
 		res.render('index.twig', {
-			title: 'Moi, président'
+			title: 'Vous, président'
 			,og_url: req.protocol + "://" + req.get('host') + req.url
 		});
 		return;
@@ -41,7 +41,7 @@ function show(req, res){
 function articles(req, res){
   	if (!req.xhr){
 		res.render('index.twig', {
-			title: 'Moi, président'
+			title: 'Vous, président'
 			,og_url: req.protocol + "://" + req.get('host') + req.url
 		});
 		return;
