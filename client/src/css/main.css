@@ -3795,7 +3795,6 @@ p > a, p > b > a {
 }
 .texte-header:hover {
   text-decoration: none;
-  cursor: default;
 }
 @media only screen and (max-width: 1023px) {
   .section .texte-header {
@@ -3864,6 +3863,10 @@ p > a, p > b > a {
 }
 .remaining-time:first-letter {
   text-transform: uppercase;
+}
+.texte-header__buttons {
+  text-align: center;
+  margin: 20px 0 10px;
 }
 
 /*

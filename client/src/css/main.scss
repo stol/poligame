@@ -368,7 +368,6 @@ p > a, p > b > a{
 
 	&:hover{
 		text-decoration: none;
-		cursor: default;
 	}
 
 	@include media-query(portable){
@@ -436,6 +435,10 @@ p > a, p > b > a{
 		text-transform: uppercase;
 	}
 
+	#{&}__buttons{
+		text-align: center;
+		margin: 20px 0 10px;
+	}
 }
 
 
