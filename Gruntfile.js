@@ -17,8 +17,8 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         // Vider le précédent
         clean: {
-            reset: ['client/build'],
-            clean: ['client/build/css', 'client/build/js', 'client/build/vendor']
+            prebuild: ['client/build'],
+            postbuild: ['.tmp','client/build/css', 'client/build/js', 'client/build/vendor']
         },
         // Copie des fichiers de devs vers le build
         copy: {
@@ -51,9 +51,9 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['clean:reset', 'copy',
+    grunt.registerTask('default', ['clean:prebuild', 'copy',
                                    'useminPrepare',
                                    'concat', 'uglify', 'cssmin',
                                    'usemin',
-                                   'clean:clean']);
+                                   'clean:postbuild']);
 };
