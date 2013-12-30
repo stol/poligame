@@ -126,12 +126,12 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
 
         console.log("publishVote() => sending action");
         /*
-        https://graph.facebook.com/me/moipresident:vote_against?
+        https://graph.facebook.com/me/vouspresident:vote_against?
         access_token=ACCESS_TOKEN&
         method=POST&
         bill=http%3A%2F%2Fsamples.ogp.me%2F720445391318491
         */
-        $window.FB.api('https://graph.facebook.com/me/moipresident:vote_for', 'post', {
+        $window.FB.api('https://graph.facebook.com/me/vouspresident:vote_for', 'post', {
             access_token: accessToken,
             bill: $location.absUrl()
         }, function(response) {
