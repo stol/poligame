@@ -39,6 +39,7 @@ h1, h2, h3, h4, label, ul, li{
 	position: relative;
 	height: 40px;
 	line-height: 40px;
+	background-color: #0A3F5A;
 	@include media-query(desk){
 		height: 60px;
 		line-height: 60px;
@@ -368,15 +369,12 @@ p > a, p > b > a{
 
 	&:hover{
 		text-decoration: none;
+		cursor: default;
 	}
 
-	@include media-query(portable){
-		.section &{
-			cursor: pointer;
-			&:hover{
-				background-color: #dadada;
-			}
-		}
+	.section &:hover{
+		cursor: pointer;
+		background-color: #dadada;
 	}
 
 	@include media-query(lap){
@@ -390,6 +388,58 @@ p > a, p > b > a{
 		font-size: 20px;
 	}
 
+	@include media-query(lap-and-up){
+		display: table;
+		width: 100%;
+	}
+
+	#{&}__body{
+		display: inline;
+		@include media-query(lap-and-up){
+			display: table-cell;
+		}
+		@include media-query(lap){
+			width: 80%;
+		}
+		@include media-query(desk){
+			width: 85%;
+		}
+	}
+
+    #{&}__time{
+		color: #828282;
+		display: inline;
+		font-family: 'Lato',sans-serif;
+		font-size: 16px;
+
+		@include media-query(palm){
+			&:after{
+				content: ' : ';
+			}
+		}
+
+		@include media-query(lap){
+			font-size: 18px;
+		}
+		@include media-query(desk){
+			font-size: 20px;
+		}
+
+
+		&:first-letter{
+			text-transform: uppercase;
+		}
+		@include media-query(lap-and-up){
+			display: table-cell;
+		}
+		@include media-query(lap){
+			width: 20%;
+		}
+		@include media-query(desk){
+			width: 15%;
+		}
+	}
+
 	#{&}__title{
 		color: #0a3f5a;
 		display: inline;
@@ -400,7 +450,11 @@ p > a, p > b > a{
     	text-transform: uppercase;
 		font-weight: 700;
 		font-size: inherit;
+		display: inline;
+		&:before{
+			content: ' : ';
 
+		}
     	&.is-1{
     		color: #666;
     	}
@@ -410,30 +464,8 @@ p > a, p > b > a{
     	&.is-3{
     		color: red;
     	}
-		@include media-query(portable){
-			display: inline;
-		}
     }
-    .remaining{
-		color: #828282;
-		display: inline;
-		font-family: 'Lato',sans-serif;
-		font-size: 16px;
 
-		@include media-query(lap){
-			font-size: 18px;
-		}
-		@include media-query(desk){
-			font-size: 24px;
-		}
-
-		&:after{
-			content: ' : ';
-		}
-	}
-	.remaining-time:first-letter{
-		text-transform: uppercase;
-	}
 
 	#{&}__buttons{
 		text-align: center;
