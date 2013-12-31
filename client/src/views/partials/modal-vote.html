@@ -1,17 +1,19 @@
 <div class="modal-header">
-	<h3>4 points importants</h3>
+	<h3 class="modale__title">4 points importants</h3>
 </div>
 <div class="modal-body">
-	<h4>1/ Les votes sont définitifs</h4>
-	<h4>2/ Les votes sont anonymes</h4>
-	<h4>3/ L'identification par facebook est obligatoire</h4>
-	<h4>4/ Vous pouvez choisir de partager votre vote avec vos amis, en cochant la case ci-dessous</h4>
-  	<label class="checkbox">
-    	<input type="checkbox" name="share" ng-model="socialShare" checked="checked">
-    	Partager vote vote sur facebook
-  	</label>
+    <ol>
+        <li>Les votes sont définitifs</li>
+        <li>Les votes sont anonymes</li>
+        <li>L'identification par facebook est obligatoire</li>
+        <li>Vous pouvez faire connaître votre vote en cochant "partager"</li>
+    </ol>
 </div>
 <div class="modal-footer">
 	<button ng-click="close(0)" class="btn btn-large btn-warning" >Annuler</button>
 	<button ng-click="close(1)" class="btn btn-large btn-primary" >Valider votre vote</button>
+    <label class="checkbox modal-share">
+        <input type="checkbox" name="share" ng-model="socialShare" checked="checked">
+        Partager le vote sur facebook
+    </label>
 </div>

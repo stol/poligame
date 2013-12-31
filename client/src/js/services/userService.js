@@ -14,15 +14,15 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
         votes: {}
     };
 
-    Social.register("facebook", function(){
+    Social.register("facebook", function(FB){
 
         var statusAlreadyChecked = false;
 
         $rootScope.$broadcast('fbLoaded');
 
         // Quoi faire si changement de statut
-        $window.FB.Event.subscribe('auth.statusChange', statusHandler);
-        $window.FB.getLoginStatus(loginStatusHandler);
+        FB.Event.subscribe('auth.statusChange', statusHandler);
+        FB.getLoginStatus(loginStatusHandler);
 
         function loginStatusHandler(response){
             statusAlreadyChecked || statusHandler(response);
@@ -31,7 +31,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
         // Le gestionnaire de changement de statut
         function statusHandler(response){
             statusAlreadyChecked = true;
-            console.log("auth.statusChange : ", response.status);
+            console.log("statusHandler START | auth.statusChange : ", response.status);
 
             // User connecté ET inscrit
             if (response.status === 'connected') {
@@ -81,7 +81,6 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
     // );
     function login(){
         user_is_logged_deferred = $q.defer();
-        
         // User déjà connecté ? On ne déclenche pas le popup de login
         if (status === "connected"){
             user_is_logged_deferred.resolve();
