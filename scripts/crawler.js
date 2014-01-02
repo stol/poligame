@@ -111,8 +111,7 @@ parse_lf_lois("http://www.legifrance.gouv.fr/affichLoiPreparation.do?legislature
 });
 
 /*
-parse_an_detail({url_an: "http://www.assemblee-nationale.fr/14/dossiers/vie_publique_transparence.asp"})
-.then(insert_or_update_texte)
+parse_agenda()
 .then(function(texte){
     console.log("DONE : ", texte);
     process.exit(0)
@@ -657,6 +656,9 @@ function parse_agenda(){
                 date_relative = moment(date_relative, "dddd DD MMMM");
                 if (moment().month()+1 == 12 && date_relative.month() == 0){
                     date_relative.year(moment().year()+1);
+                }
+                else if (moment().month()+1 == 1 && date_relative.month() == 11){
+                    date_relative.year(moment().year()-1);
                 }
                 dossiers[url] = dossiers[url] || [];
                 dossiers[url].push(date_relative);
