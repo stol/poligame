@@ -503,6 +503,12 @@ p > a, p > b > a{
 	#{&}__buttons{
 		text-align: center;
 		margin: 20px 0 10px;
+		.btn{
+			text-transform: uppercase;
+			font-weight: 700;
+		}
+		
+
 	}
 }
 

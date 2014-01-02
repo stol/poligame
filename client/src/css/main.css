@@ -3928,6 +3928,10 @@ p > a, p > b > a {
   text-align: center;
   margin: 20px 0 10px;
 }
+.texte-header__buttons .btn {
+  text-transform: uppercase;
+  font-weight: 700;
+}
 
 /*
 .remaining{
