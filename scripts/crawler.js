@@ -184,7 +184,7 @@ function parse_lf_lois(url, mode){
                 .then(parse_gouvernement)
                 .then(insert_or_update_texte)
                 .then(function(texte){
-                    console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total + " | ADDED " + texte.url_lf + " (dates TODO)");
+                    console.log("LF_LOIS" + mode + " " + (done+1) + "/" + total + " | CHECKED " + texte.url_lf + " (dates TODO)");
 
                     if (++done == total){
                         console.log("LF_LOIS"+mode+" DONE");
@@ -704,7 +704,7 @@ function parse_agenda(){
                     })
                     .then(insert_texte)
                     .then(function(texte){
-                        console.log("AGENDA " + (done+1)+"/"+total + " | ADDED " + url_an );
+                        console.log("AGENDA " + (done+1)+"/"+total + " | CHECKED " + url_an );
 
                         // La loi n'est pas dans la BDD ? On on la réintègre
                         if (++done == total){
