@@ -25,12 +25,57 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 /**
  * Gestion des popins
  */
-moiElu.controller('ReminderPopinCtrl', ['$scope', '$modalInstance', function($scope, $modalInstance) {
+moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
+    var do_share = 1;
+    $scope.step = 1;
+
     $scope.close = function(result){
         $modalInstance.close(result);
     };
 
-    $scope.socialShare = true;
+    $scope.truc = function(){
+        do_share *= -1;
+    }
+
+    $scope.next = function(){
+        $scope.step = 2;
+
+        // Starts the vote process
+        User.login().then(function(){
+            // Optimistic vote
+            User.infos.votes_nb++;
+
+            User.votes[TYPE_TEXTE][texte.id] = true;
+            // Sends the vote to the server
+            $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
+                user_id: User.infos.id,
+                do_share: do_share,
+                texte_id: texte.id,
+                user_vote: user_vote,
+                access_token: User.getAccessToken(),
+                csp: User.getLocalInfos().csp,
+                bord: User.getLocalInfos().bord,
+                gender: User.getLocalInfos().gender,
+                age: User.getLocalInfos().age
+            }})
+            // cancel vote if error
+            .success(function(data, status, headers, config) {
+                if (!data.success){
+                    console.log("VOTE texte 1 : Erreur !");
+                    delete User.votes[TYPE_TEXTE][texte.id];
+                    User.infos.votes_nb--;
+                }
+            })
+            .error(function(data, status, headers, config) {
+                console.log("VOTE texte 2 : Erreur !");
+                delete User.votes[texte.id];
+                User.infos.votes_nb--;
+            });
+
+
+        });
+    }
+
 }]);
 
 moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {

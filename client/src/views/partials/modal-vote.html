@@ -1,19 +1,36 @@
-<div class="modal-header">
-	<h3 class="modale__title">4 points importants</h3>
+<div ng-if="step == 1">
+
+    <div class="modal-header">
+    	<h3 class="modale__title">4 points importants</h3>
+    </div>
+    <div class="modal-body">
+        <ol>
+            <li>Les votes sont définitifs</li>
+            <li>Les votes sont anonymes</li>
+            <li>L'identification par facebook est obligatoire</li>
+            <li>Vous pouvez faire connaître votre vote en cochant "partager"</li>
+        </ol>
+    </div>
+    <div class="modal-footer">
+    	<button ng-click="close(0)" class="btn btn-large btn-warning" >Annuler</button>
+    	<button ng-click="next(1)" class="btn btn-large btn-primary" >Valider votre vote</button>
+        <label class="checkbox modal-share">
+            <input type="checkbox" ng-click="truc()" checked="checked">
+            Partager le vote sur facebook
+        </label>
+    </div>
 </div>
-<div class="modal-body">
-    <ol>
-        <li>Les votes sont définitifs</li>
-        <li>Les votes sont anonymes</li>
-        <li>L'identification par facebook est obligatoire</li>
-        <li>Vous pouvez faire connaître votre vote en cochant "partager"</li>
-    </ol>
-</div>
-<div class="modal-footer">
-	<button ng-click="close(0)" class="btn btn-large btn-warning" >Annuler</button>
-	<button ng-click="close(1)" class="btn btn-large btn-primary" >Valider votre vote</button>
-    <label class="checkbox modal-share">
-        <input type="checkbox" name="share" ng-model="socialShare" checked="checked">
-        Partager le vote sur facebook
-    </label>
+
+<div ng-if="step == 2">
+    <div class="modal-header">
+        <h3 class="modale__title">Vote enregistré</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            Revenez lorsque le texte ne sera plus en discussion à l'assemblée pour comparer les résultats.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="close(0)" class="btn btn-large btn-primary" >Fermer</button>
+    </div>
 </div>

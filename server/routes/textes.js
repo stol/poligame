@@ -68,7 +68,9 @@ function vote(req, res){
 			return q.all([set_user_vote(), set_anon_vote(), update_stats()])          // 3x inserts
 		})
 		.then(function(){
-			return publishVote(texte)
+            if (req.body.do_share == 1){
+                return publishVote(texte);
+            }
 		})
 	})
 	.then(function(){ // Success :)
@@ -82,6 +84,7 @@ function vote(req, res){
 	});
 
 	function publishVote(texte){
+        console.log("PUBLISHING VOTE");
 		var deferred = q.defer();
 
     	if      (choice == defines.VOTE_POUR){

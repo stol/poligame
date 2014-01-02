@@ -36,7 +36,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         });
 
 
-        
+        /*
         $http({
             method: 'GET',
             url: '/textes/'+$routeParams.texte_id+'/articles',
@@ -48,32 +48,32 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
 
             $scope.articles = articles;
         });
+        */
 
     }
 
     // Open the right popin depending the user status
     function openPopinAndVoteArticle(user_vote, texte, article){
-        info_needed() && openUserInfosPopin(user_vote, texte, article) || openReminderPopin(user_vote, texte, article);
+        info_needed() && openUserInfosPopin(user_vote, texte, article) || openB4VoteReminderPopin(user_vote, texte, article);
     }
 
     // Open the right popin depending the user status
     function openPopinAndVote(user_vote, texte) {
-        info_needed() && openUserInfosPopin(user_vote, texte) || openReminderPopin(user_vote, texte);
+        info_needed() && openUserInfosPopin(user_vote, texte) || openB4VoteReminderPopin(user_vote, texte);
     };
 
     // Opens the "Reminder about your infos" popin
-    function openReminderPopin(user_vote, texte, article){
+    function openB4VoteReminderPopin(user_vote, texte, article){
         $modal.open({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             templateUrl:  '/views/partials/modal-vote.html',
-            controller: 'ReminderPopinCtrl',
+            controller: 'b4VoteReminderCtrl',
             resolve: {
+                texte: function(){ return texte},
+                user_vote: function(){ return user_vote }
             }
-        }).result.then(function (result) {
-            result = !!result; // Casts result to boolean
-            result && doVote(user_vote, texte, article);
         });
     }
 
@@ -102,29 +102,23 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             controller: 'UserInfosPopinCtrl'
         }).result.then(function (result) {
             result = !!result; // Casts result to boolean
-            result && openReminderPopin(user_vote, texte, article);
+            result && openB4VoteReminderPopin(user_vote, texte, article);
         });
 
         return  true;
     }
 
     // Starts the vote process
-    function doVote(user_vote, texte, article){
+    function doVote(user_vote, texte){
         User.login().then(function(){
             // Optimistic vote
             User.infos.votes_nb++;
-            if (article){
-                User.votes[TYPE_ARTICLE][article.id] = true;
-            }
-            else {
-                User.votes[TYPE_TEXTE][texte.id] = true;
-            }
 
+            User.votes[TYPE_TEXTE][texte.id] = true;
             // Sends the vote to the server
             $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
                 user_id: User.infos.id,
                 texte_id: texte.id,
-                article_id: article && article.id,
                 user_vote: user_vote,
                 access_token: User.getAccessToken(),
                 csp: User.getLocalInfos().csp,
