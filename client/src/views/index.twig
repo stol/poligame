@@ -33,7 +33,7 @@
         <div class="header" ng-controller="NavigationCtrl">
             <div class="header__top">
                 <label class="main-nav__icon" for="main-nav__checkbox">☰</label><!--
-             --><h1 class="header__logo"><a href="/">Moi, citoyen</a></h1><!--
+             --><h1 class="header__logo"><a href="/">DEBATS</a></h1><!--
              --><div class="header__social-widget">
                     <div id="fb-header-like" class="fb-like" data-href="http://www.moi-president.info" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
                 </div><!--
@@ -41,9 +41,8 @@
                     <a href="https://twitter.com/vous_president" class="twitter-follow-button" data-lang="fr" data-size="medium" data-show-screen-name="false" data-show-count="false">Suivre</a>
                 </div><!--
              --><ul class="main-nav">
-                    <li class="main-nav__item" ng-class="navClass('home')"><a class="main-nav__link" href="/">Home</a></li>
-                    <li class="main-nav__item" ng-class="navClass('a-propos')"><a class="main-nav__link" href="/a-propos">À propos</a></li>
                     <li class="main-nav__item" ng-class="navClass('user')" ng-show="user.isLogged()"><a class="main-nav__link" href="/user/{{user.id}}">Vos votes</a></li>
+                    <li class="main-nav__item" ng-class="navClass('a-propos')"><a class="main-nav__link" href="/a-propos">À propos</a></li>
                 </ul>
             </div>
         </div>

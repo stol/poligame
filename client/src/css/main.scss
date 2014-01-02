@@ -144,7 +144,9 @@ h1, h2, h3, h4, label, ul, ol, li{
 		display: inline-block;
 		vertical-align: middle;
 		margin-left: 25px;
-		@include media-query(portable){
+    	height: 20px;
+    	line-height: 20px;
+    	@include media-query(portable){
 			display: none;
 		}
 	}
@@ -155,6 +157,10 @@ h1, h2, h3, h4, label, ul, ol, li{
 
 	#{&}__intro{
 	  position: relative;
+
+	  img{
+	  	width: 100%;
+	  }
 	}
 
 	#{&}__intro-slogan{
@@ -189,20 +195,53 @@ h1, h2, h3, h4, label, ul, ol, li{
 	#{&}__icon{
 		display: none;
 	}
+
+	#{&}__link{
+		text-transform: uppercase;
+    	font-family: 'Lato',sans-serif;
+		font-weight: 700;
+		color: #fff;
+		line-height: 20px;
+		font-size: 12px;
+		background-color: #2A5F7A;
+		&.is-active, &:hover{
+			background: #DADADA;
+			color: #333;
+			border-color: #0A3F5A;
+			text-decoration: none;
+		}
+	}
+
+
 	@include media-query(desk){
-		display: none;
+    	display: block;
+    	float: right;
+    	margin-right: 20px;
+    	#{&}__item{
+			display: inline-block;
+			vertical-align: middle;
+	    	& + & {
+	    		margin-left: 10px;
+	    	}
+		}
+
+		#{&}__link{
+			display: block;
+			border: 1px solid #fff;
+			border-radius : 4px;
+			vertical-align: middle;
+			padding: 5px 10px;
+		}
 	}
 	@include media-query(portable){
 		position: fixed;
 		width: 180px;
 		height: 100%;
-		background-color: #fff;
-		border-right: 1px solid #666;
+		background-color: #0A3F5A;
+		border: 1px solid #fff;
+		border-left: 0;
 		z-index: 1;
 		left: -180px;
-		font-family: 'Lato', sans-serif;
-		font-weight: bold;
-		color: #333;
 		
 		//@include transition(left 150ms ease-in-out);
 
@@ -249,16 +288,10 @@ h1, h2, h3, h4, label, ul, ol, li{
 		}
 		
 		#{&}__link{
-			border-top: 1px solid #fff;
-			border-bottom: 1px solid #dadada;
+			border-bottom: 1px solid #fff;
 			display: block;
 			padding: 10px;
-			@include background(linear-gradient(#fff, #f1f1f1));
-			&.is-active, &:hover{
-				background-color: #dadada;
-				@include box-shadow(inset 0 0 10px 0 #dadada);
-				text-decoration: none;
-			}
+			//@include background(linear-gradient(#2A5F7A, #0A3F5A));
 		}
 	}
 
