@@ -1,8 +1,10 @@
-var moment = require('moment')
-	, _ = require('underscore')
-	, q = require('q')
-    , User = require('../models/user.js')
-  	, Texte = require('../models/texte.js')
+var   moment  = require('moment')
+	, _       = require('underscore')
+	,  q      = require('q')
+    , User    = require('../models/user.js')
+  	, Texte   = require('../models/texte.js')
+    , defines = require('../defines.js')
+    , request = require('request')
 ;
 
 
@@ -54,36 +56,66 @@ function articles(req, res){
 
 function vote(req, res){
 
-
 	var choice = parseInt(req.body.user_vote,10);
-	if (choice !== 0 && choice !== 1 && choice !== 2){
-		res.json(401, {
-			success: false,
-			message: "Wrong choice"
-		});
-		return;
-	}
 
-
-	q.all([User.getFacebookInfos(req.body.access_token), User.get(req.body.user_id)]) // x2 login
+	Texte.fetch(req, res, {ids: [req.body.texte_id]}).then(function(texte){
+		return q.all([
+			User.getFacebookInfos(req.body.access_token),
+			User.get(req.body.user_id)
+		])
+		 // x2 login
 		.then(function(){
 			return q.all([set_user_vote(), set_anon_vote(), update_stats()])          // 3x inserts
 		})
-		.then(function(){ // Success :)
-			res.json({success: true});
+		.then(function(){
+			return publishVote(texte)
 		})
-		.catch(function(msg){ // Error :(
-			res.json(401, {
-				success: false,
-				message: msg
-			});
+	})
+	.then(function(){ // Success :)
+		res.json({success: true});
+	})
+	.catch(function(msg){ // Error :(
+		res.json(401, {
+			success: false,
+			message: msg
 		});
+	});
+
+	function publishVote(texte){
+		var deferred = q.defer();
+
+    	if      (choice == defines.VOTE_POUR){
+    		var story = 'vote_for';
+    	}
+    	else if (choice == defines.VOTE_CONTRE){
+    		var story = 'vote_against';
+    	}	
+    	else if (choice == defines.VOTE_CONTRE){
+    		var story = 'refrain_from_voting';
+    	} 
+    	else{
+    		deferred.reject("Vote incompris");
+    	}
+
+    	var url = 'https://graph.facebook.com/me/mecitizen:'+story;
+		request.post({
+  			url:     url,
+  			form:    { 
+				access_token: req.body.access_token,
+        		bill: 'http://www.moi-citoyen.com/textes/'+texte.id
+  			}
+		}, function(error, response, body){
+			deferred.resolve();
+		});
+
+    	return deferred.promise;
+	}
 
 	function set_user_vote(){
 		var deferred = q.defer();
 
 		// Set texte voted for user
-		db.query("INSERT INTO votes SET ?", {
+		db.query("INSERT IGNORE INTO votes SET ?", {
 			user_id: req.body.user_id,
 			obj_id: req.body.article_id || req.params.texte_id,
 			obj_type: req.body.article_id ? TYPE_ARTICLE : TYPE_TEXTE
@@ -111,7 +143,7 @@ function vote(req, res){
 			age: req.body.age
 		}
 
-		db.query("INSERT INTO votes_anon SET ?", data, function(err, rows, fields) {
+		db.query("INSERT IGNORE INTO votes_anon SET ?", data, function(err, rows, fields) {
 	  		if (err) {
 	  			deferred.reject(err.message);
 	  			return;

@@ -113,6 +113,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
 
     // Envoie le vote à facebook
     function publishVote(user_vote, texte){
+        console.log("publishVote() => sending action ot server");
 
         var deferred = $q.defer();
 
@@ -122,20 +123,13 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
             return deferred.promise;
         }
 
-
-        console.log("publishVote() => sending action");
-        /*
-        https://graph.facebook.com/me/mecitizen:vote_against?
-        access_token=ACCESS_TOKEN&
-        method=POST&
-        bill=http%3A%2F%2Fsamples.ogp.me%2F720445391318491
-        */
-        $window.FB.api('https://graph.facebook.com/me/mecitizen:vote_for', 'post', {
-            access_token: accessToken,
-            bill: $location.absUrl()
-        }, function(response) {
-            console.log(response);
+        $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
+        .success(function(data, status, headers, config) {
+            console.log(data);
             deferred.resolve(response);
+        })
+        .error(function(data, status, headers, config) {
+            deferred.reject(data);
         });
 
         return deferred.promise;
