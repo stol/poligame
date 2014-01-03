@@ -69,6 +69,9 @@
                     <p><a href="/textes/{{texte.id}}">{{ texte.title }}</a></p>
                     {% endfor %}
                 {% endif %}
+                {% if apropos is defined %}
+                    {% include '../views/pages/a-propos.html' %}
+                {% endif %}
 
             </div>
         </div>

@@ -17,6 +17,7 @@ exports.index = function(req, res){
 exports.about = function(req, res){
     res.render('index.twig', {
         title: 'Moi, citoyen',
+        apropos: true,
         og_url: req.protocol + "://" + req.get('host') + req.url
     });
 };

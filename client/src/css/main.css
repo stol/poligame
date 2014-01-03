@@ -3638,7 +3638,7 @@ h1, h2, h3, h4, label, ul, ol, li {
   font-size: 12px;
   background-color: #2A5F7A;
 }
-.main-nav__link.is-active, .main-nav__link:hover {
+.is-active .main-nav__link, .main-nav__link:hover {
   background: #DADADA;
   color: #333;
   border-color: #0A3F5A;
@@ -3647,8 +3647,9 @@ h1, h2, h3, h4, label, ul, ol, li {
 @media only screen and (min-width: 1024px) {
   .main-nav {
     display: block;
-    float: right;
-    margin-right: 20px;
+    position: absolute;
+    top: 0;
+    right: 20px;
   }
   .main-nav__item {
     display: inline-block;
@@ -3728,18 +3729,18 @@ p > a, p > b > a {
   color: #1b7bab;
 }
 
-.section__message, .section__title, .texte-header, .texte .texte__body {
+.section__message, .section--text, .section__title, .texte-header, .texte .texte__body {
   padding-left: 10px;
   padding-right: 10px;
 }
 @media only screen and (min-width: 481px) and (max-width: 1023px) {
-  .section__message, .section__title, .texte-header, .texte .texte__body {
+  .section__message, .section--text, .section__title, .texte-header, .texte .texte__body {
     padding-left: 15px;
     padding-right: 15px;
   }
 }
 @media only screen and (min-width: 1024px) {
-  .section__message, .section__title, .texte-header, .texte .texte__body {
+  .section__message, .section--text, .section__title, .texte-header, .texte .texte__body {
     padding-left: 20px;
     padding-right: 20px;
   }
@@ -3781,6 +3782,25 @@ p > a, p > b > a {
     padding-top: 15px;
     padding-bottom: 15px;
   }
+}
+.section--text .section--text__title {
+  padding-left: 0;
+  padding-right: 0;
+}
+.section--text ul {
+  padding-left: 30px;
+}
+.section--text p {
+  color: #333;
+}
+.section--text p + p, .section--text p + ul {
+  margin-top: 5px;
+}
+.section--text p + .section--text__title, .section--text ul + .section--text__title {
+  margin-top: 20px;
+}
+.section--text .section--text__title + p {
+  margin-top: 15px;
 }
 
 .section__title {

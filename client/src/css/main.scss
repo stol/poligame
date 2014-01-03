@@ -204,7 +204,7 @@ h1, h2, h3, h4, label, ul, ol, li{
 		line-height: 20px;
 		font-size: 12px;
 		background-color: #2A5F7A;
-		&.is-active, &:hover{
+		.is-active &, &:hover{
 			background: #DADADA;
 			color: #333;
 			border-color: #0A3F5A;
@@ -215,8 +215,9 @@ h1, h2, h3, h4, label, ul, ol, li{
 
 	@include media-query(desk){
     	display: block;
-    	float: right;
-    	margin-right: 20px;
+    	position: absolute;
+    	top: 0;
+    	right: 20px;
     	#{&}__item{
 			display: inline-block;
 			vertical-align: middle;
@@ -360,6 +361,31 @@ p > a, p > b > a{
 		@include media-query(lap-and-up){
 			padding-top: 15px;
 			padding-bottom: 15px;
+		}
+	}
+
+	#{&}--text{
+		@extend %insidepadding;
+		#{&}__title{
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		ul{
+			padding-left: 30px;
+		}
+		p{
+			color: #333;
+			& + p, & + ul{
+				margin-top: 5px;
+			}
+		}
+		p + #{&}__title, ul + #{&}__title{
+			margin-top: 20px;
+		}
+		#{&}__title + p{
+			margin-top: 15px;
+
 		}
 	}
 }
