@@ -21,13 +21,13 @@
 	<div class="texte-header__body">
 		<h4 class="texte-header__title">{{texte.title}}<span class="texte-header__status is-{{texte.status}}" ng-if="texte.status>0 && texte.mode=='past'">{{texte.status_txt}}</span></h4>
 
-		<div ng-if="texte.mode == 'past'" class="results_bars-container">
+		<div ng-if="texte.mode == 'past'" class="results-bars-container">
 			<div class="grid">
 				<div class="grid__item desk-one-half">
-					<div results-bars="assemblee" class="results_bars results_bars_2"></div>
+					<div results-bars="assemblee" class="results-bars"></div>
 				</div><!--
 			 --><div class="grid__item desk-one-half">
-					<div results-bars="net" class="results_bars results_bars_1"></div>
+					<div results-bars="net" class="results-bars"></div>
 				</div>
 			</div>
 		</div>

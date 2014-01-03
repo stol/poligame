@@ -7,7 +7,7 @@
 	<p ng-if="!(textes | filter:{mode:routeParams.mode}).length">Il n'y a pas de texte.</p>
 	<div
 		ng-repeat="texte in textes | filter:{mode:routeParams.mode} | orderBy:order"
-		ng-include="'/views/partials/texte_small.html'"
+		ng-include="'/views/partials/texte-header.html'"
 		class="texte_small clearfix"
 	></div>
 

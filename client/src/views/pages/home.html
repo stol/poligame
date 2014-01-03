@@ -7,7 +7,7 @@
 	<p class="section__message" ng-if="!(textes | filter:{mode:'present'}).length">De nouveaux textes seront bientôt discutés. En attendant, faites comme vos députés&nbsp;: profitez du temps libre ou au contraire, renseignez-vous un maximum pour tout connaître des prochains textes discutés :-)</p>
 	<div
 		ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at'"
-		ng-include="'/views/partials/texte_small.html'"
+		ng-include="'/views/partials/texte-header.html'"
 	></div>
 
 </div>
@@ -21,7 +21,7 @@
 
 	<div 
 		ng-repeat="texte in textes | filter:{mode:'future'} | orderBy:'starts_at'"
-		ng-include="'/views/partials/texte_small.html'"
+		ng-include="'/views/partials/texte-header.html'"
 	></div>
 </div>
 
@@ -33,7 +33,7 @@
 	<p class="section__message" ng-if="!(textes | filter:{mode:'past'}).length">Il n'y a pas encore de textes déjà discutés.</p>
 	<div 
 		ng-repeat="texte in textes | filter:{mode:'past'} | orderBy:'-ends_at' | limitTo:NbParPage"
-		ng-include="'/views/partials/texte_small.html'"
+		ng-include="'/views/partials/texte-header.html'"
 	></div>
 	<!--p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><a class="read-more__link" href="/textes?mode=past">Voir la liste complète</a></p-->
     <p class="read-more" ng-if="(textes | filter:{mode:'past'}).length > 3"><span class="read-more__link" ng-click="showMoreItems()">Afficher les textes plus anciens</a></p>

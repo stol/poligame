@@ -194,21 +194,33 @@ moiElu.directive('resultsBars', function(Textes) {
             var pour_perc = Math.round(votes.pour.perc * 100 / votes.abstention.perc * 10)/10;
             var contre_perc = Math.round(votes.contre.perc * 100 / votes.abstention.perc * 10)/10;
             var abstention_perc = 100;
-
+        }
+        else{
+            var pour_perc = 0;
+            var contre_perc = 0;
+            var abstention_perc = 0;
         }
 
+        /*
         if (votes.total == 0 ){
             r_label+= ' indisponibles'
         }
-        if (votes.total > 0 ){
-            $(element[0]).append('<div class="results_bars-title">'+r_label+'</div>');
+        */
+        if (attrs.resultsBars == "net"){
+            r_label+= ' ('+votes.total+')'
         }
+        $(element[0]).append('<div class="results-bars__title">'+r_label+'</div>');
 
-        votes.total > 0 && $(element[0]).append(
-            '<div class="rb-row rb-row_pour"><span class="rb-row-label">Pour</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+pour_perc+'%"></span></span><span class="rb-row-perc">'+votes.pour.perc+'%</span></div>',
-            '<div class="rb-row rb-row_contre"><span class="rb-row-label">Contre</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+contre_perc+'%"></span></span><span class="rb-row-perc">'+votes.contre.perc+'%</span></div>',
-            '<div class="rb-row rb-row_abstention"><span class="rb-row-label">Abstention</span><span class="rb-row-bar"><span class="rb-row-bar_inside" style="width:'+abstention_perc+'%"></span></span><span class="rb-row-perc">'+votes.abstention.perc+'%</span></div>'
-        );
+        if (attrs.resultsBars == "assemblee" && votes.total == 0){
+            $(element[0]).append('<div class="results-bars__stitle">Données non disponibles</div>');
+        }
+        else{
+            $(element[0]).append(
+                '<div class="results-bars__row results-bars__row-pour"><span class="results-bars__row-label">Pour</span><span class="results-bars__row-bar"><span class="results-bars__inside" style="width:'+pour_perc+'%"></span></span><span class="results-bars__row-perc">'+votes.pour.perc+'%</span></div>',
+                '<div class="results-bars__row results-bars__row-contre"><span class="results-bars__row-label">Contre</span><span class="results-bars__row-bar"><span class="results-bars__inside" style="width:'+contre_perc+'%"></span></span><span class="results-bars__row-perc">'+votes.contre.perc+'%</span></div>',
+                '<div class="results-bars__row results-bars__row-abstention"><span class="results-bars__row-label">Abstention</span><span class="results-bars__row-bar"><span class="results-bars__inside" style="width:'+abstention_perc+'%"></span></span><span class="results-bars__row-perc">'+votes.abstention.perc+'%</span></div>'
+            );
+        }
 
     };
 });

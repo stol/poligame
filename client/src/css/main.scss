@@ -619,6 +619,12 @@ p > a, p > b > a{
 		margin: 25px -10px 20px -10px;
 		padding: 10px 10px 0 10px;
 		line-height: inherit;
+		@include media-query(lap){
+	    	font-size: 18px;
+		}
+		@include media-query(desk){
+	    	font-size: 24px;
+		}
     }
     .texte-status{
     	&.is-1{
@@ -670,32 +676,30 @@ p > a, p > b > a{
 	}
 }
 
-.results_bars-container{
-}
-.results_bars{
+@include module('results-bars') {
 	min-width: 230px;
 
-	.results_bars-title{
+	#{&}__title{
 		color: #828282;
 		font-family: 'Roboto Condensed', sans-serif;
 		font-weight: 300;
-		font-size: 26px;
-		margin: 30px 0;
+		font-size: 16px;
+		margin: 10px 0;
 		text-align: center;
-		@media only screen and (max-width: 600px){
-			font-size: 16px;
-			margin: 10px 0;
+		@include media-query(desk){
+			font-size: 26px;
+			margin: 30px 0;
 		}
 	}
 
-	.rb-row{
+	#{&}__row{
 		display: table;
 		width: 100%;
 		table-layout: fixed;
 	}
 
 
-	.rb-row-label{
+	#{&}__row-label{
 		font-family: 'Roboto Condensed', sans-serif;
 		font-weight: 700;
 		color: #828282;
@@ -708,12 +712,12 @@ p > a, p > b > a{
 	        overflow: hidden;
 	        text-overflow: ellipsis;
 	}
-	.rb-row-bar{
+	#{&}__row-bar{
 		display: table-cell;
 		height: 20px;
 		vertical-align: middle;
 	}
-	.rb-row-perc{
+	#{&}__row-perc{
 		display: table-cell;
 		font-family: 'Roboto Condensed', sans-serif;
 		font-weight: 300;
@@ -722,39 +726,39 @@ p > a, p > b > a{
 		width: 58px;
 		text-indent: 8px;
 	}
-	.rb-row_pour{
-		.rb-row-bar_inside{
+	#{&}__row-pour{
+		.results-bars__inside{
 			display: block;
 			background-color: #1c98be;
 			height: 20px;
 		}
-		.rb-row-perc{
+		.results-bars__perc{
 			color: #1c98be;
 		}
 	}
 
-	.rb-row_contre{
-		.rb-row-bar_inside{
+	#{&}__row-contre{
+		.results-bars__inside{
 			background-color: #d3492b;
 			display: block;
 			height: 20px;
 		}
-		.rb-row-perc{
+		.results-bars__perc{
 			color: #d3492b;
 		}
 	}
-	.rb-row_abstention{
-		.rb-row-bar_inside{
+	#{&}__row-abstention{
+		.results-bars__inside{
 			background-color: #be8814;
 			display: block;
 			height: 20px;
 		}
-		.rb-row-perc{
+		.results-bars__perc{
 			color: #be8814;
 		}
 	}
 
-	.rb-row_contre, .rb-row_abstention{
+	#{&}__row-contre, #{&}__row-abstention{
 		margin-top: 10px;
 	}
 }

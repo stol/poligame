@@ -100,19 +100,19 @@ function alter_texte(texte){
 		pour: {
 			label: "pour",
         	nb: texte.pour,
-        	perc: Math.round(100 * texte.pour / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.pour / total * 10)/10 : 0,
         	color: '#006DCC'
     	},
     	contre: {
 			label: "contre",
         	nb: texte.contre,
-        	perc: Math.round(100 * texte.contre / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.contre / total * 10)/10 : 0,
         	color: '#DA4F49'
     	},
 		abstention: {
 			label: "abstention",
         	nb: texte.abstention,
-        	perc: Math.round(100 * texte.abstention / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.abstention / total * 10)/10 : 0,
         	color: '#FAA732'
     	}
 	};
@@ -124,19 +124,19 @@ function alter_texte(texte){
 		pour: {
 			label: "pour",
         	nb: texte.pour_assemblee,
-        	perc: Math.round(100 * texte.pour_assemblee / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.pour_assemblee / total * 10)/10 : 0,
         	color: '#006DCC'
     	},
     	contre: {
 			label: "contre",
         	nb: texte.contre_assemblee,
-        	perc: Math.round(100 * texte.contre_assemblee / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.contre_assemblee / total * 10)/10 : 0,
         	color: '#DA4F49'
     	},
 		abstention: {
 			label: "abstention",
         	nb: texte.abstention_assemblee,
-        	perc: Math.round(100 * texte.abstention_assemblee / total * 10)/10,
+        	perc: total ? Math.round(100 * texte.abstention_assemblee / total * 10)/10 : 0,
         	color: '#FAA732'
     	}
 	};
