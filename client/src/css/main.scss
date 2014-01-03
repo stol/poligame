@@ -691,6 +691,17 @@ p > a, p > b > a{
 			margin: 30px 0;
 		}
 	}
+	#{&}__stitle{
+		color: darken(#828282,5%);
+		font-size: 14px;
+		text-align: center;
+		margin-bottom: 10px;
+		@include media-query(desk){
+			font-size: 18px;
+		}
+
+	}
+
 
 	#{&}__row{
 		display: table;
