@@ -28,6 +28,10 @@ exports.fetch = function fetch(req, res, params){
 
 	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
 	if (ids){
+
+		for(var i=0; i<ids.length; i++){
+			ids[i] = isNaN(+ids[i]) ? 0 : parseInt(ids[i],10);
+		}
 		sql+= ' AND seances.bill_id IN('+ids.join(',')+')';
 	}
 
