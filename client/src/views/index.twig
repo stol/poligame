@@ -72,11 +72,14 @@
                 {% if apropos is defined %}
                     {% include '../views/pages/a-propos.html' %}
                 {% endif %}
+                {% if notfound is defined %}
+                    <h1>page non trouvée</h1>
+                {% endif %}
 
             </div>
         </div>
         <div class="footer">
-            <p>&copy; Moi, citoyen 2014</p>
+            <p>Moi, citoyen 2014</p>
         </div>
     </div>
 

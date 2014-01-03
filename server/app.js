@@ -58,10 +58,7 @@ app.use(function (req, res, next) {
 
 app.use(app.router);
 
-app.use(function(req, res, next) {
-    
-    next();
-});
+
 
 // Production
 if ('production' == app.get('env')) {
@@ -104,6 +101,21 @@ else{
         database : 'poligame'
     });
 }
+
+app.use(function(req, res) {
+    //res.send('404: Page not Found', 404);
+    res.status(404);
+    res.render('index.twig', {
+        title: 'Moi, citoyen',
+        notfound: true,
+        og_url: req.protocol + "://" + req.get('host') + req.url
+    });
+});
+
+// Handle 500
+app.use(function(error, req, res, next) {
+    res.send('500: Internal Server Error', 500);
+});
 
 app.get ('/', routes.index);
 app.get ('/textes', textes.textes);
