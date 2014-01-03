@@ -109,6 +109,16 @@ h1, h2, h3, h4, label, ul, ol, li{
 		}
 	}
 
+	#{&}__logo-stit{
+	    display: inline-block;
+	    font-size: 12px;
+	    vertical-align: top;
+	    margin-left: 10px;
+        @media only screen and (max-width: 500px){
+			display: none;
+        }
+	}
+
 	#{&}__content{
 		clear: both;
 	}
