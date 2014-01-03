@@ -142,6 +142,7 @@ moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', f
 moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window','$location', function($scope, User, $routeParams, Social, $window, $location) {
     $scope.user = User;
     $scope.routeParams = $routeParams;
+    $scope.location = $location
 
     var IS_TOUCH = !!('ontouchstart' in $window) || !!('onmsgesturechange' in $window);
 

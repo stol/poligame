@@ -1,8 +1,9 @@
-moiElu.controller('TextesController', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies',
-function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, Cookies) {
+moiElu.controller('TextesController', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies', 'Social',
+function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, Cookies, Social) {
     
 
     $scope.moreInfo = false;
+    $scope.NbParPage = 15;
 
     var Article = {
         isVoted: function(){
@@ -34,7 +35,6 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         Textes.get({id: $routeParams.texte_id}).then(function(texte){
             $scope.texte = texte;
         });
-
 
         /*
         $http({
@@ -108,52 +108,10 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         return  true;
     }
 
-    // Starts the vote process
-    function doVote(user_vote, texte){
-        User.login().then(function(){
-            // Optimistic vote
-            User.infos.votes_nb++;
-
-            User.votes[TYPE_TEXTE][texte.id] = true;
-            // Sends the vote to the server
-            $http({method: 'POST', url: '/textes/'+texte.id+'/vote', data: {
-                user_id: User.infos.id,
-                texte_id: texte.id,
-                user_vote: user_vote,
-                access_token: User.getAccessToken(),
-                csp: User.getLocalInfos().csp,
-                bord: User.getLocalInfos().bord,
-                gender: User.getLocalInfos().gender,
-                age: User.getLocalInfos().age
-            }})
-            // cancel vote if error
-            .success(function(data, status, headers, config) {
-                if (!data.success){
-                    console.log("VOTE texte 1 : Erreur !");
-                    delete User.votes[TYPE_TEXTE][texte.id];
-                    User.infos.votes_nb--;
-                }
-            })
-            .error(function(data, status, headers, config) {
-                console.log("VOTE texte 2 : Erreur !");
-                delete User.votes[texte.id];
-                User.infos.votes_nb--;
-            });
-
-
-        });
-    }
-
-    $scope.NbParPage = 10;
 
     $scope.showMoreItems = function(){
-        $scope.NbParPage+=10;
+        $scope.NbParPage+=15;
     };
-
-    function doToggle(){
-
-
-    }
 
     // API exposition
     $scope.openPopinAndVote = openPopinAndVote;

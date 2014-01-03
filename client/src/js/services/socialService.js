@@ -25,6 +25,8 @@ moiElu.service('Social', ['$window', function($window) {
             }(document, 'script', 'facebook-jssdk'));
 
             $window.fbAsyncInit = function() {
+                ready_libs["facebook"] = $window.FB;
+
                 if (!actions["facebook"].length){
                     return;
                 }
@@ -33,7 +35,6 @@ moiElu.service('Social', ['$window', function($window) {
                     actions["facebook"][i]($window.FB);
                 }
 
-                ready_libs["facebook"] = $window.FB;
             };
         }
 
@@ -46,6 +47,7 @@ moiElu.service('Social', ['$window', function($window) {
             }(document, "script", "twitter-wjs"));
 
             $window.twttr.ready(function(twttr){
+                ready_libs["twitter"] = twttr;
 
                 if (!actions["twitter"].length){
                     return;
@@ -55,7 +57,6 @@ moiElu.service('Social', ['$window', function($window) {
                     actions["twitter"][i] && actions["twitter"][i](twttr);
                 }
 
-                ready_libs["facebook"] = twttr;
 
             });
 

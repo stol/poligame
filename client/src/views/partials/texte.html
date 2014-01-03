@@ -26,8 +26,19 @@
 
 <div class="texte" ng-init="init_texte()">
 	<div class="texte__body">
+		<h3 class="sstitre">Partager ce lien</h3>
+		
+		<div id="fb-header-like" class="fb-like" data-width="450" data-colorscheme="dark" data-layout="button_count" data-action="recommend" data-show-faces="true" data-send="false"></div>
+		
+		<div class="fake-twitter-share-button">
+  			<a href="https://twitter.com/intent/tweet?text=À suivre : {{texte.title}} sur &url={{location.absUrl()}}&via=moicitoyen_site" target="_blank" alt ="Tweet this post">
+    			<i class="btn-icon"></i>
+    			<span class="btn-text">Twitter</span>
+  			</a>
+		</div>
 
-		<h3 class="sstitre" ng-if="!texte.communique_title">Communiqué indisponible</p>
+
+		<h3 class="sstitre" ng-if="!texte.communique_title">Communiqué indisponible</h3>
 		<h3 class="sstitre" ng-if="texte.communique_title" ng-bind-html='texte.communique_title'></h3>
 
 		<p ng-if="texte.communique" truncate-words data-words="120" data-text-ellipsis="Lire la suite" data-ellipsis="..."></p>

@@ -4100,11 +4100,6 @@ p > a, p > b > a {
     margin: 30px 0;
   }
 }
-.results-bars__stitle {
-  text-align: center;
-  color: dimgray;
-  font-size: 14px;
-}
 .results-bars__row {
   display: table;
   width: 100%;
@@ -4232,4 +4227,58 @@ p > a, p > b > a {
 .modal .modal-share {
   display: block;
   margin-top: 15px;
+}
+
+.fake-twitter-share-button {
+  display: inline-block;
+}
+.fake-twitter-share-button a {
+  position: relative;
+  display: inline-block;
+  height: 20px;
+  border: 1px solid #ccc;
+  font-size: 11px;
+  color: #333;
+  text-decoration: none;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  font-weight: bold;
+  background-color: #F8F8F8;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(white), to(#dedede));
+  background-image: -moz-linear-gradient(top, white, #dedede);
+  background-image: -o-linear-gradient(top, white, #dedede);
+  background-image: -ms-linear-gradient(top, white, #dedede);
+  border: #CCC solid 1px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  cursor: pointer;
+  overflow: hidden;
+}
+.fake-twitter-share-button a:hover {
+  border-color: #BBB;
+  background-color: #F8F8F8;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#f8f8f8), to(#d9d9d9));
+  background-image: -moz-linear-gradient(top, #f8f8f8, #d9d9d9);
+  background-image: -o-linear-gradient(top, #f8f8f8, #d9d9d9);
+  background-image: -ms-linear-gradient(top, #f8f8f8, #d9d9d9);
+  background-image: linear-gradient(to bottom, #f8f8f8, #d9d9d9);
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.fake-twitter-share-button a .btn-icon {
+  position: absolute;
+  width: 16px;
+  height: 13px;
+  top: 50%;
+  left: 3px;
+  margin-top: -6px;
+  background: url("https://twitter.com/favicons/favicon.ico") 1px center no-repeat;
+}
+.fake-twitter-share-button a .btn-text {
+  display: inline-block;
+  padding: 0 5px 0 25px;
+  line-height: 20px;
+  height: 20px;
+  vertical-align: middle;
 }
