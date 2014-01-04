@@ -1,15 +1,25 @@
 <div ng-if="step == 1">
 
     <div class="modal-header">
-    	<h3 class="modale__title">4 points importants</h3>
+    	<h3 class="modale__title">A lire attentivement</h3>
     </div>
     <div class="modal-body">
-        <ol>
-            <li>Les votes sont définitifs</li>
-            <li>Les votes sont anonymes</li>
-            <li>L'identification par facebook est obligatoire. Elle sert uniquement à éviter les votes multiples.</li>
-            <li>Vous pouvez faire connaître votre vote en cochant "partager"</li>
-        </ol>
+        <p>
+            L'identification par facebook est obligatoire, mais <b>aucune information n'est envoyée ou publiée sur facebook.</b>
+        </p>
+
+        <p>
+            facebook est utilisé <b>uniquement pour empêcher les votes multiples</b>, un peu comme une carte d'électeur.<br/>
+
+            Aucune donnée personnelle n'est enregistrée sur le site, et surtout pas le vote.<br/>
+
+            <b>Les votes sont définitifs, et anonymes</b>, un peu à la façon d'une urne contenant les bulletins de votes, sans aucun moyen de les relier au votant.
+        </p>
+
+        <p>
+            <b>Si toutefois vous le choisissez</b>, vous pouvez partager votre vote sur facebook en cochant la case "partager le vote".<br/>
+            Une mention pourra apparaître sur les pages de vos contact, sous la forme "XXX a voté pour/contre/abstention le projet/proposition de loi YYYY"
+        </p>
     </div>
     <div class="modal-footer">
     	<button ng-click="close(0)" class="btn btn-large btn-warning" >Annuler</button>
