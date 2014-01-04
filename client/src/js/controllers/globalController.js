@@ -61,13 +61,13 @@ moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$h
             // cancel vote if error
             .success(function(data, status, headers, config) {
                 if (!data.success){
-                    console.log("VOTE texte 1 : Erreur !");
+                    //console.log("VOTE texte 1 : Erreur !");
                     delete User.votes[TYPE_TEXTE][texte.id];
                     User.infos.votes_nb--;
                 }
             })
             .error(function(data, status, headers, config) {
-                console.log("VOTE texte 2 : Erreur !");
+                //console.log("VOTE texte 2 : Erreur !");
                 delete User.votes[texte.id];
                 User.infos.votes_nb--;
             });

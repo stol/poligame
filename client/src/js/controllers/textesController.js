@@ -78,6 +78,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     }
 
     function info_needed(){
+        return false;
         // On veut un user loggé
         if (!User.isLogged() || !User.infos.votes_nb || User.infos.votes_nb % 2 != 0){
             return false;

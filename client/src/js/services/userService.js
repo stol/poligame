@@ -31,7 +31,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
         // Le gestionnaire de changement de statut
         function statusHandler(response){
             statusAlreadyChecked = true;
-            console.log("statusHandler START | auth.statusChange : ", response.status);
+            //console.log("statusHandler START | auth.statusChange : ", response.status);
 
             // User connecté ET inscrit
             if (response.status === 'connected') {
@@ -104,16 +104,16 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
 
         $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
         .success(function(data, status, headers, config) {
-            console.log("USER UPDATE is great success ! ");
+            //console.log("USER UPDATE is great success ! ");
         })
         .error(function(data, status, headers, config) {
-            console.log("Erreur update user !");
+            //console.log("Erreur update user !");
         });
     }
 
     // Envoie le vote à facebook
     function publishVote(user_vote, texte){
-        console.log("publishVote() => sending action ot server");
+        //console.log("publishVote() => sending action ot server");
 
         var deferred = $q.defer();
 
@@ -125,7 +125,7 @@ moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$loc
 
         $http({method: 'POST', url: '/users/'+user.infos.id, data: user.infos})
         .success(function(data, status, headers, config) {
-            console.log(data);
+            //console.log(data);
             deferred.resolve(response);
         })
         .error(function(data, status, headers, config) {
