@@ -543,9 +543,13 @@ p > a, p > b > a{
 			text-transform: uppercase;
 			font-weight: 700;
 		}
-		
-
 	}
+
+	#{&}__votes-nb{
+		text-align: center;
+		color: #333;
+	}
+
 }
 
 
