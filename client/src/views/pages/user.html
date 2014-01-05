@@ -2,7 +2,6 @@
 
     <h3 class="section__title">Listes des textes que vous avez votés ({{textes.length}})</h3>
 
-    <p class="section__message" ng-if="!(textes | filter:{mode:'present'}).length">De nouveaux textes seront bientôt discutés. En attendant, faites comme vos députés&nbsp;: profitez du temps libre ou au contraire, renseignez-vous un maximum pour tout connaître des prochains textes discutés :-)</p>
     <div
         ng-repeat="texte in textes | filter:{mode:'present'} | orderBy:'ends_at'"
         ng-include="'/views/partials/texte-header.html'"
