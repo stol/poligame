@@ -76,35 +76,26 @@ moiElu.directive('results', function(Textes) {
 moiElu.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
-        var timeoutId; // timeoutId, so that we can cancel the time updates
  
-        // used to update the UI
-        function updateTime() {
-            var texte = $scope.texte.$$v || $scope.texte;
-            var hop = moment.unix(texte[attrs.humanTime]).fromNow();
-            var txt = dateFilter(new Date(), "YYYY");
-            element.text(hop);
-        }
-
-        // schedule update in one second
-        function updateLater() {
-            // save the timeoutId for canceling
-            timeoutId = $timeout(function() {
-                updateTime(); // update DOM
-                updateLater(); // schedule another update
-            }, 1000);
-        }
- 
-        // listen on DOM destroy (removal) event, and cancel the next UI update
-        // to prevent updating time after the DOM element was removed.
-        element.on('$destroy', function() {
-            $timeout.cancel(timeoutId);
-        });
- 
-        //updateLater(); // kick off the UI update process.
-        updateTime();
+        var texte = $scope.texte.$$v || $scope.texte;
+        var hop = moment.unix(texte[attrs.humanTime]).fromNow();
+        var txt = dateFilter(new Date(), "YYYY");
+        element.text(hop);
     }
 }]);
+
+moiElu.directive('duration', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
+    // return the directive link function. (compile function not needed)
+    return function($scope, element, attrs) {
+        var texte = $scope.texte.$$v || $scope.texte;
+        var starts_at = moment.unix(texte.starts_at);
+        var ends_at = moment.unix(texte.ends_at);
+        var duration = ends_at.from(starts_at);
+        element.text("pendant "+duration);
+    }
+}]);
+
+
 
 moiElu.directive('fbComments', ['$window', function($window) {  
     return {

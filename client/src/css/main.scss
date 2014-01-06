@@ -550,6 +550,15 @@ p > a, p > b > a{
 		color: #828282;
 	}
 
+	.remaining-length{
+		font-size: 12px;
+		display: block;
+		@include media-query(palm){
+			display: none;
+		}
+
+	}
+
 }
 
 

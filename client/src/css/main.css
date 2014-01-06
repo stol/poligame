@@ -3967,6 +3967,15 @@ p > a, p > b > a {
   text-align: center;
   color: #828282;
 }
+.remaining-length {
+  font-size: 12px;
+  display: block;
+}
+@media only screen and (max-width: 480px) {
+  .remaining-length {
+    display: none;
+  }
+}
 
 /*
 .remaining{
