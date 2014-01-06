@@ -51,8 +51,8 @@
 				ng-click="openPopinAndVote(0,texte)"
 			>Abstention</button>
 		</div>
-		<p class="texte-header__votes-nb"><ng-pluralize count="texte.votes.total" when="{'0': 'Aucun vote pour l\'instant',
-                     														'one': 'Un seul vote pour l\'instant',
-                     														'other': 'Déjà {} votes !'}"></ng-pluralize></p>
+		<p class="texte-header__votes-nb" ng-if="texte.votes.total < 100">Moins de 100 votes</p>
+		<p class="texte-header__votes-nb" ng-if="texte.votes.total >= 100 && texte.votes.total < 1000">Plus de 100 votes</p>
+		<p class="texte-header__votes-nb" ng-if="texte.votes.total >= 1000">Plus de 1000 votes</p>
 	</div>
 </div>
