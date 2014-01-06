@@ -122,10 +122,6 @@ c.queue([{
                 pattern: 'facilit',
                 lois : []
             },
-            élargir:{
-                pattern: 'élargi',
-                lois : []
-            },
             protéger:{
                 pattern: 'protég',
                 lois : []
@@ -234,10 +230,6 @@ c.queue([{
                 pattern: 'inform',
                 lois : []
             },
-            sécuriser:{
-                pattern: 'sécuri',
-                lois : []
-            },
             étendre:{
                 pattern: 'étend',
                 lois : []
@@ -274,16 +266,8 @@ c.queue([{
                 pattern: 'simplif',
                 lois : []
             },
-            reconnaître:{
-                pattern: 'reconnai',
-                lois : []
-            },
             ratifier:{
                 pattern: 'ratifi',
-                lois : []
-            },
-            majorer:{
-                pattern: 'major',
                 lois : []
             },
             modifier:{
@@ -322,10 +306,6 @@ c.queue([{
                 pattern: 'attribu',
                 lois : []
             },
-            péréniser:{
-                pattern: 'péréni',
-                lois : []
-            },
             renommer:{
                 pattern: 'renomm',
                 lois : []
@@ -354,10 +334,6 @@ c.queue([{
                 pattern: 'punir',
                 lois : []
             },
-            démocratiser:{
-                pattern: 'démocratis',
-                lois : []
-            },
             identifier:{
                 pattern: 'identifi',
                 lois : []
@@ -378,16 +354,8 @@ c.queue([{
                 pattern: 'assoupli',
                 lois : []
             },
-            intégrer:{
-                pattern: 'intégr',
-                lois : []
-            },
             pérénniser:{
                 pattern: 'pérénnis',
-                lois : []
-            },
-            affirmer:{
-                pattern: '(ré)?affirm',
                 lois : []
             },
             affirmer:{
@@ -463,13 +431,20 @@ c.queue([{
                 }
             });
             if (!found){
-                theme.divers.lois.push(txt_ori);
+                console.log(txt);
+                //themes.divers.lois.push(txt_ori);
             }
 
         });
-        console.log(themes);
 
-        "DONE";
+        $.each(themes, function(word, theme){
+            theme.word = word;
+        });
+        themes = _.sortBy(themes, function(theme){ return -theme.lois.length });
+
+        $.each(themes, function(word, theme){
+            console.log(theme.lois.length + " visent à "+theme.word);
+        });
 
         process.exit(0)
     }
