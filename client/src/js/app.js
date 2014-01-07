@@ -1,10 +1,10 @@
-// moiElu module with moiElu.controllers dependency containing all controllers
+// poligame module with poligame.controllers dependency containing all controllers
 // and ngMockE2E dependency containing $httpBackend service
 
-var moiElu = angular.module('moiElu', ['ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule', 'ngAnimate']);
+var poligame = angular.module('poligame', ['ui.bootstrap', 'ngResource', 'ngRoute', 'ngSanitize', 'cookiesModule', 'ngAnimate']);
 
   // routes declaration
-moiElu.config(['$routeProvider', function($routeProvider) {
+poligame.config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         templateUrl: '/views/pages/home.html',
         controller: 'TextesController'
@@ -30,7 +30,7 @@ moiElu.config(['$routeProvider', function($routeProvider) {
     $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
-moiElu.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
+poligame.config(['$locationProvider', '$httpProvider', function($locationProvider, $httpProvider) {
     $locationProvider.html5Mode(true);
     $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -53,7 +53,7 @@ TYPE_ARTICLE = 2;
 TYPE_AMENDEMENT = 3;
 
 // application initialization
-moiElu.run(['$rootScope', '$location', function($rootScope, $location){
+poligame.run(['$rootScope', '$location', function($rootScope, $location){
     $rootScope.location = $location;
 }]);
 

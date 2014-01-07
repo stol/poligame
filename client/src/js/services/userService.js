@@ -1,4 +1,4 @@
-moiElu.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$location', 'Social', function($window, $http, $q, $rootScope, Cookies, $location, Social) {
+poligame.service('User', ['$window', '$http', '$q', '$rootScope', 'Cookies', '$location', 'Social', function($window, $http, $q, $rootScope, Cookies, $location, Social) {
 
     var accessToken = null,
         is_logged = false,

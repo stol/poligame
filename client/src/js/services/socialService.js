@@ -1,4 +1,4 @@
-moiElu.service('Social', ['$window', function($window) {
+poligame.service('Social', ['$window', function($window) {
 
     "use strict";
 

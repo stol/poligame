@@ -1,4 +1,4 @@
-moiElu.controller('TextesController', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies', 'Social',
+poligame.controller('TextesController', ['$scope', '$location','$http', '$modal', '$routeParams', '$window', 'Textes', 'User', 'Cookies', 'Social',
 function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, Cookies, Social) {
     
 
