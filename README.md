@@ -66,7 +66,6 @@
     
 ```
 $ node scripts/crawler.js # Maj du des infos en BDD
-$ grunt                   # Création et déploiement des assets
 $ node server/app.js      # Démarrage du serveur
 ```
 ### PROD
