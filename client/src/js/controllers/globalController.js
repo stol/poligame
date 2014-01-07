@@ -82,8 +82,8 @@ poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '
  * Gestion de la popin de soumission de lien
  */
 
-poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
-
+poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
+    $scope.step = 1;
 
 }]);
 

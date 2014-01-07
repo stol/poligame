@@ -110,7 +110,6 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     }
 
     function openLinkProposalPopin(texte){
-        console.log("openLinkProposalPopin => ", texte)
         $modal.open({
             backdrop: true,
             keyboard: true,
