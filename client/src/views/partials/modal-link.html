@@ -1,0 +1,38 @@
+<div ng-if="step == 1">
+
+    <div class="modal-header">
+    	<h3 class="modale__title">Ajouter un lien à la liste des textes explicatifs</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            Si vous disposez d'un lien vers un article permettant de mieux comprendre la loi, ajoutez-le ici
+        </p>
+
+        <p>
+            Attention, ne seront acceptés que des liens d'articles de journaux (quodidiens, hebdomadaires, mensuels...)<br/>
+            Les liens vers les blogs ou autres pages personnelles ne sont (pour l'instant) pas acceptés.
+        </p>
+
+        <p>
+            <input type="text" placeholder="http://"/><br/>
+            <input type="text" placeholder="Lien (http://...)"/>
+        </p>
+    </div>
+    <div class="modal-footer">
+    	<button ng-click="next(1)" class="btn btn-large btn-primary" >Soumettre la proposition</button>
+    </div>
+</div>
+
+<div ng-if="step == 2">
+    <div class="modal-header">
+        <h3 class="modale__title">Proposition enregistrée</h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            Merci de votre proposition. Les liens seront validés dès que possible.
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button ng-click="close(0)" class="btn btn-large btn-primary" >Fermer</button>
+    </div>
+</div>

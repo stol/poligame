@@ -109,6 +109,25 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
         return  true;
     }
 
+    function openLinkProposalPopin(texte){
+        console.log("openLinkProposalPopin => ", texte)
+        $modal.open({
+            backdrop: true,
+            keyboard: true,
+            backdropClick: true,
+            templateUrl:  '/views/partials/modal-link.html',
+            controller: 'VoteProposalCtrl',
+            resolve: {
+                texte: function(){ return texte}
+            }
+        }).result.then(function (result) {
+            result = !!result; // Casts result to boolean
+            console.log("RESULT !");
+        });
+
+        return true;
+    }
+
 
     $scope.showMoreItems = function(){
         $scope.NbParPage+=15;
@@ -117,4 +136,5 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
     // API exposition
     $scope.openPopinAndVote = openPopinAndVote;
     $scope.openPopinAndVoteArticle = openPopinAndVoteArticle;
+    $scope.openLinkProposalPopin = openLinkProposalPopin;
 }]); 

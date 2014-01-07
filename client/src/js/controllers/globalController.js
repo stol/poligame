@@ -23,7 +23,7 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 
 
 /**
- * Gestion des popins
+ * Gestion de la popin de vote
  */
 moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
     var do_share = 1;
@@ -78,6 +78,18 @@ moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$h
 
 }]);
 
+/**
+ * Gestion de la popin de soumission de lien
+ */
+
+moiElu.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
+
+
+}]);
+
+/**
+ * Gestion de la popin de demande d'infos perso au visiteur
+ */
 moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {
 	$scope.infos = User.getLocalInfos();
 

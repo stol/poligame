@@ -78,6 +78,10 @@
 		<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Dossier de l'assemblée nationale</a></b></p>
 		<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Dossier du sénat</a></b></p>
 
+		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
+				ng-click="openLinkProposalPopin(texte)"
+		>Proposer un texte explicatif</button>
+
 		<h3 class="sstitre">Vos commentaires</h3>
 	</div>
 
