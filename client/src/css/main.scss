@@ -522,7 +522,7 @@ p > a, p > b > a{
 		display: inline;
 		&:before{
 			content: ' : ';
-
+			color: #0a3f5a;
 		}
     	&.is-1{
     		color: #666;

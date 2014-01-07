@@ -3945,6 +3945,7 @@ p > a, p > b > a {
 }
 .texte-header__status:before {
   content: ' : ';
+  color: #0a3f5a;
 }
 .texte-header__status.is-1 {
   color: #666;
