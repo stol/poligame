@@ -1,5 +1,5 @@
 //factory style, more involved but more sophisticated
-moiElu.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
+poligame.factory('Textes', ['$http', '$q', 'User', function($http, $q, User) {
     var textes = {};
     var cache = {};
     

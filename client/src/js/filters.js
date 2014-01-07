@@ -1,4 +1,4 @@
-moiElu.filter('nl2br', function () {
+poligame.filter('nl2br', function () {
     return function(text) {
         if (!text)
             return '';
@@ -7,7 +7,7 @@ moiElu.filter('nl2br', function () {
 });
 
 
-moiElu.filter('truncateChars', function () {
+poligame.filter('truncateChars', function () {
     return function(text, size, omission, ignore) {
         var options = {
             size    : size || 240,
@@ -39,7 +39,7 @@ moiElu.filter('truncateChars', function () {
     }
 });
 
-moiElu.filter('truncateWords', function () {
+poligame.filter('truncateWords', function () {
     return function(text, size, omission, toggleText) {
 
         var options = {

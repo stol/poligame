@@ -13,7 +13,7 @@ String.prototype.hashCode = function(){
 /**
  * Gestion de la navigation
  */
-moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $location) {
+poligame.controller('NavigationCtrl', ['$scope', '$location', function($scope, $location) {
     $scope.navClass = function (page) {
         var currentRoute = $location.path().substring(1) || 'home';
         return page === currentRoute ? 'is-active' : '';
@@ -25,7 +25,7 @@ moiElu.controller('NavigationCtrl', ['$scope', '$location', function($scope, $lo
 /**
  * Gestion des popins
  */
-moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
+poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', 'user_vote', function($scope, $modalInstance, User, $http, texte, user_vote) {
     var do_share = 1;
     $scope.step = 1;
 
@@ -78,7 +78,7 @@ moiElu.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '$h
 
 }]);
 
-moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {
+poligame.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Cookies', function($scope, $modalInstance, User, Cookies) {
 	$scope.infos = User.getLocalInfos();
 
 	$scope.csps = [
@@ -127,7 +127,7 @@ moiElu.controller('UserInfosPopinCtrl', ['$scope', '$modalInstance', 'User', 'Co
 }]);
 
 
-moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
+poligame.controller('UsersController', ['$scope', 'Textes', 'User', '$location', function($scope, Textes, User, $location) {
     User.onConnected(function(e){
         var ids = _.keys(User.votes[TYPE_TEXTE]);
         Textes.get({ids: ids}).then(function(textes){
@@ -139,7 +139,7 @@ moiElu.controller('UsersController', ['$scope', 'Textes', 'User', '$location', f
 }]);
 
 
-moiElu.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window','$location', function($scope, User, $routeParams, Social, $window, $location) {
+poligame.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window','$location', function($scope, User, $routeParams, Social, $window, $location) {
     $scope.user = User;
     $scope.routeParams = $routeParams;
     $scope.location = $location

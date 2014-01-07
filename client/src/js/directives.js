@@ -1,5 +1,5 @@
 
-moiElu.directive('results', function(Textes) {
+poligame.directive('results', function(Textes) {
     return function($scope, element, attrs, Textes) {
 
         var texte = $scope.texte.then && $scope.texte.$$v || $scope.texte;
@@ -73,7 +73,7 @@ moiElu.directive('results', function(Textes) {
     };
 });
 
-moiElu.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
+poligame.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
  
@@ -84,7 +84,7 @@ moiElu.directive('humanTime', ['$timeout', 'dateFilter', function($timeout, date
     }
 }]);
 
-moiElu.directive('duration', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
+poligame.directive('duration', ['$timeout', 'dateFilter', function($timeout, dateFilter) {
     // return the directive link function. (compile function not needed)
     return function($scope, element, attrs) {
         var texte = $scope.texte.$$v || $scope.texte;
@@ -97,7 +97,7 @@ moiElu.directive('duration', ['$timeout', 'dateFilter', function($timeout, dateF
 
 
 
-moiElu.directive('fbComments', ['$window', function($window) {  
+poligame.directive('fbComments', ['$window', function($window) {  
     return {
         restrict: 'E',      
         link: function(scope, element, attr) {
@@ -111,7 +111,7 @@ moiElu.directive('fbComments', ['$window', function($window) {
 }]);
 
 
-moiElu.directive('resultsBars', function(Textes) {
+poligame.directive('resultsBars', function(Textes) {
     
     function getMaxOfArray(numArray) {
         return Math.max.apply(null, numArray);
@@ -215,7 +215,7 @@ moiElu.directive('resultsBars', function(Textes) {
 
     };
 });
-moiElu.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {  
+poligame.directive('truncateWords', ['nl2brFilter', function(nl2brFilter) {  
     return {
         restrict: 'A',
         //template: '<div>{{truncated}}{{more}}</div>',
