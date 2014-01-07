@@ -84,7 +84,7 @@ poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '
 
 poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
     $scope.step = 1;
-
+    $scope.links = [''];
 }]);
 
 /**

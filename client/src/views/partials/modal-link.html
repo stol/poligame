@@ -13,10 +13,17 @@
             Les liens vers les blogs ou autres pages personnelles ne sont (pour l'instant) pas acceptés.
         </p>
 
+        <script type="text/ng-template" id="zippy.html">
         <p>
-            <input type="text" placeholder="Intitué du lien"/><br/>
-            <input type="text" placeholder="Lien (http://...)"/>
+            <input type="text" placeholder="http://" value="{{url}}"/><button ng-if="id > 0">X</button><br/>
         </p>
+        </script>
+        <div
+            ng-repeat="(id, url) in links"
+            ng-include="'zippy.html'"
+        ></div>
+        <button ng-if="id > 0">+</button>
+
     </div>
     <div class="modal-footer">
     	<button ng-click="next(1)" class="btn btn-large btn-primary" >Soumettre la proposition</button>
