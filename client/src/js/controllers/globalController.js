@@ -85,7 +85,7 @@ poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '
 poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
     $scope.step = 1;
     $scope.links = ['http://www.lemonde.fr'];
-    $scope.linkPattern = /^https?:\/\/.+/;
+    $scope.linkPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/  ;
     $scope.addLink = function(linkUrl){
         // Url valide ?
         if (!linkUrl || !linkUrl.match($scope.linkPattern)){
@@ -99,6 +99,14 @@ poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$h
         $scope.links.push(linkUrl);
         $scope.linkUrl = '';
     }
+
+    $scope.close = function(result){
+        $modalInstance.close(result);
+    };
+    $scope.removeLink = function(index){
+        $scope.links.splice(index, 1);
+    }
+
 }]);
 
 /**

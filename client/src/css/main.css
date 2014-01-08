@@ -4264,8 +4264,20 @@ p > a, p > b > a {
   display: block;
   margin-top: 15px;
 }
+.modal .modal-form {
+  display: table;
+  width: 100%;
+}
 .modal .modal-form.ng-invalid [type=submit] {
-  display: none;
+  color: #dadada;
+}
+.modal .modal-form .form-group {
+  display: table-cell;
+  width: 100%;
+  vertical-align: middle;
+}
+.modal .modal-form .xsubmit {
+  width: 0%;
 }
 
 .fake-twitter-share-button {

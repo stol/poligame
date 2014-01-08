@@ -868,8 +868,18 @@ p > a, p > b > a{
 	}
 
 	.modal-form{
+		display: table;
+		width: 100%;
 		&.ng-invalid [type=submit]{
-			display: none;
+			color: #dadada;
+		}
+		.form-group{
+			display: table-cell;
+			width: 100%;
+			vertical-align: middle;
+		}
+		.xsubmit{
+			width: 0%;
 		}
 	}
 }
