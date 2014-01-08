@@ -122,6 +122,7 @@ app.get ('/textes', textes.textes);
 app.get ('/a-propos', routes.about);
 app.get ('/textes/:texte_id', textes.show);
 //app.get ('/textes/:texte_id/articles', textes.articles);
+app.post ('/textes/:texte_id/links', textes.addLinks);
 app.post('/textes/:texte_id/vote', textes.vote);
 app.post('/users/login', users.login);
 app.post('/users/:user_id', users.update);

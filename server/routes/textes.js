@@ -183,10 +183,55 @@ function vote(req, res){
 
 		return deferred.promise;
 	}
-
 };
 
+function addLinks(req, res){
+  	if (!req.xhr){
+		res.render('index.twig', {
+			title: 'Moi, citoyen'
+			,og_url: req.protocol + "://" + req.get('host') + req.url
+		});
+		return;
+	}
+	if (typeof req.body.links != "object"){
+		res.send("ERR 1", 500)
+		return;
+	}
+	if (req.body.links.length == 0){
+		res.send("ERR 2", 500)
+		return;
+	}
 
+	for (var i=0; i<req.body.links.length;i++){
+		if (!req.body.links[i].match(/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/)){
+			res.send("ERR 3", 500)
+			return;
+		}
+	}
+
+	// TODO : check doublons
+
+	Texte.fetch(req, res, {ids: [req.params.texte_id]}).then(function(texte){
+		if (!texte || !texte.id){
+			res.send("ERR 4", 500)
+			return;			
+		}
+
+		var data = [];
+		for (var i=0; i<req.body.links.length;i++){
+			data.push([texte.id, req.body.links[i]]);
+		}
+
+		db.query("INSERT INTO links (bill_id, url) VALUES ?", [data], function(err, rows, fields) {
+		  	if (err) {
+		  		throw err;
+		  	}
+		  	res.json({succes:true});
+		});
+	});
+}
+
+exports.addLinks = addLinks;
 exports.textes   = textes;
 exports.show     = show;
 exports.articles = articles;

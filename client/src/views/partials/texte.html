@@ -72,15 +72,34 @@
 			</div>
 		</div-->
 
-		<h3 class="sstitre">Plus d'informations</h3>
+		<h3 class="sstitre">Textes officiels</h3>
 		<p ng-if="!texte.url_sn && !texte.url_an && !texte.url_lf">Ancun lien disponible</p>
 		<p ng-if="texte.url_lf"><b><a ng-href="{{texte.url_lf}}" target="_blank">Dossier légifrance</a></b></p>
 		<p ng-if="texte.url_an"><b><a ng-href="{{texte.url_an}}" target="_blank">Dossier de l'assemblée nationale</a></b></p>
 		<p ng-if="texte.url_sn"><b><a ng-href="{{texte.url_sn}}" target="_blank">Dossier du sénat</a></b></p>
 
-		<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
+		<h3 class="sstitre">Sources d'analyse</h3>
+
+		<div ng-if="texte.links.length">
+			<ul>
+				<li ng-repeat="link in texte.links"><a href="{{link.url}}" target="_blank">{{link.title}}</a></li>
+			</ul>
+
+			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
 				ng-click="openLinkProposalPopin(texte)"
-		>Proposer un texte explicatif</button>
+			>Ajouter une source</button>
+		</div>
+
+		<div ng-if="!texte.links.length">
+
+			<p>
+				Aucune source n'a été proposée. Soyez le premier à soumettre un lien offrant une analyse du texte.
+			</p>
+
+			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
+				ng-click="openLinkProposalPopin(texte)"
+			>Proposer une source</button>
+		</div>
 
 		<h3 class="sstitre">Vos commentaires</h3>
 	</div>

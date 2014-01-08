@@ -115,7 +115,7 @@ function($scope, $location, $http, $modal, $routeParams, $window, Textes, User, 
             keyboard: true,
             backdropClick: true,
             templateUrl:  '/views/partials/modal-link.html',
-            controller: 'VoteProposalCtrl',
+            controller: 'LinkProposalCtrl',
             resolve: {
                 texte: function(){ return texte}
             }

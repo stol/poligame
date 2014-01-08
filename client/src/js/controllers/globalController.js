@@ -82,7 +82,7 @@ poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '
  * Gestion de la popin de soumission de lien
  */
 
-poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
+poligame.controller('LinkProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
     $scope.step = 1;
     $scope.links = ['http://www.lemonde.fr'];
     $scope.linkPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/  ;
@@ -106,6 +106,18 @@ poligame.controller('VoteProposalCtrl', ['$scope', '$modalInstance', 'User', '$h
     $scope.removeLink = function(index){
         $scope.links.splice(index, 1);
     }
+
+    $scope.send = function(){
+        $http({method: 'POST', url: '/textes/'+texte.id+'/links', data: {
+            links: $scope.links
+        }})
+        .success(function(data, status, headers, config) {
+            console.log("KEWL");
+        })
+        .error(function(data, status, headers, config) {
+            console.log("ERROROOOO");
+        });
+    };
 
 }]);
 
