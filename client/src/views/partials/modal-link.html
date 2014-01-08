@@ -13,16 +13,21 @@
             Les liens vers les blogs ou autres pages personnelles ne sont (pour l'instant) pas acceptés.
         </p>
 
-        <script type="text/ng-template" id="zippy.html">
-        <p>
-            <input type="text" placeholder="http://" value="{{url}}"/><button ng-if="id > 0">X</button><br/>
+        <p ng-repeat="(id, link) in links">
+            - {{link}} <a ng-click="removeLink(id)">Supprimer</a>
         </p>
-        </script>
-        <div
-            ng-repeat="(id, url) in links"
-            ng-include="'zippy.html'"
-        ></div>
-        <button ng-if="id > 0">+</button>
+
+
+
+        <form ng-submit="addLink(linkUrl)" name="linksForm" class="modal-form">
+            <input type="text" ng-model="linkUrl"
+                placeholder="http://"
+                ng-pattern="linkPattern"
+            >
+
+            <input ng-if="linkUrl.length>0" class="btn btn-primary" type="submit" value="ajouter">
+
+        </form>
 
     </div>
     <div class="modal-footer">

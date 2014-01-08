@@ -4264,6 +4264,9 @@ p > a, p > b > a {
   display: block;
   margin-top: 15px;
 }
+.modal .modal-form.ng-invalid [type=submit] {
+  display: none;
+}
 
 .fake-twitter-share-button {
   display: inline-block;
