@@ -5,6 +5,103 @@ var moment = require('moment')
 	, defines = require('../defines.js')
 ;
 
+
+function selectTextes(mode, texte_ids){
+	var deferred = q.defer();
+
+	var mode = req.query.mode || (params && params.mode) || false;
+
+	var sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
+		+ ' FROM (SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture) AS seances'
+		+ ' LEFT JOIN bills ON seances.bill_id = bills.id';
+
+	sql+= ' WHERE 1';
+
+	if (mode == "past"){
+		sql += " AND ends_at < '"+moment().format("YYYY-MM-DD")
+	}
+	else if (mode == "present"){
+		sql += " AND starts_at < '"+moment().format("YYYY-MM-DD")+"' AND ends_at > '"+moment().format("YYYY-MM-DD")+"'";
+	}
+	else if (mode == "future"){
+		sql += " AND starts_at > '"+moment().format("YYYY-MM-DD")+"'";
+	}
+
+	var texte_ids = (req.query.texte_ids && _.isString(req.query.texte_ids) && JSON.parse(req.query.texte_ids)) || (params && params.texte_ids) || false;
+	if (texte_ids){
+
+		for(var i=0; i<texte_ids.length; i++){
+			texte_ids[i] = isNaN(+texte_ids[i]) ? 0 : parseInt(texte_ids[i],10);
+		}
+		sql+= ' AND seances.bill_id IN('+texte_ids.join(',')+')';
+	}
+
+	sql += " GROUP BY id"
+		+  " ORDER BY ends_at DESC";
+
+	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
+	if (limit){
+		sql+= ' LIMIT '+limit;
+	}
+	db.query(sql, function(err, textes, fields) {
+  		if (err) throw err;
+  		deferred.resolve(textes);
+  	});
+
+	return deferred.promise;
+}
+
+function selectLinks(texte_ids){
+	var deferred = q.defer();
+
+	if (_.isNumber(texte_ids) && !_.isNaN(texte_ids)){
+		texte_ids = [texte_ids];
+	}
+
+	if (!_.isArray(texte_ids)){
+		deferred.reject();
+		return;
+	}
+
+	for (var i=0; i<texte_ids.length){
+		if (!_.isNumber(texte_ids[i]) || _.isNaN(texte_ids[i])){
+			deferred.reject();
+			return;
+		}
+	}
+
+	var sql = "SELECT * FROM links WHERE bill_id IN("+texte_ids.join(',')+")";
+	db.query(sql, function(err, links, fields) {
+  		if (err) throw err;
+  		deferred.resolve(links);
+  	});
+
+	return deferred.promise;
+
+}
+
+
+function get(mode, texte_ids){
+	selectTextes(mode, texte_ids).then(function(textes){
+		var deferred = q.defer();
+
+		var promises = 
+		for (var i=0; i<textes.length; i++){
+
+
+		}
+		selectLinks(texte_ids).then(function(links){
+
+			deferred.resolve(textes, links);
+		})
+		return deferred.promise;
+	}).then(function(textes, link){
+
+		for(var i=0, i)
+	})
+
+}
+
 exports.fetch = function fetch(req, res, params){
 	var deferred = q.defer();
 
