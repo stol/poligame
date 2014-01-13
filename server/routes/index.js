@@ -5,7 +5,7 @@ var Texte = require('../models/texte.js');
  */
 
 exports.index = function(req, res){
-	Texte.fetch(req, res).then(function(textes){
+	Texte.fetch().then(function(textes){
 	    res.render('index.twig', {
 	        title: 'Moi, citoyen'
 	        ,textes: textes

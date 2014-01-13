@@ -5,44 +5,115 @@ var moment = require('moment')
 	, defines = require('../defines.js')
 ;
 
-
-function selectTextes(mode, texte_ids){
+exports.fetch = function fetch(mode, textes_ids){
+	console.log("ICI : ", textes_ids, textes_ids.length)
 	var deferred = q.defer();
 
-	var mode = req.query.mode || (params && params.mode) || false;
+	var single_id = false;
+	if (textes_ids){
+		if (_.isString(textes_ids)){
+			textes_ids = parseInt(textes_ids, 10);
+		}
+
+		if (_.isNumber(textes_ids) && !_.isNaN(textes_ids)){
+			single_id = true;
+			textes_ids = [textes_ids];
+		}
+		if (!_.isArray(textes_ids)){
+			deferred.reject();
+			return deferred.promise;
+		}
+		for (var i=0; i<textes_ids.length; i++){
+			if (!_.isNumber(textes_ids[i]) || _.isNaN(textes_ids[i])){
+				deferred.reject();
+				return deferred.promise;
+			}
+		}
+	}
+
+	selectTextes(mode, textes_ids)
+		.then(array2obj)
+		.then(selectLinks)
+		.then(alterTextes)
+		.then(function(textes){
+			textes = _.toArray(textes);
+			if (single_id){
+				deferred.resolve(textes[0]);
+			}
+			else{
+				deferred.resolve(textes);
+			}
+		})
+
+	return deferred.promise;
+}
+
+function selectTextes(mode, textes_ids){
+	console.log("coucou : ", textes_ids)
+	var deferred = q.defer();
+
+	if (_.isArray(textes_ids)){
+		return selectTextesByIds(textes_ids);
+	}
+	else{
+		return selectTextesByMode(mode);
+	}
+}
+
+
+// Private
+function selectLinks(textes){
+	var deferred = q.defer();
+
+	if (!_.keys(textes).length){
+		deferred.resolve(textes);
+		return deferred;
+	}
+
+	var sql = "SELECT * FROM links WHERE bill_id IN("
+			+ _.pluck(textes, "id").join(',')
+			+ ")";
+
+	db.query(sql, function(err, links, fields) {
+  		if (err) throw err;
+  		for( var i=0;i<links.length; i++){
+  			textes[links[i].bill_id].links = textes[links[i].bill_id].links || [];
+  			textes[links[i].bill_id].links.push(links[i]);
+  		}
+
+  		deferred.resolve(textes);
+  	});
+
+	return deferred.promise;
+
+}
+
+// Converti l'array en object dont chaque clé est un ID
+function array2obj(textes){
+	var deferred = q.defer();
+
+	var textesObj = {};
+
+	for(var i=0; i<textes.length; i++){
+		textesObj[textes[i].id] = textes[i];
+	}
+
+	deferred.resolve(textesObj);
+
+	return deferred.promise;
+}
+// Private
+function selectTextesByIds(textes_ids){
+	var deferred = q.defer();
 
 	var sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
 		+ ' FROM (SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture) AS seances'
-		+ ' LEFT JOIN bills ON seances.bill_id = bills.id';
+		+ ' LEFT JOIN bills ON seances.bill_id = bills.id'
+		+ ' WHERE seances.bill_id IN('+textes_ids.join(',')+')'
+		+ ' GROUP BY id'
+		+ ' ORDER BY ends_at DESC'
+		+ ' LIMIT 100';
 
-	sql+= ' WHERE 1';
-
-	if (mode == "past"){
-		sql += " AND ends_at < '"+moment().format("YYYY-MM-DD")
-	}
-	else if (mode == "present"){
-		sql += " AND starts_at < '"+moment().format("YYYY-MM-DD")+"' AND ends_at > '"+moment().format("YYYY-MM-DD")+"'";
-	}
-	else if (mode == "future"){
-		sql += " AND starts_at > '"+moment().format("YYYY-MM-DD")+"'";
-	}
-
-	var texte_ids = (req.query.texte_ids && _.isString(req.query.texte_ids) && JSON.parse(req.query.texte_ids)) || (params && params.texte_ids) || false;
-	if (texte_ids){
-
-		for(var i=0; i<texte_ids.length; i++){
-			texte_ids[i] = isNaN(+texte_ids[i]) ? 0 : parseInt(texte_ids[i],10);
-		}
-		sql+= ' AND seances.bill_id IN('+texte_ids.join(',')+')';
-	}
-
-	sql += " GROUP BY id"
-		+  " ORDER BY ends_at DESC";
-
-	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
-	if (limit){
-		sql+= ' LIMIT '+limit;
-	}
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
   		deferred.resolve(textes);
@@ -51,147 +122,79 @@ function selectTextes(mode, texte_ids){
 	return deferred.promise;
 }
 
-function selectLinks(texte_ids){
+//Private
+function selectTextesByMode(mode){
 	var deferred = q.defer();
 
-	if (_.isNumber(texte_ids) && !_.isNaN(texte_ids)){
-		texte_ids = [texte_ids];
-	}
-
-	if (!_.isArray(texte_ids)){
-		deferred.reject();
-		return;
-	}
-
-	for (var i=0; i<texte_ids.length){
-		if (!_.isNumber(texte_ids[i]) || _.isNaN(texte_ids[i])){
-			deferred.reject();
-			return;
-		}
-	}
-
-	var sql = "SELECT * FROM links WHERE bill_id IN("+texte_ids.join(',')+")";
-	db.query(sql, function(err, links, fields) {
-  		if (err) throw err;
-  		deferred.resolve(links);
-  	});
-
-	return deferred.promise;
-
-}
-
-
-function get(mode, texte_ids){
-	selectTextes(mode, texte_ids).then(function(textes){
-		var deferred = q.defer();
-
-		var promises = 
-		for (var i=0; i<textes.length; i++){
-
-
-		}
-		selectLinks(texte_ids).then(function(links){
-
-			deferred.resolve(textes, links);
-		})
-		return deferred.promise;
-	}).then(function(textes, link){
-
-		for(var i=0, i)
-	})
-
-}
-
-exports.fetch = function fetch(req, res, params){
-	var deferred = q.defer();
-
-	var mode = req.query.mode || (params && params.mode) || false;
+	mode = mode || false;
 
 	var sql = 'SELECT bills.id, MAX(lecture) as lecture, MAX(starts_at) AS starts_at, MAX(ends_at) AS ends_at, bills.*'
 		+ ' FROM (SELECT bill_id, min(seances.date) AS starts_at, max(seances.date) AS ends_at, lecture FROM seances GROUP BY bill_id, lecture) AS seances'
 		+ ' LEFT JOIN bills ON seances.bill_id = bills.id';
 
-	sql+= ' WHERE 1';
-
 	if (mode == "past"){
-		sql += " AND ends_at < '"+moment().format("YYYY-MM-DD")
+		sql += " WHERE ends_at < '"+moment().format("YYYY-MM-DD")
 	}
 	else if (mode == "present"){
-		sql += " AND starts_at < '"+moment().format("YYYY-MM-DD")+"' AND ends_at > '"+moment().format("YYYY-MM-DD")+"'";
+		sql += " WHERE starts_at < '"+moment().format("YYYY-MM-DD")+"' AND ends_at > '"+moment().format("YYYY-MM-DD")+"'";
 	}
 	else if (mode == "future"){
-		sql += " AND starts_at > '"+moment().format("YYYY-MM-DD")+"'";
-	}
-
-	var ids = (req.query.ids && _.isString(req.query.ids) && JSON.parse(req.query.ids)) || (params && params.ids) || false;
-	if (ids){
-
-		for(var i=0; i<ids.length; i++){
-			ids[i] = isNaN(+ids[i]) ? 0 : parseInt(ids[i],10);
-		}
-		sql+= ' AND seances.bill_id IN('+ids.join(',')+')';
+		sql += " AWHEREND starts_at > '"+moment().format("YYYY-MM-DD")+"'";
 	}
 
 	sql += " GROUP BY id"
-		+  " ORDER BY ends_at DESC";
+		+  " ORDER BY ends_at DESC"
+		+  " LIMIT 100";
 
-	var limit = (req.query.limit && parseInt(req.query.limit,10)) || (params && params.limit) || 100;
-	if (limit){
-		sql+= ' LIMIT '+limit;
-	}
-
-	//console.log(sql);
 
 	db.query(sql, function(err, textes, fields) {
   		if (err) throw err;
+  		deferred.resolve(textes);
+  	});
 
-  		var stats_done = 0;
+	return deferred.promise;
+}
 
-  		if (textes.length == 0){
-  			deferred.resolve([]);
-  			return;
-  		}
 
-        for( var i=0; i<textes.length; i++){
-			textes[i].mode = mode;
+function alterTextes(textes){
+	var deferred = q.defer();
 
-			var present   = moment().unix();
-			textes[i].starts_at = moment(textes[i].starts_at).hours(0).minutes(0).seconds(0).unix(),
-			textes[i].ends_at   = moment(textes[i].ends_at).hours(23).minutes(59).seconds(59).unix();
+	textes_nb = _.keys(textes).length;
+	stats_done = 0;
+	_.each(textes, function(texte){
 
-			if (textes[i].ends_at < present){
-				textes[i].mode = "past";
+		alter_texte(texte);
+
+		get_stats(texte).then(function(){
+			if (++stats_done == textes_nb){
+				deferred.resolve(textes);
 			}
-			else if (textes[i].starts_at < present && textes[i].ends_at > present){
-				textes[i].mode = "present";
-			}
-			else{
-				textes[i].mode = "future";
-			}
+		})
 
-			alter_texte(textes[i]);
-
-			get_stats(textes[i], function(){
-				if (++stats_done == textes.length){
-					if(ids && ids.length == 1){
-						deferred.resolve(textes[0]);
-						return;
-					}
-					else{
-						deferred.resolve(textes);
-						return;
-					}
-					
-				}
-			})
-        }
 	});
 
 	return deferred.promise;
 }
 
+
+
 // Rajoute des données calculées à la volée dans l'object passé en paramètre
 function alter_texte(texte){
+
+	var present   = moment().unix();
+	
+	texte.starts_at = moment(texte.starts_at).hours(0).minutes(0).seconds(0).unix(),
+	texte.ends_at   = moment(texte.ends_at).hours(23).minutes(59).seconds(59).unix();
+
+	if (texte.ends_at < present){
+		texte.mode = "past";
+	}
+	else if (texte.starts_at < present && texte.ends_at > present){
+		texte.mode = "present";
+	}
+	else{
+		texte.mode = "future";
+	}
 	
 	var total = texte.pour + texte.contre + texte.abstention;
 
@@ -370,7 +373,9 @@ function StatsClass(){
 
 
 
-function get_stats(texte, callback){
+function get_stats(texte){
+	var deferred = q.defer();
+
 	var stats = new StatsClass();
 
 	db.query('SELECT * from votes_anon WHERE obj_id = ? AND obj_type = ?', [texte.id, texte.type], function(err, rows, fields) {
@@ -378,8 +383,10 @@ function get_stats(texte, callback){
 			stats.addVote(rows[i]);
 		}
 		texte.stats = stats.getNumbers();
-		callback && callback(texte);
+		
+		deferred.resolve(texte);
 	});
+	return deferred.promise;
 }
 
 function voteObj(label){

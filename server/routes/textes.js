@@ -20,7 +20,7 @@ function textes(req, res){
 		return;
 	}
 
-	Texte.fetch(req, res).then(function(textes){
+	Texte.fetch().then(function(textes){
 		res.json(textes);
 	});
 }
@@ -29,7 +29,7 @@ function textes(req, res){
 function show(req, res){
 
 
-	Texte.fetch(req, res, {ids: [req.params.texte_id]}).then(function(texte){
+	Texte.fetch(null, req.params.texte_id).then(function(texte){
 		return req.xhr
 			? res.json(texte)
 			: res.render('index.twig', {
@@ -58,7 +58,7 @@ function vote(req, res){
 
 	var choice = parseInt(req.body.user_vote,10);
 
-	Texte.fetch(req, res, {ids: [req.body.texte_id]}).then(function(texte){
+	Texte.fetch(null, {ids: [req.body.texte_id]}).then(function(texte){
 		return q.all([
 			User.getFacebookInfos(req.body.access_token),
 			User.get(req.body.user_id)
@@ -211,7 +211,7 @@ function addLinks(req, res){
 
 	// TODO : check doublons
 
-	Texte.fetch(req, res, {ids: [req.params.texte_id]}).then(function(texte){
+	Texte.fetch(null, {ids: [req.params.texte_id]}).then(function(texte){
 		if (!texte || !texte.id){
 			res.send("ERR 4", 500)
 			return;			
