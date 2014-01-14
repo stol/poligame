@@ -33,7 +33,6 @@ function textes(req, res){
 
 function show(req, res){
 
-
 	Texte.fetch(null, req.params.texte_id).then(function(texte){
 		return req.xhr
 			? res.json(texte)
@@ -94,7 +93,6 @@ function vote(req, res){
 	});
 
 	function publishVote(texte){
-        console.log("PUBLISHING VOTE");
 		var deferred = q.defer();
 
     	if      (choice == defines.VOTE_POUR){

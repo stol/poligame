@@ -30,9 +30,6 @@ exports.fetch = function fetch(mode, textes_ids){
 		}
 	}
 
-
-
-
 	selectTextes(mode, textes_ids)
 		.then(array2obj)
 		.then(selectLinks)
@@ -167,16 +164,17 @@ function alterTextes(textes){
 	var deferred = q.defer();
 
 	textes_nb = _.keys(textes).length;
+
 	if (textes_nb == 0){
 		deferred.resolve(textes);
 	}
 	else{
-		stats_done = 0;
+		var stats_done = 0;
 		_.each(textes, function(texte){
 
 			alter_texte(texte);
 
-			get_stats(texte).then(function(){
+			get_stats(texte).then(function(){				
 				if (++stats_done == textes_nb){
 					deferred.resolve(textes);
 				}

@@ -82,7 +82,7 @@
 
 		<div ng-if="texte.links.length">
 			<ul>
-				<li ng-repeat="link in texte.links"><a href="{{link.url}}" target="_blank">{{link.title}}</a></li>
+				<li ng-repeat="link in texte.links"><a href="{{link.url}}" target="_blank">{{link.url}}</a></li>
 			</ul>
 
 			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
