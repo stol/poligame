@@ -22,6 +22,11 @@ function textes(req, res){
 
 	Texte.fetch().then(function(textes){
 		res.json(textes);
+	}).fail(function(){
+	    res.status(404);
+	    res.render('index.twig', {
+	        notfound: true,
+	    });
 	});
 }
 
@@ -36,6 +41,11 @@ function show(req, res){
 				og_url: req.protocol + "://" + req.get('host') + req.url
 				,texte: texte
 		});
+	}).fail(function(){
+	    res.status(404);
+	    res.render('index.twig', {
+	        notfound: true,
+	    });
 	});
 };
 
@@ -76,7 +86,7 @@ function vote(req, res){
 	.then(function(){ // Success :)
 		res.json({success: true});
 	})
-	.catch(function(msg){ // Error :(
+	.fail(function(msg){ // Error :(
 		res.json(401, {
 			success: false,
 			message: msg
@@ -228,6 +238,11 @@ function addLinks(req, res){
 		  	}
 		  	res.json({succes:true});
 		});
+	}).fail(function(){
+	    res.status(404);
+	    res.render('index.twig', {
+	        notfound: true,
+	    });
 	});
 }
 

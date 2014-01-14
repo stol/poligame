@@ -6,7 +6,6 @@ var moment = require('moment')
 ;
 
 exports.fetch = function fetch(mode, textes_ids){
-	console.log("ICI : ", textes_ids, textes_ids.length)
 	var deferred = q.defer();
 
 	var single_id = false;
@@ -31,25 +30,33 @@ exports.fetch = function fetch(mode, textes_ids){
 		}
 	}
 
+
+
+
 	selectTextes(mode, textes_ids)
 		.then(array2obj)
 		.then(selectLinks)
 		.then(alterTextes)
 		.then(function(textes){
 			textes = _.toArray(textes);
-			if (single_id){
+			if (single_id && textes.length){
 				deferred.resolve(textes[0]);
+			}
+			else if (single_id && !textes.length){
+				deferred.reject();
 			}
 			else{
 				deferred.resolve(textes);
 			}
+		})
+		.fail(function(){
+			deferred.reject();
 		})
 
 	return deferred.promise;
 }
 
 function selectTextes(mode, textes_ids){
-	console.log("coucou : ", textes_ids)
 	var deferred = q.defer();
 
 	if (_.isArray(textes_ids)){
@@ -67,7 +74,7 @@ function selectLinks(textes){
 
 	if (!_.keys(textes).length){
 		deferred.resolve(textes);
-		return deferred;
+		return deferred.promise;
 	}
 
 	var sql = "SELECT * FROM links WHERE bill_id IN("
@@ -160,18 +167,23 @@ function alterTextes(textes){
 	var deferred = q.defer();
 
 	textes_nb = _.keys(textes).length;
-	stats_done = 0;
-	_.each(textes, function(texte){
+	if (textes_nb == 0){
+		deferred.resolve(textes);
+	}
+	else{
+		stats_done = 0;
+		_.each(textes, function(texte){
 
-		alter_texte(texte);
+			alter_texte(texte);
 
-		get_stats(texte).then(function(){
-			if (++stats_done == textes_nb){
-				deferred.resolve(textes);
-			}
-		})
+			get_stats(texte).then(function(){
+				if (++stats_done == textes_nb){
+					deferred.resolve(textes);
+				}
+			})
 
-	});
+		});
+	}
 
 	return deferred.promise;
 }
