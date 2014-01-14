@@ -81,9 +81,7 @@
 		<h3 class="sstitre">Sources d'analyse</h3>
 
 		<div ng-if="texte.links.length">
-			<ul>
-				<li ng-repeat="link in texte.links"><a href="{{link.url}}" target="_blank">{{link.url}}</a></li>
-			</ul>
+			<p ng-repeat="link in texte.links"><a href="{{link.url}}" target="_blank">{{link.url}}</a></p>
 
 			<button type="submit" ng-model="radio" class="btn btn-primary" name="vote" value="3"
 				ng-click="openLinkProposalPopin(texte)"

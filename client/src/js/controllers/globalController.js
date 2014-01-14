@@ -84,7 +84,7 @@ poligame.controller('b4VoteReminderCtrl', ['$scope', '$modalInstance', 'User', '
 
 poligame.controller('LinkProposalCtrl', ['$scope', '$modalInstance', 'User', '$http', 'texte', function($scope, $modalInstance, User, $http, texte) {
     $scope.step = 1;
-    $scope.links = ['http://www.lemonde.fr'];
+    $scope.links = [];
     $scope.linkPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/  ;
     $scope.addLink = function(linkUrl){
         // Url valide ?

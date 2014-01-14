@@ -194,6 +194,7 @@ function vote(req, res){
 };
 
 function addLinks(req, res){
+	console.log("ADD LINK")
   	if (!req.xhr){
 		res.render('index.twig', {
 			title: 'Moi, citoyen'
@@ -219,7 +220,7 @@ function addLinks(req, res){
 
 	// TODO : check doublons
 
-	Texte.fetch(null, {ids: [req.params.texte_id]}).then(function(texte){
+	Texte.fetch(null, req.params.texte_id).then(function(texte){
 		if (!texte || !texte.id){
 			res.send("ERR 4", 500)
 			return;			
