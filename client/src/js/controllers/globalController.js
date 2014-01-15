@@ -112,10 +112,10 @@ poligame.controller('LinkProposalCtrl', ['$scope', '$modalInstance', 'User', '$h
             links: $scope.links
         }})
         .success(function(data, status, headers, config) {
-            console.log("KEWL");
+            $scope.step = 2;
         })
         .error(function(data, status, headers, config) {
-            console.log("ERROROOOO");
+            $scope.step = 3;
         });
     };
 
@@ -187,6 +187,7 @@ poligame.controller('UsersController', ['$scope', 'Textes', 'User', '$location',
 
 poligame.controller('AppCtrl', ['$scope', 'User', '$routeParams', 'Social', '$window','$location', function($scope, User, $routeParams, Social, $window, $location) {
     $scope.user = User;
+    console.log($scope.user);
     $scope.routeParams = $routeParams;
     $scope.location = $location
 

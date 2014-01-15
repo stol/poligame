@@ -235,7 +235,11 @@ function addLinks(req, res){
 		  	if (err) {
 		  		throw err;
 		  	}
-		  	res.json({succes:true});
+		  	Texte.fetch(null, texte.id).then(function(texte){
+		  		res.json(texte);
+		  	});
+
+		  	
 		});
 	}).fail(function(){
 	    res.status(404);
