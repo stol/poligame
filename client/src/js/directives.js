@@ -174,24 +174,32 @@ poligame.directive('resultsBars', function(Textes) {
         var max = getMaxOfArray(nbs);
         var min = getMinOfArray(nbs);
 
-        if (votes.total && votes.pour.nb == max){
-            var pour_perc = 100;
+        if (votes.total){
+            if (votes.total && votes.pour.nb == max){
+                var pour_perc = 100;
+            }
+            else{
+                var pour_perc = Math.round(votes.pour.nb / max * 100);
+            }
+            if (votes.total && votes.contre.nb == max){
+                var contre_perc = 100;
+            }
+            else{
+                var contre_perc = Math.round(votes.contre.nb / max * 100);
+            }
+            if (votes.total && votes.abstention.nb == max){
+                var abstention_perc = 100;
+            }
+            else{
+                var abstention_perc = Math.round(votes.abstention.nb / max * 100);
+            }
         }
         else{
-            var pour_perc = Math.round(votes.pour.nb / max * 100);
+            var pour_perc = 0;
+            var contre_perc = 0;
+            var abstention_perc = 0;
         }
-        if (votes.total && votes.contre.nb == max){
-            var contre_perc = 100;
-        }
-        else{
-            var contre_perc = Math.round(votes.contre.nb / max * 100);
-        }
-        if (votes.total && votes.abstention.nb == max){
-            var abstention_perc = 100;
-        }
-        else{
-            var abstention_perc = Math.round(votes.abstention.nb / max * 100);
-        }
+
 
         // Si y'a des égalités au niveau des max, on divise par le nombre d'égalités de max
         var max_nb = 0;
