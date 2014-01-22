@@ -91,7 +91,7 @@ var c = new Crawler({
 var global_deferred = q.defer();
 
 // MAIN
-if (process.argv.length){
+if (process.argv.length > 2){
     process.argv.forEach(function (val, index, array) {
         switch(val){
             case "propositions":
